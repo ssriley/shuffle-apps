@@ -1,6 +1,7 @@
 import json
 #from telnetlib import TLS
 import ssl
+from typing import Any
 import ldap3
 import asyncio
 from ldap3 import (
@@ -28,7 +29,7 @@ class ActiveDirectory(AppBase):
     def __ldap_connection(self, server, port, domain, login_user, password, use_ssl):
         use_SSL = False if use_ssl.lower() == "false" else True
         login_dn = domain + "\\" + login_user
-        tls_config = Tls(validate=ssl.CERT_NONE)
+        tls_config = Tls(validate=ssl.CERT_NONE,version=ssl.PROTOCOL_TLSv1_2,ciphers='Any')
         s = Server(server, port=int(port), use_ssl=use_SSL, tls=tls_config)
         c = Connection(s, user=login_dn, password=password, auto_bind=True)
 
