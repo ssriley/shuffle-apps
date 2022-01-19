@@ -25,11 +25,11 @@ class ActiveDirectory(AppBase):
         """
         super().__init__(redis, logger, console_logger)
 
-    def __ldap_connection(self, server, port, domain, login_user, password, use_ssl,tls_validate=ssl.CERT_NONE):
+    def __ldap_connection(self, server, port, domain, login_user, password, use_ssl,tls_settings):
         use_SSL = False if use_ssl.lower() == "false" else False
         login_dn = domain + "\\" + login_user
-        tls_settings = Tls(validate=tls_validate)
-        s = Server(server, port=int(port), use_ssl=use_SSL, tls=tls_settings)
+        tls_config = Tls(validate=tls_settings)
+        s = Server(server, port=int(port), use_ssl=use_SSL, tls=tls_config)
         c = Connection(s, user=login_dn, password=password, auto_bind=True)
 
         return c
