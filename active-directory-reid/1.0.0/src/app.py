@@ -29,7 +29,7 @@ class ActiveDirectory(AppBase):
     def __ldap_connection(self, server, port, domain, login_user, password, use_ssl):
         use_SSL = False if use_ssl.lower() == "false" else True
         login_dn = domain + "\\" + login_user
-        tls_config = Tls(validate=ssl.CERT_NONE,version=ssl.PROTOCOL_TLSv1_2,ciphers='Any')
+        tls_config = Tls(validate=ssl.CERT_NONE,version=ssl.PROTOCOL_TLSv1_2,ciphers='ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:AES256-SHA')
         s = Server(server, port=int(port), use_ssl=use_SSL, tls=tls_config)
         c = Connection(s, user=login_dn, password=password, auto_bind=True)
 
