@@ -380,11 +380,10 @@ class ActiveDirectory(AppBase):
         c = self.__ldap_connection(
             server, port, domain, login_user, password, use_ssl
         )
-        c.add('cn=' + samaccountname + ',' + organizational_unit + ',' + base_dn, ['inetOrgPerson', 'top', 'person', 'user', 'organizationalPerson'], 
+        c.add('cn=' + samaccountname + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
         {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname})
-        #result = json.loads(user_attributes( server, port, domain, login_user, password, base_dn, use_ssl, samaccountname, search_base,))
 
-        print(c.result)
+        #print(c.result)
         return json.dumps(c.result)
 
 
