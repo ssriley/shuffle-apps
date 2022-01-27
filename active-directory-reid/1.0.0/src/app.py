@@ -384,7 +384,17 @@ class ActiveDirectory(AppBase):
         {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname})
 
         #print(c.result)
-        return json.dumps(c.result)
+        user_create_result = json.dumps(c.result)
+        full_return = {
+            'samaccountname': samaccountname,
+            'firstname': firstname,
+            'lastname': lastname,
+            'email': email,
+            'upn_suffix': upn_suffix,
+            'organization_unit': organizational_unit,
+            'result_of_operation': user_create_result
+        }
+        #return json.dumps(c.result)
 
 
 if __name__ == "__main__":
