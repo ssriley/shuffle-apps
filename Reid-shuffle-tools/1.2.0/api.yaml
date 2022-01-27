@@ -930,7 +930,7 @@ actions:
         example: "8"
         required: True
         schema:
-          type: integer
+          type: string
     returns:
       schema:
         type: string

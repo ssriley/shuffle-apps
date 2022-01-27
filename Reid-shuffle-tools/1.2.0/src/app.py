@@ -1724,7 +1724,7 @@ class Tools(AppBase):
     
     def generate_password(self,length):
         characters = string.ascii_letters + string.digits + string.punctuation
-        password = ''.join(random.choice(characters) for i in range(length))
+        password = ''.join(random.choice(characters) for i in range(int(length)))
         result = {"random_password": password}
         return result
 
