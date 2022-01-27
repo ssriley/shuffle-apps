@@ -26,11 +26,11 @@ class ActiveDirectory(AppBase):
         """
         super().__init__(redis, logger, console_logger)
 
-    def __ldap_connection(self, server, port, domain, login_user, password, use_ssl):
+    def __ldap_connection(self, server, port, domain, login_user, password, use_ssl,tls_validate=ssl.CERT_NONE,tls_version=None):
         use_SSL = False if use_ssl.lower() == "false" else True
         login_dn = domain + "\\" + login_user
-        tls_config = Tls(validate=ssl.CERT_NONE,version=ssl.PROTOCOL_TLSv1)
-        s = Server(server, port=int(port), use_ssl=use_SSL, tls=None)
+        tls_config = Tls(validate=tls_validate,version=tls_version)
+        s = Server(server, port=int(port), use_ssl=use_SSL, tls=tls_config)
         c = Connection(s, user=login_dn, password=password, auto_bind=True)
 
         return c
@@ -326,6 +326,66 @@ class ActiveDirectory(AppBase):
             c.result["samAccountName"] = samaccountname
 
             return json.dumps(c.result)
+
+    def group_attributes(
+        self,
+        server,
+        port,
+        domain,
+        login_user,
+        password,
+        base_dn,
+        use_ssl,
+        groupname,
+        search_base,
+    ):
+        if search_base:
+            base_dn = search_base
+
+        c = self.__ldap_connection(server, port, domain, login_user, password, use_ssl)
+
+        c.search(
+            search_base=base_dn,
+            search_filter=f"(cn={groupname})",
+            attributes=ALL_ATTRIBUTES,
+        )
+        result = json.loads(c.response_to_json())["entries"][0]
+
+        result = {
+            "group_name": result['attributes']['distinguishedName'],
+            "group_members": result['attributes']['member'],
+            'group_member_total': len(result['attributes']['member'])
+        }
+        #print(str(result))
+        return json.dumps(result)
+
+    def create_user(
+        self,
+        server,
+        port,
+        domain,
+        login_user,
+        password,
+        base_dn,
+        use_ssl,
+        samaccountname,
+        firstname,
+        lastname,
+        email,
+        upn_suffix,
+        organizational_unit='ou=onboarding'
+    ):
+
+
+        c = self.__ldap_connection(
+            server, port, domain, login_user, password, use_ssl
+        )
+        c.add('cn=' + samaccountname + ',' + organizational_unit + ',' + base_dn, ['inetOrgPerson', 'top', 'person', 'user', 'organizationalPerson'], 
+        {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname})
+        #result = json.loads(user_attributes( server, port, domain, login_user, password, base_dn, use_ssl, samaccountname, search_base,))
+
+        print(c.result)
+        return json.dumps(c.result)
 
 
 if __name__ == "__main__":
