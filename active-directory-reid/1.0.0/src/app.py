@@ -394,7 +394,7 @@ class ActiveDirectory(AppBase):
             'organization_unit': organizational_unit,
             'result_of_operation': user_create_result
         }
-        #return json.dumps(c.result)
+        return json.dumps(full_return)
 
 
 if __name__ == "__main__":
