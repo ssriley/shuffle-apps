@@ -10,6 +10,8 @@ from ldap3 import (
     Tls,
     MODIFY_REPLACE,
     ALL_ATTRIBUTES,
+    MODIFY_ADD,
+    MODIFY_DELETE
 )
 from walkoff_app_sdk.app_base import AppBase
 
@@ -395,6 +397,100 @@ class ActiveDirectory(AppBase):
             'result_of_operation': user_create_result
         }
         return json.dumps(full_return)
+    
+    def add_group_member(
+        self,
+        server,
+        port,
+        domain,
+        login_user,
+        password,
+        base_dn,
+        use_ssl,
+        groupname,
+        samaccountname,
+        search_base,
+    ):
+        if search_base:
+            base_dn = search_base
+
+        c = self.__ldap_connection(server, port, domain, login_user, password, use_ssl)
+
+        c.search(
+            search_base=base_dn,
+            search_filter=f"(cn={groupname})",
+            attributes=ALL_ATTRIBUTES,
+        )
+        result = json.loads(c.response_to_json())["entries"][0]
+
+        group_name = result['attributes']['distinguishedName']
+        c.search(
+            search_base=base_dn,
+            search_filter=f"(cn={samaccountname})",
+            attributes=ALL_ATTRIBUTES,
+        )
+        result = json.loads(c.response_to_json())["entries"][0]
+        
+        account_name = result['attributes']['distinguishedName']
+
+        c.modify(group_name,{'member': [(MODIFY_ADD, [account_name])]})
+
+        modify_result = c.result['description']
+        final_result = {
+            'action': 'Add user to Group',
+            'result': modify_result,
+            'group_name': group_name,
+            'user_name': account_name
+        }
+        #print(str(final_result))
+        return json.dumps(final_result)
+
+    def delete_group_member(
+        self,
+        server,
+        port,
+        domain,
+        login_user,
+        password,
+        base_dn,
+        use_ssl,
+        groupname,
+        samaccountname,
+        search_base,
+    ):
+        if search_base:
+            base_dn = search_base
+
+        c = self.__ldap_connection(server, port, domain, login_user, password, use_ssl)
+
+        c.search(
+            search_base=base_dn,
+            search_filter=f"(cn={groupname})",
+            attributes=ALL_ATTRIBUTES,
+        )
+        result = json.loads(c.response_to_json())["entries"][0]
+
+        group_name = result['attributes']['distinguishedName']
+        c.search(
+            search_base=base_dn,
+            search_filter=f"(cn={samaccountname})",
+            attributes=ALL_ATTRIBUTES,
+        )
+        result = json.loads(c.response_to_json())["entries"][0]
+        
+        account_name = result['attributes']['distinguishedName']
+
+        c.modify(group_name,{'member': [(MODIFY_DELETE, [account_name])]})
+
+        modify_result = c.result['description']
+        final_result = {
+            'action': 'Delete user from Group',
+            'result': modify_result,
+            'group_name': group_name,
+            'user_name': account_name
+        }
+        #print(str(final_result))
+        return json.dumps(final_result)
 
 
 if __name__ == "__main__":
