@@ -107,10 +107,10 @@ actions:
         schema:
           type: bool
       - name: data_type 
-        description: The type of data to send in request. Needs to be data or json
+        description: The type of data to send in request. Needs to be data, json, or json_rpc
         multiline: false 
         required: false 
-        example: "data or json"
+        example: "data or json or json_rpc"
         schema:
           type: string
     returns:

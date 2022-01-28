@@ -147,6 +147,8 @@ class HTTP(AppBase):
             return requests.post(url, headers=parsed_headers, auth=requests.auth.HTTPBasicAuth(username, password), data=body, verify=verify).text
         elif data_type == "json":
             return requests.post(url, headers=parsed_headers, auth=requests.auth.HTTPBasicAuth(username, password), json=body, verify=verify).text
+        elif data_type == "json_rpc":
+            return requests.post(url, headers=parsed_headers, auth=requests.auth.HTTPBasicAuth(username, password), data=json.dumps(body), verify=verify).text
         else:
             print("data type needs to be either data or json")
     # UNTESTED BELOW HERE
