@@ -7,8 +7,6 @@ import uncurl
 import asyncio
 import requests
 import subprocess
-from jsonrpcclient import request
-from jsonrpcclient.clients.http_client import HTTPClient 
 
 from walkoff_app_sdk.app_base import AppBase
 
@@ -150,9 +148,13 @@ class HTTP(AppBase):
         elif data_type == "json":
             return requests.post(url, headers=parsed_headers, auth=requests.auth.HTTPBasicAuth(username, password), json=body, verify=verify).text
         elif data_type == "json_rpc":
-            json_rpc_client = HTTPClient(url)
-            response = json_rpc_client.send(body, headers=parsed_headers, verify=verify)
-            return response.data.result
+            payload = {
+                "id": "2bc99d4c804576e0cd7b1b1463ce479e",
+                "jsonrpc": "2.0",
+                "method": "createAccount",
+                "params": json.dumps(body)
+            }
+            return requests.post(url, headers=parsed_headers, auth=requests.auth.HTTPBasicAuth(username, password), json=payload, verify=verify).text
         else:
             print("data type needs to be either data or json")
     # UNTESTED BELOW HERE

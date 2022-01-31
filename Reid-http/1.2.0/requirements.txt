@@ -1,3 +1,2 @@
 uncurl==0.0.10
 requests==2.25.1
-jsonrpcclient[requests]
