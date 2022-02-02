@@ -154,7 +154,7 @@ class HTTP(AppBase):
                 "method": "createAccount",
                 "params": body
             }
-            return requests.post(url, headers=parsed_headers, auth=requests.auth.HTTPBasicAuth(username, password), json=payload, verify=verify).text
+            return requests.post(url, headers=parsed_headers, auth=requests.auth.HTTPBasicAuth(username, password), data=json.dumps(body), verify=verify).text
         else:
             print("data type needs to be either data or json")
     # UNTESTED BELOW HERE
