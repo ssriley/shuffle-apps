@@ -152,7 +152,7 @@ class HTTP(AppBase):
                 "id": "2bc99d4c804576e0cd7b1b1463ce479e",
                 "jsonrpc": "2.0",
                 "method": "createAccount",
-                "params": json.dumps(body)
+                "params": body
             }
             return requests.post(url, headers=parsed_headers, auth=requests.auth.HTTPBasicAuth(username, password), json=payload, verify=verify).text
         else:
