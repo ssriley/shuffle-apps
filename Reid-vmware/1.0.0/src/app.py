@@ -286,5 +286,27 @@ class VMwareTools(AppBase):
             }
             return json.dumps(result)
 
+    def reboot_vm(self,host_ip,username,password,port,disableSslCertValidation=True,vm_ip=None,vm_name=None):
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        vm = None
+        if vm_ip:
+            vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
+        elif vm_name:
+            content = si.RetrieveContent()
+            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        
+        if vm is None:
+            result = {
+                "Error": "Cannot find VM"
+            }
+            return json.dumps(result)
+        WaitForTask(vm.ResetVM_Task())
+        result = {
+            "Search": "Found: {0}".format(vm.name),
+            "Current_State": "The current powerState is: {0}".format(vm.runtime.powerState),
+            "Complete": "Reboot completed"
+        }
+        return json.dumps(result)
+
 if __name__ == "__main__":
     VMwareTools.run()
