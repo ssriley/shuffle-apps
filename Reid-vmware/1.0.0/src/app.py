@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import re
 import sys
 import atexit
 import pyVmomi
@@ -308,5 +309,47 @@ class VMwareTools(AppBase):
         }
         return json.dumps(result)
 
+    def create_snapshot(self,
+    host_ip,
+    username,
+    password,
+    port,
+    disableSslCertValidation=True,
+    vm_ip=None,
+    vm_name=None,
+    snap_description=None,
+    snap_name=None,
+    snap_memory=False,
+    snap_quiesce=False):
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+
+        if vm_ip:
+            vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
+        elif vm_name:
+            content = si.RetrieveContent()
+            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        if vm is None:
+            result = {
+                "Error": "Cannot find VM"
+            }
+            return json.dumps(result)
+        vm.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce)
+
+        if vm_ip:
+            vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
+        elif vm_name:
+            content = si.RetrieveContent()
+            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        snap_info = vm.snapshot
+        tree = snap_info.rootSnapshotList
+        while tree[0].childSnapshotList is not None:
+            #print("Snap: {0} => {1}".format(tree[0].name, tree[0].description))
+            result = {
+                "Snapshot": "Snap: {0} => {1}".format(tree[0].name, tree[0].description)
+            }
+            if len(tree[0].childSnapshotList) < 1:
+                break
+            tree = tree[0].childSnapshotList
+            return json.dumps(result)
 if __name__ == "__main__":
     VMwareTools.run()

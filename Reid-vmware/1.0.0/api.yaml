@@ -115,7 +115,7 @@ actions:
       schema:
         type: string
   - name: reboot_vm
-    description: creates a virtual machine
+    description: Reboots a VM
     parameters:
       - name: vm_name
         description: Optional - The name of the vm in vcenter
@@ -129,6 +129,54 @@ actions:
         required: false
         multiline: false
         example: "10.20.136.10"
+        schema:
+          type: string
+    returns:
+      schema:
+        type: string
+  - name: create_snapshot
+    description: Creates a snapshot for a VM
+    parameters:
+      - name: vm_name
+        description: Optional - Search The name of the vm in vcenter
+        required: false
+        multiline: false
+        example: "Cool_VM"
+        schema:
+          type: string
+      - name: vm_ip
+        description: Optional - Search IP of VM to reboot
+        required: false
+        multiline: false
+        example: "10.20.136.10"
+        schema:
+          type: string
+      - name: snap_description
+        description: Optional - description of snap
+        required: false
+        multiline: true
+        example: "Before Upgrade"
+        schema:
+          type: string
+      - name: snap_name
+        description: Snapshot name
+        required: true
+        multiline: true
+        example: "Snap 10-21-2022"
+        schema:
+          type: string
+      - name: snap_memory
+        description: Optional - Do you want to snap the memory?
+        required: false
+        multiline: false
+        example: "False"
+        schema:
+          type: string
+      - name: snap_quiesce
+        description: Optional - Do you want to quiesce?
+        required: false
+        multiline: false
+        example: "False"
         schema:
           type: string
     returns:
