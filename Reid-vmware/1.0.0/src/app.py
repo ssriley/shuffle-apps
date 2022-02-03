@@ -20,7 +20,7 @@ class VMwareTools(AppBase):
     logging set up behind the scenes.
     """
 
-    __version__ = "1.0.1"
+    __version__ = "1.0.2"
     app_name = (
         "Reid VMware Tools"  # this needs to match "name" in api.yaml for WALKOFF to work
     )
