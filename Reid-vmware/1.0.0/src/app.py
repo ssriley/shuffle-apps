@@ -8,6 +8,7 @@ from pyVmomi import vim
 from pyVim.task import WaitForTask
 from pyVim.connect import SmartConnect, Disconnect
 import requests
+from pyVmomi import vmodl
 
 from walkoff_app_sdk.app_base import AppBase
 
@@ -263,6 +264,21 @@ class VMwareTools(AppBase):
             print("VM name %s already exists." % vm_name, file=sys.stderr)
             result = {
                 "VM_name_already_exists": vm_name
+            }
+            return json.dumps(result)
+
+    def test_vcenter_connection(self,host_ip,username,password,port,disableSslCertValidation=True):
+        si = self.connect(host=host_ip,user=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        try:
+            session_id = si.content.sessionManager.currentSession.key
+            result = {
+                "Message": "success",
+                "session_id": "current session id: {}".format(session_id)
+             }
+            return json.dumps(result)
+        except vmodl.MethodFault as error:
+            result = {
+                "Error": error.msg
             }
             return json.dumps(result)
 
