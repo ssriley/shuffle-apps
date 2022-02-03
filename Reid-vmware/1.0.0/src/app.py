@@ -221,7 +221,7 @@ class VMwareTools(AppBase):
     annotation="Example",
     cpus=1
     ):
-        si = self.__connect(host=host_ip,user=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
         content = si.RetrieveContent()
         destination_host = self.get_obj(content, [vim.HostSystem], host_ip)
         source_pool = destination_host.parent.resourcePool
