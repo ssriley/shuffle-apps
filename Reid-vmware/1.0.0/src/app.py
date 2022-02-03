@@ -34,7 +34,7 @@ class VMwareTools(AppBase):
         """
         super().__init__(redis, logger, console_logger)
     
-    def connect(self,host_ip,username,password,port,disableSslCertValidation=True):
+    def __connect(self,host_ip,username,password,port,disableSslCertValidation=True):
         """
         Determine the most preferred API version supported by the specified server,
         then connect to the specified server using that API version, login and return
@@ -218,7 +218,7 @@ class VMwareTools(AppBase):
     annotation="Example",
     cpus=1
     ):
-        si = self.connect(host=host_ip,user=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        si = self.__connect(host=host_ip,user=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
         content = si.RetrieveContent()
         destination_host = self.get_obj(content, [vim.HostSystem], host_ip)
         source_pool = destination_host.parent.resourcePool
@@ -268,7 +268,7 @@ class VMwareTools(AppBase):
             return json.dumps(result)
 
     def test_vcenter_connection(self,host_ip,username,password,port,disableSslCertValidation=True):
-        si = self.connect(host=host_ip,user=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        si = self.__connect(host=host_ip,user=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
         try:
             session_id = si.content.sessionManager.currentSession.key
             result = {
