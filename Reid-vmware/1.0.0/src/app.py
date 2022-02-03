@@ -333,16 +333,17 @@ class VMwareTools(AppBase):
                 "Error": "Cannot find VM"
             }
             return json.dumps(result)
-        task = vm.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce)
-        del vm
-        if vm_ip:
-            vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
-        elif vm_name:
-            content = si.RetrieveContent()
-            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
-        snap_info = vm.snapshot
-        tree = snap_info.rootSnapshotList
-        return json.dumps({"snap_tree": tree})
+        vm.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce)
+        return json.dumps({"status": "completed"})
+        # del vm
+        # if vm_ip:
+        #     vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
+        # elif vm_name:
+        #     content = si.RetrieveContent()
+        #     vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        # snap_info = vm.snapshot
+        # tree = snap_info.rootSnapshotList
+        # return json.dumps({"snap_tree": tree})
         # while tree[0].childSnapshotList is not None:
         #     #print("Snap: {0} => {1}".format(tree[0].name, tree[0].description))
         #     result = {
