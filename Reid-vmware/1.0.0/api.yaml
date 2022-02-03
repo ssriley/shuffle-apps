@@ -57,6 +57,13 @@ actions:
         example: "Ops"
         schema:
           type: string
+      - name: esxi_host_ip
+        description: The ip of the esxi host to run on
+        required: true
+        multiline: false
+        example: "10.20.4.10"
+        schema:
+          type: string
       - name: datastore_name
         description: What datastore to put the vm in
         required: true

@@ -214,6 +214,7 @@ class VMwareTools(AppBase):
     port,
     vm_name, 
     datacenter_name, 
+    esxi_host_ip,
     disableSslCertValidation=True,
     datastore_name=None,
     memory=4,
@@ -223,7 +224,7 @@ class VMwareTools(AppBase):
     ):
         si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
         content = si.RetrieveContent()
-        destination_host = self.get_obj(content, [vim.HostSystem], host_ip)
+        destination_host = self.get_obj(content, [vim.HostSystem], esxi_host_ip)
         source_pool = destination_host.parent.resourcePool
         if datastore_name is None:
             datastore_name = destination_host.datastore[0].name
