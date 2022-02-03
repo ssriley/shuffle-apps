@@ -333,8 +333,8 @@ class VMwareTools(AppBase):
                 "Error": "Cannot find VM"
             }
             return json.dumps(result)
-        vm.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce)
-
+        task = vm.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce)
+        del vm
         if vm_ip:
             vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
         elif vm_name:
@@ -342,14 +342,15 @@ class VMwareTools(AppBase):
             vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
         snap_info = vm.snapshot
         tree = snap_info.rootSnapshotList
-        while tree[0].childSnapshotList is not None:
-            #print("Snap: {0} => {1}".format(tree[0].name, tree[0].description))
-            result = {
-                "Snapshot": "Snap: {0} => {1}".format(tree[0].name, tree[0].description)
-            }
-            if len(tree[0].childSnapshotList) < 1:
-                break
-            tree = tree[0].childSnapshotList
-            return json.dumps(result)
+        return json.dumps({"snap_tree": tree})
+        # while tree[0].childSnapshotList is not None:
+        #     #print("Snap: {0} => {1}".format(tree[0].name, tree[0].description))
+        #     result = {
+        #         "Snapshot": "Snap: {0} => {1}".format(tree[0].name, tree[0].description)
+        #     }
+        #     if len(tree[0].childSnapshotList) < 1:
+        #         break
+        #     tree = tree[0].childSnapshotList
+        #     return json.dumps(result)
 if __name__ == "__main__":
     VMwareTools.run()
