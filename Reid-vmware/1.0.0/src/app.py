@@ -20,7 +20,7 @@ class VMwareTools(AppBase):
     logging set up behind the scenes.
     """
 
-    __version__ = "1.0.0"
+    __version__ = "1.0.1"
     app_name = (
         "Reid VMware Tools"  # this needs to match "name" in api.yaml for WALKOFF to work
     )
@@ -60,8 +60,11 @@ class VMwareTools(AppBase):
             # doing this means you don't need to remember to disconnect your script/objects
             atexit.register(Disconnect, service_instance)
         except IOError as io_error:
-            print(io_error)
-
+            #print(io_error)
+            result = {
+                "Error": io_error
+            }
+            return json.dumps(result)
         if not service_instance:
             raise SystemExit("Unable to connect to host with supplied credentials.")
 
@@ -240,7 +243,7 @@ class VMwareTools(AppBase):
                 vm_folder = child.vmFolder  # child is a datacenter
                 break
         else:
-            print("Datacenter %s not found!" % datacenter_name)
+            #print("Datacenter %s not found!" % datacenter_name)
             result = {
                 "Datacenter Not Found": datacenter_name
             }
@@ -249,19 +252,19 @@ class VMwareTools(AppBase):
 
         try:
             WaitForTask(vm_folder.CreateVm(config, pool=source_pool, host=destination_host))
-            print("VM created: %s" % vm_name)
+            #print("VM created: %s" % vm_name)
             result = {
                 "VM_Created": vm_name
             }
             return json.dumps(result)
         except vim.fault.DuplicateName:
-            print("VM duplicate name: %s" % vm_name, file=sys.stderr)
+            #print("VM duplicate name: %s" % vm_name, file=sys.stderr)
             result = {
                 "Vm_Duplicate_Name": vm_name
             }
             return json.dumps(result)
         except vim.fault.AlreadyExists:
-            print("VM name %s already exists." % vm_name, file=sys.stderr)
+            #print("VM name %s already exists." % vm_name, file=sys.stderr)
             result = {
                 "VM_name_already_exists": vm_name
             }
