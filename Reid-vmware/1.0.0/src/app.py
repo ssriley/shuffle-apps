@@ -271,7 +271,7 @@ class VMwareTools(AppBase):
             return json.dumps(result)
 
     def test_vcenter_connection(self,host_ip,username,password,port,disableSslCertValidation=True):
-        si = self.__connect(host=host_ip,user=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
         try:
             session_id = si.content.sessionManager.currentSession.key
             result = {
