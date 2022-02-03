@@ -240,19 +240,31 @@ class VMwareTools(AppBase):
                 break
         else:
             print("Datacenter %s not found!" % datacenter_name)
-            return print("Datacenter %s not found!" % datacenter_name)
-            sys.exit(1)
+            result = {
+                "Datacenter Not Found": datacenter_name
+            }
+            return json.dumps(result)
+            #sys.exit(1)
 
         try:
             WaitForTask(vm_folder.CreateVm(config, pool=source_pool, host=destination_host))
             print("VM created: %s" % vm_name)
-            return print("VM created: %s" % vm_name)
+            result = {
+                "VM_Created": vm_name
+            }
+            return json.dumps(result)
         except vim.fault.DuplicateName:
             print("VM duplicate name: %s" % vm_name, file=sys.stderr)
-            return print("VM duplicate name: %s" % vm_name, file=sys.stderr)
+            result = {
+                "Vm_Duplicate_Name": vm_name
+            }
+            return json.dumps(result)
         except vim.fault.AlreadyExists:
             print("VM name %s already exists." % vm_name, file=sys.stderr)
-            return print("VM name %s already exists." % vm_name, file=sys.stderr)
+            result = {
+                "VM_name_already_exists": vm_name
+            }
+            return json.dumps(result)
 
 if __name__ == "__main__":
     VMwareTools.run()
