@@ -330,10 +330,10 @@ class VMwareTools(AppBase):
     password,
     port,
     disableSslCertValidation=True,
-    vm_ip=None,
     vm_name=None,
-    snap_description=None,
-    snap_name=None,
+    vm_ip=None,
+    snap_description="Test Test",
+    snap_name="Test",
     snap_memory=False,
     snap_quiesce=False
     ):
@@ -350,7 +350,7 @@ class VMwareTools(AppBase):
             }
             return json.dumps(result)
         try:
-            task = vm.CreateSnapshot(snap_name,snap_description,snap_memory,snap_quiesce)
+            task = vm.CreateSnapshot(snap_name,snap_description,snap_memory=snap_memory,snap_quiesce=snap_quiesce)
             WaitForTask(task)
             #vm.CreateSnapshot_Task(name=snap_name,description=snap_description)
             return json.dumps({"status": str(task.info.result)})
