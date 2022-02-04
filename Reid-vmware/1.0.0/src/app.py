@@ -325,16 +325,18 @@ class VMwareTools(AppBase):
 
         if vm_ip:
             vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
+            return json.dumps({"vm": vm})
         elif vm_name:
             content = si.RetrieveContent()
             vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
-        if vm is None:
-            result = {
-                "Error": "Cannot find VM"
-            }
-            return json.dumps(result)
-        vm.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce)
-        return json.dumps({"status": "completed"})
+            return json.dumps({"vm": vm})
+        # if vm is None:
+        #     result = {
+        #         "Error": "Cannot find VM"
+        #     }
+        #     return json.dumps(result)
+        #vm.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce)
+        #return json.dumps({"status": "completed"})
         # del vm
         # if vm_ip:
         #     vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
