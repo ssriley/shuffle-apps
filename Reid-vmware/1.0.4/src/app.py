@@ -11,7 +11,7 @@ from pyVmomi import vmodl
 import json
 
 class VMwareTools(AppBase):
-    __version__ = "1.0.3"
+    __version__ = "1.0.4"
     app_name = (
         "Test VMware Tools"  # this needs to match "name" in api.yaml for WALKOFF to work
     )
@@ -259,5 +259,69 @@ class VMwareTools(AppBase):
             "task_result": task.info.result
         }
         return json.dumps(result)
+
+    def create_vm(self,
+    host_ip, 
+    username,
+    password,
+    port,
+    vm_name, 
+    datacenter_name, 
+    esxi_host_ip,
+    disableSslCertValidation=True,
+    datastore_name=None,
+    memory=4,
+    guest="otherGuest",
+    annotation="Example",
+    cpus=1
+    ):
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        content = si.RetrieveContent()
+        destination_host = self.get_obj(content, [vim.HostSystem], esxi_host_ip)
+        source_pool = destination_host.parent.resourcePool
+        if datastore_name is None:
+            datastore_name = destination_host.datastore[0].name
+
+        config = vim.vm.ConfigSpec()
+        config.annotation = annotation
+        config.memoryMB = int(memory)
+        config.guestId = guest
+        config.name = vm_name
+        config.numCPUs = int(cpus)
+        files = vim.vm.FileInfo()
+        files.vmPathName = "["+datastore_name+"]"
+        config.files = files
+
+        for child in content.rootFolder.childEntity:
+            if child.name == datacenter_name:
+                vm_folder = child.vmFolder  # child is a datacenter
+                break
+        else:
+            #print("Datacenter %s not found!" % datacenter_name)
+            result = {
+                "Datacenter Not Found": datacenter_name
+            }
+            return json.dumps(result)
+            #sys.exit(1)
+
+        try:
+            WaitForTask(vm_folder.CreateVm(config, pool=source_pool, host=destination_host))
+            #print("VM created: %s" % vm_name)
+            result = {
+                "VM_Created": vm_name
+            }
+            return json.dumps(result)
+        except vim.fault.DuplicateName:
+            #print("VM duplicate name: %s" % vm_name, file=sys.stderr)
+            result = {
+                "Vm_Duplicate_Name": vm_name
+            }
+            return json.dumps(result)
+        except vim.fault.AlreadyExists:
+            #print("VM name %s already exists." % vm_name, file=sys.stderr)
+            result = {
+                "VM_name_already_exists": vm_name
+            }
+            return json.dumps(result)
 if __name__ == "__main__":
     VMwareTools.run()
