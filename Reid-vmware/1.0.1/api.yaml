@@ -1,5 +1,5 @@
 ---
-app_version: 1.0.0
+app_version: 1.0.1
 name: Reid VMware Tools
 description: A tool for VMware Vcenter
 tags:
