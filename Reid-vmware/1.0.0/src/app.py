@@ -1,5 +1,6 @@
 import datetime
 import json
+from msilib.schema import Error
 import os
 import re
 import sys
@@ -325,6 +326,7 @@ class VMwareTools(AppBase):
         vm = None
         if vm_ip:
             vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
+            vm = vm.name
             #return json.dumps({"vm": str(vm.name)})
         elif vm_name:
             content = si.RetrieveContent()
@@ -337,7 +339,7 @@ class VMwareTools(AppBase):
             }
             return json.dumps(result)
         try:
-            vm.CreateSnapshot(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce)
+            WaitForTask(vm.CreateSnapshot(snap_name,snap_description,snap_memory,snap_quiesce))
             #vm.CreateSnapshot_Task(name=snap_name,description=snap_description)
             return json.dumps({"status": vm.name})
         except TypeError as error:
