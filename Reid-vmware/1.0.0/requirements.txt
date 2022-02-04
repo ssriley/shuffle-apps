@@ -1,3 +1,4 @@
 pyvmomi
 requests
+pyvim
 liquidpy==0.7.1
