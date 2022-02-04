@@ -71,6 +71,51 @@ class VMwareTools(AppBase):
             raise SystemExit("Unable to connect to host with supplied credentials.")
 
         return service_instance
+    def wait_for_tasks(self,si, tasks):
+        """Given the service instance and tasks, it returns after all the
+    tasks are complete
+    """
+        property_collector = si.content.propertyCollector
+        task_list = [str(task) for task in tasks]
+        # Create filter
+        obj_specs = [vmodl.query.PropertyCollector.ObjectSpec(obj=task)
+                    for task in tasks]
+        property_spec = vmodl.query.PropertyCollector.PropertySpec(type=vim.Task,
+                                                                pathSet=[],
+                                                                all=True)
+        filter_spec = vmodl.query.PropertyCollector.FilterSpec()
+        filter_spec.objectSet = obj_specs
+        filter_spec.propSet = [property_spec]
+        pcfilter = property_collector.CreateFilter(filter_spec, True)
+        try:
+            version, state = None, None
+            # Loop looking for updates till the state moves to a completed state.
+            while task_list:
+                update = property_collector.WaitForUpdates(version)
+                for filter_set in update.filterSet:
+                    for obj_set in filter_set.objectSet:
+                        task = obj_set.obj
+                        for change in obj_set.changeSet:
+                            if change.name == 'info':
+                                state = change.val.state
+                            elif change.name == 'info.state':
+                                state = change.val
+                            else:
+                                continue
+
+                            if not str(task) in task_list:
+                                continue
+
+                            if state == vim.TaskInfo.State.success:
+                                # Remove task from taskList
+                                task_list.remove(str(task))
+                            elif state == vim.TaskInfo.State.error:
+                                raise task.info.error
+                # Move to next version
+                version = update.version
+        finally:
+            if pcfilter:
+                pcfilter.Destroy()
 
     def collect_properties(self, si, view_ref, obj_type, path_set=None,
                        include_mors=False):
@@ -376,11 +421,12 @@ class VMwareTools(AppBase):
             return json.dumps(result)
 
         task = vm.PowerOn()
-        WaitForTask(task)
+        self.wait_for_tasks(si,task)
+        #WaitForTask(vm.PowerOn())
         result = {
             "search": "Found: {0}".format(vm.name),
             "current_state": "The current powerState is: {0}".format(vm.runtime.powerState),
-            "task_result": task.info.result
+            "task_result": "complete"
         }
         return json.dumps(result)
 if __name__ == "__main__":
