@@ -339,7 +339,7 @@ class VMwareTools(AppBase):
             }
             return json.dumps(result)
         try:
-            task = vm.CreateSnapshot_Task(name="test",description="upgrade",memory=False,quiesce=False)
+            task = vm.CreateSnapshot("test","upgrade",False,False)
             WaitForTask(task)
             #vm.CreateSnapshot_Task(name=snap_name,description=snap_description)
             return json.dumps({"status": str(task.info.result)})
