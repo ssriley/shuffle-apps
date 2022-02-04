@@ -22,7 +22,7 @@ class VMwareTools(AppBase):
     logging set up behind the scenes.
     """
 
-    __version__ = "1.0.2"
+    __version__ = "1.0.3"
     app_name = (
         "Reid VMware Tools"  # this needs to match "name" in api.yaml for WALKOFF to work
     )
@@ -331,15 +331,13 @@ class VMwareTools(AppBase):
         elif vm_name:
             content = si.RetrieveContent()
             vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
-            #return json.dumps({"vm": vm})
-            #vm = vm['vim.VirtualMachine']
         if vm is None:
             result = {
                 "Error": "Cannot find VM"
             }
             return json.dumps(result)
         try:
-            task = vm.CreateSnapshot("test","upgrade",False,False)
+            task = vm.CreateSnapshot(snap_name,snap_description,snap_memory,snap_quiesce)
             WaitForTask(task)
             #vm.CreateSnapshot_Task(name=snap_name,description=snap_description)
             return json.dumps({"status": str(task.info.result)})
@@ -363,5 +361,27 @@ class VMwareTools(AppBase):
         #         break
         #     tree = tree[0].childSnapshotList
         #     return json.dumps(result)
+    def power_on_vm(self,host_ip,username,password,port,disableSslCertValidation=True,vm_name=None):
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        vm = None
+
+        if vm_name:
+            content = si.RetrieveContent()
+            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        
+        if vm is None:
+            result = {
+                "Error": "Cannot find VM"
+            }
+            return json.dumps(result)
+
+        task = vm.PowerOn()
+        WaitForTask(task)
+        result = {
+            "search": "Found: {0}".format(vm.name),
+            "current_state": "The current powerState is: {0}".format(vm.runtime.powerState),
+            "task_result": task.info.result
+        }
+        return json.dumps(result)
 if __name__ == "__main__":
     VMwareTools.run()

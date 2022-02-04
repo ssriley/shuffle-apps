@@ -1,5 +1,5 @@
 ---
-app_version: 1.0.2
+app_version: 1.0.3
 name: Reid VMware Tools
 description: A tool for VMware Vcenter
 tags:
@@ -179,6 +179,19 @@ actions:
         example: "False"
         schema:
           type: bool
+    returns:
+      schema:
+        type: string
+  - name: power_on_vm
+    description: Power on a VM
+    parameters:
+      - name: vm_name
+        description: The name of the vm in vcenter
+        required: true
+        multiline: false
+        example: "Cool_VM"
+        schema:
+          type: string
     returns:
       schema:
         type: string
