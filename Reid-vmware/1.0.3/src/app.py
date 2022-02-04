@@ -1,9 +1,6 @@
-import datetime
-import json
-from msilib.schema import Error
-import os
-import re
-import sys
+
+from walkoff_app_sdk.app_base import AppBase
+
 import atexit
 import pyVmomi
 from pyVmomi import vim
@@ -11,20 +8,12 @@ from pyVim.task import WaitForTask
 from pyVim.connect import SmartConnect, Disconnect
 import requests
 from pyVmomi import vmodl
-
-from walkoff_app_sdk.app_base import AppBase
-
+import json
 
 class VMwareTools(AppBase):
-    """
-    An example of a Walkoff App.
-    Inherit from the AppBase class to have Redis, logging, and console
-    logging set up behind the scenes.
-    """
-
-    __version__ = "1.0.1"
+    __version__ = "1.0.2"
     app_name = (
-        "VMware Tools"  # this needs to match "name" in api.yaml for WALKOFF to work
+        "Test VMware Tools"  # this needs to match "name" in api.yaml for WALKOFF to work
     )
 
     def __init__(self, redis, logger, console_logger=None):
@@ -35,7 +24,24 @@ class VMwareTools(AppBase):
         :param console_logger:
         """
         super().__init__(redis, logger, console_logger)
-    
+
+
+    def test_vcenter_connection(self,host_ip,username,password,port,disableSslCertValidation=True):
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        try:
+            session_id = si.content.sessionManager.currentSession.key
+            #print(str(session_id))
+            result = {
+                "Message": "success",
+                "session_id": "current session id: {}".format(session_id)
+             }
+            return json.dumps(result)
+        except vmodl.MethodFault as error:
+            result = {
+                "Error": error.msg
+            }
+            return json.dumps(result)
+
     def __connect(self,host_ip,username,password,port,disableSslCertValidation=True):
         """
         Determine the most preferred API version supported by the specified server,
@@ -62,7 +68,7 @@ class VMwareTools(AppBase):
             # doing this means you don't need to remember to disconnect your script/objects
             atexit.register(Disconnect, service_instance)
         except IOError as io_error:
-            #print(io_error)
+            print(io_error)
             result = {
                 "Error": io_error
             }
@@ -71,51 +77,6 @@ class VMwareTools(AppBase):
             raise SystemExit("Unable to connect to host with supplied credentials.")
 
         return service_instance
-    def wait_for_tasks(self,si, tasks):
-        """Given the service instance and tasks, it returns after all the
-    tasks are complete
-    """
-        property_collector = si.content.propertyCollector
-        task_list = [str(task) for task in tasks]
-        # Create filter
-        obj_specs = [vmodl.query.PropertyCollector.ObjectSpec(obj=task)
-                    for task in tasks]
-        property_spec = vmodl.query.PropertyCollector.PropertySpec(type=vim.Task,
-                                                                pathSet=[],
-                                                                all=True)
-        filter_spec = vmodl.query.PropertyCollector.FilterSpec()
-        filter_spec.objectSet = obj_specs
-        filter_spec.propSet = [property_spec]
-        pcfilter = property_collector.CreateFilter(filter_spec, True)
-        try:
-            version, state = None, None
-            # Loop looking for updates till the state moves to a completed state.
-            while task_list:
-                update = property_collector.WaitForUpdates(version)
-                for filter_set in update.filterSet:
-                    for obj_set in filter_set.objectSet:
-                        task = obj_set.obj
-                        for change in obj_set.changeSet:
-                            if change.name == 'info':
-                                state = change.val.state
-                            elif change.name == 'info.state':
-                                state = change.val
-                            else:
-                                continue
-
-                            if not str(task) in task_list:
-                                continue
-
-                            if state == vim.TaskInfo.State.success:
-                                # Remove task from taskList
-                                task_list.remove(str(task))
-                            elif state == vim.TaskInfo.State.error:
-                                raise task.info.error
-                # Move to next version
-                version = update.version
-        finally:
-            if pcfilter:
-                pcfilter.Destroy()
 
     def collect_properties(self, si, view_ref, obj_type, path_set=None,
                        include_mors=False):
@@ -253,87 +214,6 @@ class VMwareTools(AppBase):
             raise RuntimeError("Managed Object " + name + " not found.")
         return obj
 
-
-    def create_vm(self,
-    host_ip, 
-    username,
-    password,
-    port,
-    vm_name, 
-    datacenter_name, 
-    esxi_host_ip,
-    disableSslCertValidation=True,
-    datastore_name=None,
-    memory=4,
-    guest="otherGuest",
-    annotation="Example",
-    cpus=1
-    ):
-        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
-        content = si.RetrieveContent()
-        destination_host = self.get_obj(content, [vim.HostSystem], esxi_host_ip)
-        source_pool = destination_host.parent.resourcePool
-        if datastore_name is None:
-            datastore_name = destination_host.datastore[0].name
-
-        config = vim.vm.ConfigSpec()
-        config.annotation = annotation
-        config.memoryMB = int(memory)
-        config.guestId = guest
-        config.name = vm_name
-        config.numCPUs = int(cpus)
-        files = vim.vm.FileInfo()
-        files.vmPathName = "["+datastore_name+"]"
-        config.files = files
-
-        for child in content.rootFolder.childEntity:
-            if child.name == datacenter_name:
-                vm_folder = child.vmFolder  # child is a datacenter
-                break
-        else:
-            #print("Datacenter %s not found!" % datacenter_name)
-            result = {
-                "Datacenter Not Found": datacenter_name
-            }
-            return json.dumps(result)
-            #sys.exit(1)
-
-        try:
-            WaitForTask(vm_folder.CreateVm(config, pool=source_pool, host=destination_host))
-            #print("VM created: %s" % vm_name)
-            result = {
-                "VM_Created": vm_name
-            }
-            return json.dumps(result)
-        except vim.fault.DuplicateName:
-            #print("VM duplicate name: %s" % vm_name, file=sys.stderr)
-            result = {
-                "Vm_Duplicate_Name": vm_name
-            }
-            return json.dumps(result)
-        except vim.fault.AlreadyExists:
-            #print("VM name %s already exists." % vm_name, file=sys.stderr)
-            result = {
-                "VM_name_already_exists": vm_name
-            }
-            return json.dumps(result)
-
-    def test_vcenter_connection(self,host_ip,username,password,port,disableSslCertValidation=True):
-        #return json.dumps({"shuffle": "Launched"})
-        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
-        try:
-            session_id = si.content.sessionManager.currentSession.key
-            result = {
-                "Message": "success",
-                "session_id": "current session id: {}".format(session_id)
-             }
-            return json.dumps(result)
-        except vmodl.MethodFault as error:
-            result = {
-                "Error": error.msg
-            }
-            return json.dumps(result)
-
     def reboot_vm(self,host_ip,username,password,port,disableSslCertValidation=True,vm_ip=None,vm_name=None):
         si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
         vm = None
@@ -356,57 +236,6 @@ class VMwareTools(AppBase):
         }
         return json.dumps(result)
 
-    def create_snapshot(self,
-    host_ip,
-    username,
-    password,
-    port,
-    disableSslCertValidation=True,
-    vm_ip=None,
-    vm_name=None,
-    snap_description=None,
-    snap_name=None,
-    snap_memory=False,
-    snap_quiesce=False):
-        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
-        vm = None
-        if vm_ip:
-            vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
-            #vm = vm.name
-            #return json.dumps({"vm": str(vm.name)})
-        elif vm_name:
-            content = si.RetrieveContent()
-            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
-        if vm is None:
-            result = {
-                "Error": "Cannot find VM"
-            }
-            return json.dumps(result)
-        try:
-            task = vm.CreateSnapshot(snap_name,snap_description,snap_memory,snap_quiesce)
-            WaitForTask(task)
-            #vm.CreateSnapshot_Task(name=snap_name,description=snap_description)
-            return json.dumps({"status": str(task.info.result)})
-        except TypeError as error:
-            return json.dumps({"Error": error})
-        # del vm
-        # if vm_ip:
-        #     vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
-        # elif vm_name:
-        #     content = si.RetrieveContent()
-        #     vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
-        # snap_info = vm.snapshot
-        # tree = snap_info.rootSnapshotList
-        # return json.dumps({"snap_tree": tree})
-        # while tree[0].childSnapshotList is not None:
-        #     #print("Snap: {0} => {1}".format(tree[0].name, tree[0].description))
-        #     result = {
-        #         "Snapshot": "Snap: {0} => {1}".format(tree[0].name, tree[0].description)
-        #     }
-        #     if len(tree[0].childSnapshotList) < 1:
-        #         break
-        #     tree = tree[0].childSnapshotList
-        #     return json.dumps(result)
     def power_on_vm(self,host_ip,username,password,port,disableSslCertValidation=True,vm_name=None):
         si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
         vm = None
@@ -428,11 +257,6 @@ class VMwareTools(AppBase):
             "search": "Found: {0}".format(vm.name),
             "current_state": "The current powerState is: {0}".format(vm.runtime.powerState),
             "task_result": task.info.result
-        }
-        return json.dumps(result)
-    def test_shuffle():
-        result = {
-            "Shuffle": "Success"
         }
         return json.dumps(result)
 if __name__ == "__main__":
