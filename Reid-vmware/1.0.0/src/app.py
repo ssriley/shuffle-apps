@@ -326,7 +326,7 @@ class VMwareTools(AppBase):
         vm = None
         if vm_ip:
             vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
-            vm = vm.name
+            #vm = vm.name
             #return json.dumps({"vm": str(vm.name)})
         elif vm_name:
             content = si.RetrieveContent()
