@@ -430,5 +430,10 @@ class VMwareTools(AppBase):
             "task_result": "complete"
         }
         return json.dumps(result)
+    def test_shuffle():
+        result = {
+            "Shuffle": "Success"
+        }
+        return json.dumps(result)
 if __name__ == "__main__":
     VMwareTools.run()

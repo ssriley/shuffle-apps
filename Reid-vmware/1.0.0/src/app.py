@@ -246,6 +246,10 @@ class VMwareTools(AppBase):
             "Complete": "Reboot completed"
         }
         return json.dumps(result)
-
+    def test_shuffle():
+        result = {
+            "Shuffle": "Success"
+        }
+        return json.dumps(result)
 if __name__ == "__main__":
     VMwareTools.run()
