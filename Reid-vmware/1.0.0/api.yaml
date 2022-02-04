@@ -171,14 +171,14 @@ actions:
         multiline: false
         example: "False"
         schema:
-          type: string
+          type: bool
       - name: snap_quiesce
         description: Optional - Do you want to quiesce?
         required: false
         multiline: false
         example: "False"
         schema:
-          type: string
+          type: bool
     returns:
       schema:
         type: string

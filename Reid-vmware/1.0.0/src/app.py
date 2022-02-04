@@ -339,9 +339,10 @@ class VMwareTools(AppBase):
             }
             return json.dumps(result)
         try:
-            WaitForTask(vm.CreateSnapshot_Task(snap_name,snap_description,snap_memory,snap_quiesce))
+            task = vm.CreateSnapshot_Task(snap_name,snap_description,snap_memory,snap_quiesce)
+            WaitForTask(task)
             #vm.CreateSnapshot_Task(name=snap_name,description=snap_description)
-            return json.dumps({"status": vm.name})
+            return json.dumps({"status": str(task.info.result)})
         except TypeError as error:
             return json.dumps({"Error": error})
         # del vm
