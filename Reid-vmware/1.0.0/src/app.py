@@ -325,7 +325,7 @@ class VMwareTools(AppBase):
         vm = None
         if vm_ip:
             vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
-            #return json.dumps({"vm": vm})
+            return json.dumps({"vm": vm})
         elif vm_name:
             content = si.RetrieveContent()
             vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
