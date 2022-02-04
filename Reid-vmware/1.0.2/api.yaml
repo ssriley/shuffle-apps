@@ -1,5 +1,5 @@
 ---
-app_version: 1.0.0
+app_version: 1.0.2
 name: Test VMware Tools
 description: A tool for VMware Vcenter
 tags:
@@ -42,6 +42,26 @@ authentication:
 actions:
   - name: test_vcenter_connection
     description: Test authentication to Vcenter
+    returns:
+      schema:
+        type: string
+  - name: reboot_vm
+    description: Reboots a VM
+    parameters:
+      - name: vm_name
+        description: Optional - The name of the vm in vcenter
+        required: false
+        multiline: false
+        example: "Cool_VM"
+        schema:
+          type: string
+      - name: vm_ip
+        description: Optional - IP of VM to reboot
+        required: false
+        multiline: false
+        example: "10.20.136.10"
+        schema:
+          type: string
     returns:
       schema:
         type: string
