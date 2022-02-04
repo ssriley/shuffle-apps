@@ -22,7 +22,7 @@ class VMwareTools(AppBase):
     logging set up behind the scenes.
     """
 
-    __version__ = "1.0.3"
+    __version__ = "1.0.4"
     app_name = (
         "Reid VMware Tools"  # this needs to match "name" in api.yaml for WALKOFF to work
     )
@@ -355,79 +355,79 @@ class VMwareTools(AppBase):
         }
         return json.dumps(result)
 
-    # def create_snapshot(self,
-    # host_ip,
-    # username,
-    # password,
-    # port,
-    # disableSslCertValidation=True,
-    # vm_ip=None,
-    # vm_name=None,
-    # snap_description=None,
-    # snap_name=None,
-    # snap_memory=False,
-    # snap_quiesce=False):
-    #     si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
-    #     vm = None
-    #     if vm_ip:
-    #         vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
-    #         #vm = vm.name
-    #         #return json.dumps({"vm": str(vm.name)})
-    #     elif vm_name:
-    #         content = si.RetrieveContent()
-    #         vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
-    #     if vm is None:
-    #         result = {
-    #             "Error": "Cannot find VM"
-    #         }
-    #         return json.dumps(result)
-    #     try:
-    #         task = vm.CreateSnapshot(snap_name,snap_description,snap_memory,snap_quiesce)
-    #         WaitForTask(task)
-    #         #vm.CreateSnapshot_Task(name=snap_name,description=snap_description)
-    #         return json.dumps({"status": str(task.info.result)})
-    #     except TypeError as error:
-    #         return json.dumps({"Error": error})
-    #     # del vm
-    #     # if vm_ip:
-    #     #     vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
-    #     # elif vm_name:
-    #     #     content = si.RetrieveContent()
-    #     #     vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
-    #     # snap_info = vm.snapshot
-    #     # tree = snap_info.rootSnapshotList
-    #     # return json.dumps({"snap_tree": tree})
-    #     # while tree[0].childSnapshotList is not None:
-    #     #     #print("Snap: {0} => {1}".format(tree[0].name, tree[0].description))
-    #     #     result = {
-    #     #         "Snapshot": "Snap: {0} => {1}".format(tree[0].name, tree[0].description)
-    #     #     }
-    #     #     if len(tree[0].childSnapshotList) < 1:
-    #     #         break
-    #     #     tree = tree[0].childSnapshotList
-    #     #     return json.dumps(result)
-    # def power_on_vm(self,host_ip,username,password,port,disableSslCertValidation=True,vm_name=None):
-    #     si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
-    #     vm = None
+    def create_snapshot(self,
+    host_ip,
+    username,
+    password,
+    port,
+    disableSslCertValidation=True,
+    vm_ip=None,
+    vm_name=None,
+    snap_description=None,
+    snap_name=None,
+    snap_memory=False,
+    snap_quiesce=False):
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        vm = None
+        if vm_ip:
+            vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
+            #vm = vm.name
+            #return json.dumps({"vm": str(vm.name)})
+        elif vm_name:
+            content = si.RetrieveContent()
+            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        if vm is None:
+            result = {
+                "Error": "Cannot find VM"
+            }
+            return json.dumps(result)
+        try:
+            task = vm.CreateSnapshot(snap_name,snap_description,snap_memory,snap_quiesce)
+            WaitForTask(task)
+            #vm.CreateSnapshot_Task(name=snap_name,description=snap_description)
+            return json.dumps({"status": str(task.info.result)})
+        except TypeError as error:
+            return json.dumps({"Error": error})
+        # del vm
+        # if vm_ip:
+        #     vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
+        # elif vm_name:
+        #     content = si.RetrieveContent()
+        #     vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        # snap_info = vm.snapshot
+        # tree = snap_info.rootSnapshotList
+        # return json.dumps({"snap_tree": tree})
+        # while tree[0].childSnapshotList is not None:
+        #     #print("Snap: {0} => {1}".format(tree[0].name, tree[0].description))
+        #     result = {
+        #         "Snapshot": "Snap: {0} => {1}".format(tree[0].name, tree[0].description)
+        #     }
+        #     if len(tree[0].childSnapshotList) < 1:
+        #         break
+        #     tree = tree[0].childSnapshotList
+        #     return json.dumps(result)
+    def power_on_vm(self,host_ip,username,password,port,disableSslCertValidation=True,vm_name=None):
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        vm = None
 
-    #     if vm_name:
-    #         content = si.RetrieveContent()
-    #         vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        if vm_name:
+            content = si.RetrieveContent()
+            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
         
-    #     if vm is None:
-    #         result = {
-    #             "Error": "Cannot find VM"
-    #         }
-    #         return json.dumps(result)
+        if vm is None:
+            result = {
+                "Error": "Cannot find VM"
+            }
+            return json.dumps(result)
 
-    #     task = vm.PowerOn()
-    #     self.wait_for_tasks(si,task)
-    #     #WaitForTask(vm.PowerOn())
-    #     result = {
-    #         "search": "Found: {0}".format(vm.name),
-    #         "current_state": "The current powerState is: {0}".format(vm.runtime.powerState),
-    #         "task_result": "complete"
-    #     }
-    #     return json.dumps(result)
+        task = vm.PowerOn()
+        self.wait_for_tasks(si,task)
+        #WaitForTask(vm.PowerOn())
+        result = {
+            "search": "Found: {0}".format(vm.name),
+            "current_state": "The current powerState is: {0}".format(vm.runtime.powerState),
+            "task_result": "complete"
+        }
+        return json.dumps(result)
 if __name__ == "__main__":
     VMwareTools.run()
