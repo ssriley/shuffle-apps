@@ -325,7 +325,6 @@ class VMwareTools(AppBase):
         vm = None
         if vm_ip:
             vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
-            vm = vm.uuid
             #return json.dumps({"vm": str(vm.name)})
         elif vm_name:
             content = si.RetrieveContent()
@@ -338,7 +337,8 @@ class VMwareTools(AppBase):
             }
             return json.dumps(result)
         try:
-            vm.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce)
+            #vm.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce)
+            vm.CreateSnapshot_Task(name=snap_name,description=snap_description)
             return json.dumps({"status": vm.name})
         except TypeError as error:
             return json.dumps({"Error": error})
