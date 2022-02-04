@@ -330,14 +330,14 @@ class VMwareTools(AppBase):
             content = si.RetrieveContent()
             vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
             #return json.dumps({"vm": vm})
-            vm = vm['vim.VirtualMachine']
+            #vm = vm['vim.VirtualMachine']
         if vm is None:
             result = {
                 "Error": "Cannot find VM"
             }
             return json.dumps(result)
         try:
-            vm.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce)
+            #vm.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce)
             return json.dumps({"status": "completed"})
         except TypeError as error:
             return json.dumps({"Error": error})
