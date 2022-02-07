@@ -150,11 +150,11 @@ actions:
   - name: list_snapshots
     description: List all snapshots for a vm
     parameters:
-      - name: vm_name
-        description: The name of the vm in vcenter
+      - name: vm_ip
+        description: The ip of the server in vcenter
         required: true
         multiline: false
-        example: "Cool_VM"
+        example: "10.20.136.10"
         schema:
           type: string
     returns:

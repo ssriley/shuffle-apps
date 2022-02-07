@@ -335,13 +335,11 @@ class VMwareTools(AppBase):
                 "VM_name_already_exists": vm_name
             }
             return json.dumps(result)
-    def list_snapshots(self,host_ip,username,password,port,disableSslCertValidation=True,vm_name=None):
+    def list_snapshots(self,host_ip,username,password,port,disableSslCertValidation=True,vm_ip=None):
         si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
         vm = None
         if vm_name:
-            vm = si.content.searchIndex.FindByIp(None, vm_name, True)
-             #content = si.RetrieveContent()
-             #vm = self.get_obj(content, vim.VirtualMachine, vm_name)
+            vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
 
         if vm is None:
             result = {
@@ -354,7 +352,7 @@ class VMwareTools(AppBase):
         for snapshot in snapshot_paths:
             snap_list.append(snapshot)
         result = {
-            "Snapshots": "Found: {0}".format(vm.name)
+            "Snapshots": "Found: {0}".format(snap_list)
         }
         return json.dumps(result)
 if __name__ == "__main__":
