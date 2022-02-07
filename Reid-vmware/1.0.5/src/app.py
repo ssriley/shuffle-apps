@@ -346,13 +346,13 @@ class VMwareTools(AppBase):
                 "Error": "Cannot find VM"
             }
             return json.dumps(result)
-        snap_list = []
+        # snap_list = []
         # snapshot_paths = self.list_snapshots_recursively(vm.snapshot.rootSnapshotList)
 
         # for snapshot in snapshot_paths:
         #     snap_list.append(snapshot)
         result = {
-            "Snapshots": "Found: {0}".format(vm.name)
+            "Snapshots": "Found: {0}".format(vm_name)
         }
         return json.dumps(result)
 if __name__ == "__main__":
