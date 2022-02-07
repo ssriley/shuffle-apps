@@ -343,6 +343,6 @@ class VMwareTools(AppBase):
 
         for snapshot in snapshot_paths:
             snap_list.append(snapshot)
-        return json.dumps({"Snapshots": snap_list})
+        return json.dumps({"Snapshots": str(snap_list)})
 if __name__ == "__main__":
     VMwareTools.run()
