@@ -211,7 +211,8 @@ class VMwareTools(AppBase):
         """
         obj = self.search_for_obj(content, vim_type, name, folder, recurse)
         if not obj:
-            raise RuntimeError("Managed Object " + name + " not found.")
+            #raise RuntimeError("Managed Object " + name + " not found.")
+            return json.dumps({"Error": "Managed Object Not Found " + name})
         return obj
 
     # def list_snapshots_recursively(self,snapshots):
