@@ -335,17 +335,17 @@ class VMwareTools(AppBase):
             }
             return json.dumps(result)
     def list_snapshots(self,host_ip,username,password,port,disableSslCertValidation=True,vm_name=None):
-        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
-        vm = None
-        if vm_name:
-            content = si.RetrieveContent()
-            vm = self.get_obj(content, vim.VirtualMachine, vm_name)
+        #si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        # vm = None
+        # # if vm_name:
+        # #     content = si.RetrieveContent()
+        # #     vm = self.get_obj(content, vim.VirtualMachine, vm_name)
 
-        if vm is None:
-            result = {
-                "Error": "Cannot find VM"
-            }
-            return json.dumps(result)
+        # if vm is None:
+        #     result = {
+        #         "Error": "Cannot find VM"
+        #     }
+        #     return json.dumps(result)
         # snap_list = []
         # snapshot_paths = self.list_snapshots_recursively(vm.snapshot.rootSnapshotList)
 
