@@ -338,13 +338,19 @@ class VMwareTools(AppBase):
         si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
         content = si.RetrieveContent()
         vm = self.get_obj(content, vim.VirtualMachine, vm_name)
+
+        if vm is None:
+            result = {
+                "Error": "Cannot find VM"
+            }
+            return json.dumps(result)
         snap_list = []
         # snapshot_paths = self.list_snapshots_recursively(vm.snapshot.rootSnapshotList)
 
         # for snapshot in snapshot_paths:
         #     snap_list.append(snapshot)
         result = {
-            "Snapshots": vm
+            "Snapshots": "Found: {0}".format(vm.name)
         }
         return json.dumps(result)
 if __name__ == "__main__":
