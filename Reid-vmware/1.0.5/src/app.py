@@ -74,8 +74,8 @@ class VMwareTools(AppBase):
             }
             return json.dumps(result)
         if not service_instance:
-            raise SystemExit("Unable to connect to host with supplied credentials.")
-
+            #raise SystemExit("Unable to connect to host with supplied credentials.")
+            return json.dumps({"Error": "Unable to connect with credentials"})
         return service_instance
 
     def collect_properties(self, si, view_ref, obj_type, path_set=None,
