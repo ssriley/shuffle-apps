@@ -1,5 +1,5 @@
 ---
-app_version: 1.0.6
+app_version: 1.0.7
 name: Test VMware Tools
 description: A tool for VMware Vcenter
 tags:
