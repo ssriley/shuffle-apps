@@ -339,7 +339,8 @@ class VMwareTools(AppBase):
         si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
         vm = None
         if vm_name:
-             content = si.RetrieveContent()
+            vm = si.content.searchIndex.FindByIp(None, vm_name, True)
+             #content = si.RetrieveContent()
              #vm = self.get_obj(content, vim.VirtualMachine, vm_name)
 
         # if vm is None:
