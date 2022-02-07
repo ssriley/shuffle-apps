@@ -1,6 +1,6 @@
 
 from walkoff_app_sdk.app_base import AppBase
-
+import sys
 import atexit
 import pyVmomi
 from pyVmomi import vim
@@ -323,38 +323,5 @@ class VMwareTools(AppBase):
                 "VM_name_already_exists": vm_name
             }
             return json.dumps(result)
-
-    def create_snapshot(self,
-    host_ip,
-    username,
-    password,
-    port,
-    disableSslCertValidation=True,
-    vm_name=None,
-    vm_ip=None,
-    snap_description="Test Test",
-    snap_name="Test",
-    snap_memory=False,
-    snap_quiesce=False
-    ):
-        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
-        vm = None
-        if vm_ip:
-            vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
-        elif vm_name:
-            content = si.RetrieveContent()
-            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
-        if vm is None:
-            result = {
-                "Error": "Cannot find VM"
-            }
-            return json.dumps(result)
-        try:
-            task = vm.CreateSnapshot(snap_name,snap_description,snap_memory=snap_memory,snap_quiesce=snap_quiesce)
-            WaitForTask(task)
-            #vm.CreateSnapshot_Task(name=snap_name,description=snap_description)
-            return json.dumps({"status": str(task.info.result)})
-        except TypeError as error:
-            return json.dumps({"Error": error})
 if __name__ == "__main__":
     VMwareTools.run()
