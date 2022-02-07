@@ -214,16 +214,16 @@ class VMwareTools(AppBase):
             raise RuntimeError("Managed Object " + name + " not found.")
         return obj
 
-    def list_snapshots_recursively(self,snapshots):
-        snapshot_data = []
-        for snapshot in snapshots:
-            snap_text = "Name: %s; Description: %s; CreateTime: %s; State: %s" % (
-                                            snapshot.name, snapshot.description,
-                                            snapshot.createTime, snapshot.state)
-            snapshot_data.append(snap_text)
-            snapshot_data = snapshot_data + self.list_snapshots_recursively(
-                                            snapshot.childSnapshotList)
-        return snapshot_data
+    # def list_snapshots_recursively(self,snapshots):
+    #     snapshot_data = []
+    #     for snapshot in snapshots:
+    #         snap_text = "Name: %s; Description: %s; CreateTime: %s; State: %s" % (
+    #                                         snapshot.name, snapshot.description,
+    #                                         snapshot.createTime, snapshot.state)
+    #         snapshot_data.append(snap_text)
+    #         snapshot_data = snapshot_data + self.list_snapshots_recursively(
+    #                                         snapshot.childSnapshotList)
+    #     return snapshot_data
 
     def reboot_vm(self,host_ip,username,password,port,disableSslCertValidation=True,vm_ip=None,vm_name=None):
         si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
