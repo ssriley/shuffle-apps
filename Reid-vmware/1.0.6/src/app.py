@@ -1,4 +1,5 @@
 
+from types import NoneType
 from walkoff_app_sdk.app_base import AppBase
 import sys
 import atexit
@@ -347,13 +348,16 @@ class VMwareTools(AppBase):
             }
             return json.dumps(result)
         snap_list = []
-        snapshot_paths = self.list_snapshots_recursively(vm.snapshot.rootSnapshotList)
+        try:
+            snapshot_paths = self.list_snapshots_recursively(vm.snapshot.rootSnapshotList)
 
-        for snapshot in snapshot_paths:
-            snap_list.append(snapshot)
-        result = {
-            "Snapshots": "Found: {0}".format(snap_list)
-        }
-        return json.dumps(result)
+            for snapshot in snapshot_paths:
+                snap_list.append(snapshot)
+            result = {
+                "Snapshots": "Found: {0}".format(snap_list)
+            }
+            return json.dumps(result)
+        except NoneType as error:
+            return json.dumps("Status": "No Snapshots Found")
 if __name__ == "__main__":
     VMwareTools.run()
