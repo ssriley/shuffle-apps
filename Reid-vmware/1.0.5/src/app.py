@@ -339,10 +339,13 @@ class VMwareTools(AppBase):
         content = si.RetrieveContent()
         vm = self.get_obj(content, vim.VirtualMachine, vm_name)
         snap_list = []
-        snapshot_paths = self.list_snapshots_recursively(vm.snapshot.rootSnapshotList)
+        # snapshot_paths = self.list_snapshots_recursively(vm.snapshot.rootSnapshotList)
 
-        for snapshot in snapshot_paths:
-            snap_list.append(snapshot)
-        return json.dumps({"Snapshots": str(snap_list)})
+        # for snapshot in snapshot_paths:
+        #     snap_list.append(snapshot)
+        result = {
+            "Snapshots": vm
+        }
+        return json.dumps(result)
 if __name__ == "__main__":
     VMwareTools.run()
