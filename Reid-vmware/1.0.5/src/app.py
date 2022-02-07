@@ -339,7 +339,7 @@ class VMwareTools(AppBase):
         vm = None
         if vm_name:
              content = si.RetrieveContent()
-        # #     vm = self.get_obj(content, vim.VirtualMachine, vm_name)
+             vm = self.get_obj(content, vim.VirtualMachine, vm_name)
 
         # if vm is None:
         #     result = {
