@@ -423,7 +423,7 @@ class VMwareTools(AppBase):
             return json.dumps(result)
         try:
             task = vm.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce)
-            self.wait_for_tasks(task)
+            self.wait_for_tasks(si,task)
             return json.dumps({"Status": "Created snapshot for {0}".format(vm.name),
             "Task": "Result of task ".format(task.info.result)})
         except:
