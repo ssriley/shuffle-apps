@@ -167,6 +167,33 @@ actions:
     returns:
       schema:
         type: string
+  - name: add_disk
+    description: Add a disk to a VM
+    parameters:
+      - name: vm_name
+        description: The name of the vm of the server in vcenter
+        required: true
+        multiline: false
+        example: "My VM"
+        schema:
+          type: string
+      - name: disk_size
+        description: Size in Bytes
+        required: true
+        multiline: false
+        example: "1024"
+        schema:
+          type: int
+      - name: disk_type
+        description: Type of disk to provision
+        required: true
+        multiline: false
+        example: "thin or thick"
+        schema:
+          type: string
+    returns:
+      schema:
+        type: string
   # - name: create_snapshot
   #   description:  Create snapshot for a vm
   #   parameters:

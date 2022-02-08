@@ -428,6 +428,60 @@ class VMwareTools(AppBase):
     #         "Task": "Result of task ".format(task.info.result)})
     #     except Exception as err:
     #         raise Exception(json.dumps({"Error was {0}".format(err)}))
+
+    def add_disk(self,host_ip,username,password,port,disableSslCertValidation=True,vm_name=None, disk_size=1024, disk_type="thin"):
+        """
+        Add disk to vm
+        """
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        vm = None
+        if vm_name:
+            content = si.RetrieveContent()
+            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        if vm is None:
+            result = {
+                "Error": "Cannot find VM"
+            }
+            return json.dumps(result)
+        spec = vim.vm.ConfigSpec()
+        # get all disks on a VM, set unit_number to the next available
+        unit_number = 0
+        controller = None
+        for device in vm.config.hardware.device:
+            if hasattr(device.backing, 'fileName'):
+                unit_number = int(device.unitNumber) + 1
+                # unit_number 7 reserved for scsi controller
+                if unit_number == 7:
+                    unit_number += 1
+                if unit_number >= 16:
+                    print("we don't support this many disks")
+                    return -1
+            if isinstance(device, vim.vm.device.VirtualSCSIController):
+                controller = device
+        if controller is None:
+            print("Disk SCSI controller not found!")
+            return -1
+        # add disk here
+        dev_changes = []
+        new_disk_kb = int(disk_size) * 1024 * 1024
+        disk_spec = vim.vm.device.VirtualDeviceSpec()
+        disk_spec.fileOperation = "create"
+        disk_spec.operation = vim.vm.device.VirtualDeviceSpec.Operation.add
+        disk_spec.device = vim.vm.device.VirtualDisk()
+        disk_spec.device.backing = \
+            vim.vm.device.VirtualDisk.FlatVer2BackingInfo()
+        if disk_type == 'thin':
+            disk_spec.device.backing.thinProvisioned = True
+        disk_spec.device.backing.diskMode = 'persistent'
+        disk_spec.device.unitNumber = unit_number
+        disk_spec.device.capacityInKB = new_disk_kb
+        disk_spec.device.controllerKey = controller.key
+        dev_changes.append(disk_spec)
+        spec.deviceChange = dev_changes
+        WaitForTask(vm.ReconfigVM_Task(spec=spec))
+        print("%sGB disk added to %s" % (disk_size, vm.config.name))
+        return json.dumps({"Status": "Complete"})
+
             
 if __name__ == "__main__":
     VMwareTools.run()
