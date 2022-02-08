@@ -376,9 +376,11 @@ class VMwareTools(AppBase):
             }
             return json.dumps(result)
         try:
-            WaitForTask(vm.CreateSnapshotEx_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce))
-            return json.dumps({"Status": "Created snapshot for {0}".format(vm.name)})
+            task = vm.CreateSnapshotEx_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce)
+            WaitForTask(task)
+            return json.dumps({"Status": "Created snapshot for {0}".format(vm.name),
+            "Task": "Result of task ".format(task.info.result)})
         except:
-            raise
+            return json.dumps({"Status": "Something went wrong."})
 if __name__ == "__main__":
     VMwareTools.run()
