@@ -375,7 +375,10 @@ class VMwareTools(AppBase):
                 "Error": "Cannot find VM"
             }
             return json.dumps(result)
-        WaitForTask(vm.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce))
-        return json.dumps({"Status": "Created snapshot for {0}".format(vm.name)})
+        try:
+            WaitForTask(vm.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce))
+            return json.dumps({"Status": "Created snapshot for {0}".format(vm.name)})
+        except:
+            raise
 if __name__ == "__main__":
     VMwareTools.run()
