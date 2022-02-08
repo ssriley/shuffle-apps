@@ -376,7 +376,7 @@ class VMwareTools(AppBase):
             }
             return json.dumps(result)
         try:
-            WaitForTask(vm.snapshot.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce))
+            WaitForTask(vm.CreateSnapshotEx_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce))
             return json.dumps({"Status": "Created snapshot for {0}".format(vm.name)})
         except:
             raise
