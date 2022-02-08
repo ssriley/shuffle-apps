@@ -12,7 +12,7 @@ from pyVmomi import vmodl
 import json
 
 class VMwareTools(AppBase):
-    __version__ = "1.1.0"
+    __version__ = "1.0.9"
     app_name = (
         "Test VMware Tools"  # this needs to match "name" in api.yaml for WALKOFF to work
     )
@@ -482,6 +482,25 @@ class VMwareTools(AppBase):
         print("%sGB disk added to %s" % (disk_size, vm.config.name))
         return json.dumps({"Status": "Complete"})
 
-            
+    def delete_vm(self,host_ip,username,password,port,disableSslCertValidation=True,vm_name=None, vm_ip=None):
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        vm = None
+        if vm_name:
+            content = si.RetrieveContent()
+            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        elif vm_ip:
+            vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
+        if vm is None:
+            result = {
+                "Error": "Cannot find VM"
+            }
+            return json.dumps(result)
+        if format(vm.runtime.powerState) == "poweredOn":
+            TASK = vm.PowerOffVM_Task()
+            #tasks.wait_for_tasks(si, [TASK])
+            WaitForTask(TASK)
+        TASK = vm.Destory_Task()
+        WaitForTask(TASK)
+        return json.dumps({"Status": "Deleted vm ".format(vm.name)})
 if __name__ == "__main__":
     VMwareTools.run()
