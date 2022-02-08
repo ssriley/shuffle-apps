@@ -381,6 +381,7 @@ class VMwareTools(AppBase):
             return json.dumps({"Status": "Created snapshot for {0}".format(vm.name),
             "Task": "Result of task ".format(task.info.result)})
         except:
-            return json.dumps({"Status": "Something went wrong."})
+            return json.dumps({"Status": "Something went wrong.",
+            "Task": "Result of task ".format(task.info.result)})
 if __name__ == "__main__":
     VMwareTools.run()
