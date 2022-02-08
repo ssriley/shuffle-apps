@@ -12,7 +12,7 @@ from pyVmomi import vmodl
 import json
 
 class VMwareTools(AppBase):
-    __version__ = "1.0.8"
+    __version__ = "1.0.9"
     app_name = (
         "Test VMware Tools"  # this needs to match "name" in api.yaml for WALKOFF to work
     )
