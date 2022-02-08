@@ -482,13 +482,17 @@ class VMwareTools(AppBase):
         print("%sGB disk added to %s" % (disk_size, vm.config.name))
         return json.dumps({"Status": "Complete"})
 
-    def delete_vm(self,host_ip,username,password,port,disableSslCertValidation=True,vm_dns_name=None, vm_ip=None):
+    def delete_vm(self,host_ip,username,password,port,disableSslCertValidation=True,vm_dns_name=None, vm_ip=None,vm_name=None):
         si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
         vm = None
         if vm_dns_name:
             vm = si.content.searchIndex.FindByDnsName(None, vm_dns_name, True)
         elif vm_ip:
             vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
+        elif vm_name:
+            content = si.RetrieveContent()
+            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+            vm = si.content.searchIndex.FindByUuid(None, vm.uuid, True, False)
         if vm is None:
             result = {
                 "Error": "Cannot find VM"
