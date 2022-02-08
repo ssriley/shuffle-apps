@@ -204,8 +204,8 @@ actions:
         example: "Optional 10.20.136.10"
         schema:
           type: string
-      - name: vm_name
-        description: Optional - The name of the vm of the server in vcenter
+      - name: vm_dns_name
+        description: Optional - The DNS name of the vm of the server in vcenter
         required: false
         multiline: false
         example: "Optional My VM"
