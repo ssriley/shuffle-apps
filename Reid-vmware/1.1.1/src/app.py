@@ -532,7 +532,7 @@ class VMwareTools(AppBase):
 
         net_content = si.RetrieveContent()
         network = self.get_obj(net_content, [vim.Network], network_name)
-        #return json.dumps({"network": network.name})
+        return json.dumps({"network": network.name})
         
         # if isinstance(network, vim.OpaqueNetwork):
         #     nic_spec.device.backing = \
