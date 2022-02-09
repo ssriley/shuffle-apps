@@ -11,7 +11,7 @@ from pyVmomi import vmodl
 import json
 from types import NoneType
 class VMwareTools(AppBase):
-    __version__ = "1.1.2"
+    __version__ = "1.1.3"
     app_name = (
         "Test VMware Tools"  # this needs to match "name" in api.yaml for WALKOFF to work
     )
@@ -431,26 +431,26 @@ class VMwareTools(AppBase):
         except NoneType as error:
             return json.dumps({"Status": "No Snapshots Found"})
 
-    # def create_snapshot(self,host_ip,username,password,port,disableSslCertValidation=True,vm_ip=None, vm_name=None,snap_name="Test",snap_description="TEST TEST", snap_memory=False,snap_quiesce=False):
-    #     si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
-    #     vm = None
-    #     if vm_ip:
-    #         vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
-    #     elif vm_name:
-    #         content = si.RetrieveContent()
-    #         vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
-    #     if vm is None:
-    #         result = {
-    #             "Error": "Cannot find VM"
-    #         }
-    #         return json.dumps(result)
-    #     try:
-    #         task = vm.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce)
-    #         WaitForTask(task)
-    #         return json.dumps({"Status": "Created snapshot for {0}".format(vm.name),
-    #         "Task": "Result of task ".format(task.info.result)})
-    #     except Exception as err:
-    #         raise Exception(json.dumps({"Error was {0}".format(err)}))
+    def create_snapshot(self,host_ip,username,password,port,disableSslCertValidation=True,vm_ip=None, vm_name=None,snap_name="Test",snap_description="TEST TEST", snap_memory=False,snap_quiesce=False):
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        vm = None
+        if vm_ip:
+            vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
+        elif vm_name:
+            content = si.RetrieveContent()
+            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        if vm is None:
+            result = {
+                "Error": "Cannot find VM"
+            }
+            return json.dumps(result)
+        try:
+            task = vm.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=bool(snap_memory == "True"),quiesce=bool(snap_quiesce == "True"))
+            WaitForTask(task)
+            return json.dumps({"Status": "Created snapshot for {0}".format(vm.name),
+            "Task": "Result of task ".format(task.info.result)})
+        except Exception as err:
+            raise Exception(json.dumps({"Error was {0}".format(err)}))
 
     def add_disk(self,host_ip,username,password,port,disableSslCertValidation=True,vm_name=None, disk_size=1024, disk_type="thin"):
         """
