@@ -529,10 +529,10 @@ class VMwareTools(AppBase):
 
         nic_spec.device.deviceInfo = vim.Description()
         nic_spec.device.deviceInfo.summary = nic_description
-
+        nic_spec.device.deviceInfo.label = "Network Adapter 10"
         net_content = si.RetrieveContent()
         network = self.get_obj(net_content, [vim.Network], network_name)
-        return json.dumps({"network": network.name})
+        #return json.dumps({"network": network.name})
         
         # if isinstance(network, vim.OpaqueNetwork):
         #     nic_spec.device.backing = \
@@ -544,9 +544,10 @@ class VMwareTools(AppBase):
         #else:
         nic_spec.device.backing = vim.vm.device.VirtualEthernetCard.NetworkBackingInfo()
         nic_spec.device.backing.useAutoDetect = False
-        nic_spec.device.backing.network = network
+        #nic_spec.device.backing.network = network
         nic_spec.device.backing.deviceName = network.name
-
+        nic_spec.device.key = 4000
+        nic_spec.device.deviceInfo.label = "Network Adapter 10"
         nic_spec.device.connectable = vim.vm.device.VirtualDevice.ConnectInfo()
         nic_spec.device.connectable.startConnected = nic_connect_on_start
         nic_spec.device.connectable.allowGuestControl = True
