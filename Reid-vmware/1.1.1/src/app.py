@@ -532,19 +532,20 @@ class VMwareTools(AppBase):
 
         net_content = si.RetrieveContent()
         network = self.get_obj(net_content, [vim.Network], network_name)
+        #return json.dumps({"network": network.name})
+        
+        # if isinstance(network, vim.OpaqueNetwork):
+        #     nic_spec.device.backing = \
+        #         vim.vm.device.VirtualEthernetCard.OpaqueNetworkBackingInfo()
+        #     nic_spec.device.backing.opaqueNetworkType = \
+        #         network.summary.opaqueNetworkType
+        #     nic_spec.device.backing.opaqueNetworkId = \
+        #         network.summary.opaqueNetworkId
+        #else:
+        nic_spec.device.backing = vim.vm.device.VirtualEthernetCard.NetworkBackingInfo()
+        nic_spec.device.backing.useAutoDetect = False
         nic_spec.device.backing.network = network
-        if isinstance(network, vim.OpaqueNetwork):
-            nic_spec.device.backing = \
-                vim.vm.device.VirtualEthernetCard.OpaqueNetworkBackingInfo()
-            nic_spec.device.backing.opaqueNetworkType = \
-                network.summary.opaqueNetworkType
-            nic_spec.device.backing.opaqueNetworkId = \
-                network.summary.opaqueNetworkId
-        else:
-            nic_spec.device.backing = \
-                vim.vm.device.VirtualEthernetCard.NetworkBackingInfo()
-            nic_spec.device.backing.useAutoDetect = False
-            nic_spec.device.backing.deviceName = network.name
+        nic_spec.device.backing.deviceName = network.name
 
         nic_spec.device.connectable = vim.vm.device.VirtualDevice.ConnectInfo()
         nic_spec.device.connectable.startConnected = nic_connect_on_start
