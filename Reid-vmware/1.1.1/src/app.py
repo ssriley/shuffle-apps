@@ -532,6 +532,7 @@ class VMwareTools(AppBase):
 
         net_content = si.RetrieveContent()
         network = self.get_obj(net_content, [vim.Network], network_name)
+        nic_spec.device.backing.network = network
         if isinstance(network, vim.OpaqueNetwork):
             nic_spec.device.backing = \
                 vim.vm.device.VirtualEthernetCard.OpaqueNetworkBackingInfo()
