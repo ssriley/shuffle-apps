@@ -560,6 +560,8 @@ class VMwareTools(AppBase):
             WaitForTask(vm.ReconfigVM_Task(spec=spec))
             return json.dumps({"Status": "Added Nic Card to Port Group ".format(network_name)})
         except vmodl.MethodFault as error:
-            return json.dumps({"Error": "Error ".format(error)})
+            return json.dumps({"Error": "Error ".format(error.msg)})
+        except vmodl.RuntimeFault as rt:
+            return json.dumps({"Error": "Error ".format(rt.msg)})
 if __name__ == "__main__":
     VMwareTools.run()
