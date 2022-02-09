@@ -1,5 +1,4 @@
 
-from types import NoneType
 from walkoff_app_sdk.app_base import AppBase
 import sys
 import atexit
