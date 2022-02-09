@@ -525,13 +525,13 @@ class VMwareTools(AppBase):
         nic_spec = vim.vm.device.VirtualDeviceSpec()
         nic_spec.operation = vim.vm.device.VirtualDeviceSpec.Operation.add
 
-        nic_spec.device = vim.vm.device.VirtualE1000()
+        nic_spec.device = vim.vm.device.VirtualVmxnet3()
 
         nic_spec.device.deviceInfo = vim.Description()
         nic_spec.device.deviceInfo.summary = nic_description
 
-        content = si.RetrieveContent()
-        network = self.get_obj(content, [vim.Network], network_name)
+        net_content = si.RetrieveContent()
+        network = self.get_obj(net_content, [vim.Network], network_name)
         if isinstance(network, vim.OpaqueNetwork):
             nic_spec.device.backing = \
                 vim.vm.device.VirtualEthernetCard.OpaqueNetworkBackingInfo()
@@ -543,7 +543,7 @@ class VMwareTools(AppBase):
             nic_spec.device.backing = \
                 vim.vm.device.VirtualEthernetCard.NetworkBackingInfo()
             nic_spec.device.backing.useAutoDetect = False
-            nic_spec.device.backing.deviceName = network_name
+            nic_spec.device.backing.deviceName = network.name
 
         nic_spec.device.connectable = vim.vm.device.VirtualDevice.ConnectInfo()
         nic_spec.device.connectable.startConnected = nic_connect_on_start
@@ -555,7 +555,7 @@ class VMwareTools(AppBase):
 
         nic_changes.append(nic_spec)
         spec.deviceChange = nic_changes
-        vm.ReconfigVM_Task(spec=spec)
+        WaitForTask(vm.ReconfigVM_Task(spec=spec))
         return json.dumps({"Status": "Added Nic Card to Port Group ".format(network_name)})
 if __name__ == "__main__":
     VMwareTools.run()
