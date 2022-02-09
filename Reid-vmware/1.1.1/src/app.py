@@ -9,7 +9,7 @@ from pyVim.connect import SmartConnect, Disconnect
 import requests
 from pyVmomi import vmodl
 import json
-
+from types import NoneType
 class VMwareTools(AppBase):
     __version__ = "1.1.1"
     app_name = (
@@ -68,9 +68,9 @@ class VMwareTools(AppBase):
             # doing this means you don't need to remember to disconnect your script/objects
             atexit.register(Disconnect, service_instance)
         except IOError as io_error:
-            print(io_error)
+            #print(io_error)
             result = {
-                "Error": io_error
+                "Error": "Error in Connection ".format(io_error)
             }
             return json.dumps(result)
         if not service_instance:
@@ -517,47 +517,49 @@ class VMwareTools(AppBase):
         elif vm_name:
             content = si.RetrieveContent()
             vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        try:
+            spec = vim.vm.ConfigSpec()
+            nic_changes = []
 
-        spec = vim.vm.ConfigSpec()
-        nic_changes = []
+            nic_spec = vim.vm.device.VirtualDeviceSpec()
+            nic_spec.operation = vim.vm.device.VirtualDeviceSpec.Operation.add
 
-        nic_spec = vim.vm.device.VirtualDeviceSpec()
-        nic_spec.operation = vim.vm.device.VirtualDeviceSpec.Operation.add
+            nic_spec.device = vim.vm.device.VirtualVmxnet3()
 
-        nic_spec.device = vim.vm.device.VirtualVmxnet3()
+            nic_spec.device.deviceInfo = vim.Description()
+            nic_spec.device.deviceInfo.summary = nic_description
+            nic_spec.device.deviceInfo.label = "Network Adapter 10"
+            net_content = si.RetrieveContent()
+            network = self.get_obj(net_content, [vim.Network], network_name)
+            #return json.dumps({"network": network.name})
+            
+            # if isinstance(network, vim.OpaqueNetwork):
+            #     nic_spec.device.backing = \
+            #         vim.vm.device.VirtualEthernetCard.OpaqueNetworkBackingInfo()
+            #     nic_spec.device.backing.opaqueNetworkType = \
+            #         network.summary.opaqueNetworkType
+            #     nic_spec.device.backing.opaqueNetworkId = \
+            #         network.summary.opaqueNetworkId
+            #else:
+            nic_spec.device.backing = vim.vm.device.VirtualEthernetCard.NetworkBackingInfo()
+            nic_spec.device.backing.useAutoDetect = False
+            #nic_spec.device.backing.network = network
+            nic_spec.device.backing.deviceName = network.name
+            nic_spec.device.key = 4000
+            nic_spec.device.deviceInfo.label = "Network Adapter 10"
+            nic_spec.device.connectable = vim.vm.device.VirtualDevice.ConnectInfo()
+            nic_spec.device.connectable.startConnected = nic_connect_on_start
+            nic_spec.device.connectable.allowGuestControl = True
+            nic_spec.device.connectable.connected = nic_connected
+            nic_spec.device.connectable.status = 'untried'
+            nic_spec.device.wakeOnLanEnabled = True
+            nic_spec.device.addressType = 'assigned'
 
-        nic_spec.device.deviceInfo = vim.Description()
-        nic_spec.device.deviceInfo.summary = nic_description
-        nic_spec.device.deviceInfo.label = "Network Adapter 10"
-        net_content = si.RetrieveContent()
-        network = self.get_obj(net_content, [vim.Network], network_name)
-        #return json.dumps({"network": network.name})
-        
-        # if isinstance(network, vim.OpaqueNetwork):
-        #     nic_spec.device.backing = \
-        #         vim.vm.device.VirtualEthernetCard.OpaqueNetworkBackingInfo()
-        #     nic_spec.device.backing.opaqueNetworkType = \
-        #         network.summary.opaqueNetworkType
-        #     nic_spec.device.backing.opaqueNetworkId = \
-        #         network.summary.opaqueNetworkId
-        #else:
-        nic_spec.device.backing = vim.vm.device.VirtualEthernetCard.NetworkBackingInfo()
-        nic_spec.device.backing.useAutoDetect = False
-        #nic_spec.device.backing.network = network
-        nic_spec.device.backing.deviceName = network.name
-        nic_spec.device.key = 4000
-        nic_spec.device.deviceInfo.label = "Network Adapter 10"
-        nic_spec.device.connectable = vim.vm.device.VirtualDevice.ConnectInfo()
-        nic_spec.device.connectable.startConnected = nic_connect_on_start
-        nic_spec.device.connectable.allowGuestControl = True
-        nic_spec.device.connectable.connected = nic_connected
-        nic_spec.device.connectable.status = 'untried'
-        nic_spec.device.wakeOnLanEnabled = True
-        nic_spec.device.addressType = 'assigned'
-
-        nic_changes.append(nic_spec)
-        spec.deviceChange = nic_changes
-        WaitForTask(vm.ReconfigVM_Task(spec=spec))
-        return json.dumps({"Status": "Added Nic Card to Port Group ".format(network_name)})
+            nic_changes.append(nic_spec)
+            spec.deviceChange = nic_changes
+            WaitForTask(vm.ReconfigVM_Task(spec=spec))
+            return json.dumps({"Status": "Added Nic Card to Port Group ".format(network_name)})
+        except vmodl.MethodFault as error:
+            return json.dumps({"Error": "Error ".format(error)})
 if __name__ == "__main__":
     VMwareTools.run()
