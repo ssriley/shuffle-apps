@@ -492,7 +492,7 @@ class VMwareTools(AppBase):
         elif vm_name:
             content = si.RetrieveContent()
             vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
-            vm = si.content.searchIndex.FindByUuid(None, vm.uuid, True, False)
+            vm = si.content.searchIndex.FindByUuid(None, vm.summary.config.uuid, True, False)
         if vm is None:
             result = {
                 "Error": "Cannot find VM"
