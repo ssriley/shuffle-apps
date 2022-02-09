@@ -493,6 +493,7 @@ class VMwareTools(AppBase):
             content = si.RetrieveContent()
             vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
             uuid = vm.summary.config.uuid
+            return json.dumps({"uuid": uuid})
             vm = si.content.searchIndex.FindByUuid(None, uuid, True, False)
         if vm is None:
             result = {
