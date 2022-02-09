@@ -382,6 +382,7 @@ class VMwareTools(AppBase):
             cdrom.controllerKey = controller.key
             cdrom.key = -1
             cdrom.connectable = connectable
+            cdrom.backing = vim.vm.device.VirtualCdrom.IsoBackingInfo()
             device_spec.operation = cdrom_operation.add
             device_spec.device = cdrom
             config_spec = vim.vm.ConfigSpec(deviceChange=[device_spec])
