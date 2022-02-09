@@ -493,7 +493,7 @@ class VMwareTools(AppBase):
             content = si.RetrieveContent()
             vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
             uuid = vm.summary.config.uuid
-            return json.dumps({"uuid": uuid})
+            #return json.dumps({"uuid": uuid})
             vm = si.content.searchIndex.FindByUuid(None, uuid, True, False)
         if vm is None:
             result = {
@@ -504,7 +504,7 @@ class VMwareTools(AppBase):
             TASK = vm.PowerOffVM_Task()
             #tasks.wait_for_tasks(si, [TASK])
             WaitForTask(TASK)
-        TASK = vm.Destory_Task()
+        TASK = vm.Destroy_Task()
         WaitForTask(TASK)
         return json.dumps({"Status": "Deleted vm ".format(vm.name)})
 if __name__ == "__main__":
