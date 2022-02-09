@@ -548,9 +548,9 @@ class VMwareTools(AppBase):
             nic_spec.device.key = 4000
             nic_spec.device.deviceInfo.label = "Network Adapter 10"
             nic_spec.device.connectable = vim.vm.device.VirtualDevice.ConnectInfo()
-            nic_spec.device.connectable.startConnected = nic_connect_on_start
+            nic_spec.device.connectable.startConnected = bool(nic_connect_on_start == "True")
             nic_spec.device.connectable.allowGuestControl = True
-            nic_spec.device.connectable.connected = nic_connected
+            nic_spec.device.connectable.connected = bool(nic_connected == "True")
             nic_spec.device.connectable.status = 'untried'
             nic_spec.device.wakeOnLanEnabled = True
             nic_spec.device.addressType = 'assigned'
