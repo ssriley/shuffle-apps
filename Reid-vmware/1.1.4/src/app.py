@@ -608,13 +608,17 @@ class VMwareTools(AppBase):
                 "Error": "Cannot find VM"
             }
             return json.dumps(result)
-        cdrom = None
-        for dev in vm.config.hardware.device:
-            if isinstance(dev, vim.vm.device.VirtualIDEController):
-                if len(dev.device) < 2:
-                    controller = dev
         cdrom_operation = vim.vm.device.VirtualDeviceSpec.Operation
         device_spec = vim.vm.device.VirtualDeviceSpec()
+        connectable = vim.vm.device.VirtualDevice.ConnectInfo()
+        connectable.allowGuestControl = True
+        connectable.startConnected = True
+
+        cdrom = vim.vm.device.VirtualCdrom()
+        cdrom.controllerKey = controller.key
+        cdrom.key = -1
+        cdrom.connectable = connectable
+        #cdrom.backing = vim.vm.device.VirtualCdrom.IsoBackingInfo()
         cdrom.backing = vim.vm.device.VirtualCdrom.IsoBackingInfo(fileName=iso)
         device_spec.operation = cdrom_operation.edit
         device_spec.device = cdrom
