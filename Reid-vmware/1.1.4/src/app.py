@@ -608,6 +608,10 @@ class VMwareTools(AppBase):
                 "Error": "Cannot find VM"
             }
             return json.dumps(result)
+        for dev in vm.config.hardware.device:
+            if isinstance(dev, vim.vm.device.VirtualIDEController):
+                #if len(dev.device) < 2:
+                controller = dev
         cdrom_operation = vim.vm.device.VirtualDeviceSpec.Operation
         device_spec = vim.vm.device.VirtualDeviceSpec()
         connectable = vim.vm.device.VirtualDevice.ConnectInfo()
