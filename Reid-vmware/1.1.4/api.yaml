@@ -352,7 +352,7 @@ actions:
         description: Full path to iso
         required: true
         multiline: false
-        example: "/Datastore1/iso/file.iso"
+        example: "[Datastore1]folder/file.iso"
         schema:
           type: string
     returns:
