@@ -496,7 +496,19 @@ class VMwareTools(AppBase):
             dev_changes.append(scsi_ctr)
             spec.deviceChange = dev_changes
             WaitForTask(vm.ReconfigVM_Task(spec=spec))
-            controller = scsi_ctr.device
+            content = si.RetrieveContent()
+            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+            for device in vm.config.hardware.device:
+                if hasattr(device.backing, 'fileName'):
+                    unit_number = int(device.unitNumber) + 1
+                    # unit_number 7 reserved for scsi controller
+                    if unit_number == 7:
+                        unit_number += 1
+                    if unit_number >= 16:
+                        #print("we don't support this many disks")
+                        return json.dumps({"Status": "we don't support this many disks"})
+                if isinstance(device, vim.vm.device.VirtualSCSIController):
+                    controller = device
             #return json.dumps({"Status": "Disk SCSI controller not found!"})
         # add disk here
         dev_changes = []
