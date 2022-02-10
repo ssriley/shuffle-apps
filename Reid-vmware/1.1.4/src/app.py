@@ -610,8 +610,9 @@ class VMwareTools(AppBase):
             return json.dumps(result)
         for dev in vm.config.hardware.device:
             if isinstance(dev, vim.vm.device.VirtualCdrom):
+                if 'CD/DVD' in dev.deviceInfo.label:
                 #if len(dev.device) < 2:
-                controller = dev
+                    controller = dev
         cdrom_operation = vim.vm.device.VirtualDeviceSpec.Operation
         device_spec = vim.vm.device.VirtualDeviceSpec()
         connectable = vim.vm.device.VirtualDevice.ConnectInfo()
@@ -619,8 +620,8 @@ class VMwareTools(AppBase):
         connectable.startConnected = True
 
         cdrom = vim.vm.device.VirtualCdrom()
-        cdrom.controllerKey = controller.key
-        cdrom.key = -1
+        cdrom.controllerKey = controller.controllerKey
+        cdrom.key = controller.key
         cdrom.connectable = connectable
         #cdrom.backing = vim.vm.device.VirtualCdrom.IsoBackingInfo()
         cdrom.backing = vim.vm.device.VirtualCdrom.IsoBackingInfo(fileName=iso)
