@@ -369,7 +369,7 @@ class VMwareTools(AppBase):
             vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
             cdrom = None
             for dev in vm.config.hardware.device:
-                if isinstance(dev, vim.vm.device.VirtualSATAController):
+                if isinstance(dev, vim.vm.device.VirtualIDEController):
                     if len(dev.device) < 2:
                         controller = dev
             cdrom_operation = vim.vm.device.VirtualDeviceSpec.Operation
