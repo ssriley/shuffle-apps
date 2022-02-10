@@ -372,6 +372,27 @@ class VMwareTools(AppBase):
                 if isinstance(dev, vim.vm.device.VirtualIDEController):
                     if len(dev.device) < 2:
                         controller = dev
+            if controller is None:
+                dev_changes = []
+                spec = vim.vm.ConfigSpec()
+                
+                ide_ctr = vim.vm.device.VirtualDeviceSpec()
+                ide_ctr.operation = vim.vm.device.VirtualDeviceSpec.Operation.add
+                ide_ctr.device = vim.vm.device.VirtualIDEController()
+                ide_ctr.device.busNumber = 0
+                ide_ctr.device.hotAddRemove = True
+                ide_ctr.device.sharedBus = 'noSharing'
+                #ide_ctr.device.scsiCtlrUnitNumber = 7
+                dev_changes.append(ide_ctr)
+                spec.deviceChange = dev_changes
+                WaitForTask(vm.ReconfigVM_Task(spec=spec))
+                content = si.RetrieveContent()
+                vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+                cdrom = None
+                for dev in vm.config.hardware.device:
+                    if isinstance(dev, vim.vm.device.VirtualIDEController):
+                        if len(dev.device) < 2:
+                            controller = dev
             cdrom_operation = vim.vm.device.VirtualDeviceSpec.Operation
             device_spec = vim.vm.device.VirtualDeviceSpec()
             connectable = vim.vm.device.VirtualDevice.ConnectInfo()
