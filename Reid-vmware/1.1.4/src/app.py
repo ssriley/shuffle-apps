@@ -452,7 +452,7 @@ class VMwareTools(AppBase):
         except Exception as err:
             raise Exception(json.dumps({"Error was {0}".format(err)}))
 
-    def add_disk(self,host_ip,username,password,port,disableSslCertValidation=True,vm_name=None, disk_size=1024, disk_type="thin"):
+    def add_disk(self,host_ip,username,password,port,disableSslCertValidation=True,vm_name=None, disk_size=10, disk_type="thin"):
         """
         Add disk to vm
         """
@@ -477,13 +477,13 @@ class VMwareTools(AppBase):
                 if unit_number == 7:
                     unit_number += 1
                 if unit_number >= 16:
-                    print("we don't support this many disks")
-                    return -1
+                    #print("we don't support this many disks")
+                    return json.dumps({"Status": "we don't support this many disks"})
             if isinstance(device, vim.vm.device.VirtualSCSIController):
                 controller = device
         if controller is None:
-            print("Disk SCSI controller not found!")
-            return -1
+            #print("Disk SCSI controller not found!")
+            return json.dumps({"Status": "Disk SCSI controller not found!"})
         # add disk here
         dev_changes = []
         new_disk_kb = int(disk_size) * 1024 * 1024
