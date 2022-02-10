@@ -609,7 +609,7 @@ class VMwareTools(AppBase):
             }
             return json.dumps(result)
         for dev in vm.config.hardware.device:
-            if isinstance(dev, vim.vm.device.VirtualIDEController):
+            if isinstance(dev, vim.vm.device.VirtualCdrom):
                 #if len(dev.device) < 2:
                 controller = dev
         cdrom_operation = vim.vm.device.VirtualDeviceSpec.Operation
