@@ -482,8 +482,19 @@ class VMwareTools(AppBase):
             if isinstance(device, vim.vm.device.VirtualSCSIController):
                 controller = device
         if controller is None:
-            #print("Disk SCSI controller not found!")
-            return json.dumps({"Status": "Disk SCSI controller not found!"})
+            dev_changes = []
+            spec = vim.vm.ConfigSpec()
+            
+            scsi_ctr = vim.vm.device.VirtualDeviceSpec()
+            scsi_ctr.operation = vim.vm.device.VirtualDeviceSpec.Operation.add
+            scsi_ctr.device = vim.vm.device.ParaVirtualSCSIController()
+            scsi_ctr.device.busNumber = 1
+            scsi_ctr.device.hotAddRemove = True
+            scsi_ctr.device.sharedBus = 'noSharing'
+            scsi_ctr.device.scsiCtlrUnitNumber = 7
+            dev_changes.append(scsi_ctr)
+            controller = scsi_ctr.device
+            #return json.dumps({"Status": "Disk SCSI controller not found!"})
         # add disk here
         dev_changes = []
         new_disk_kb = int(disk_size) * 1024 * 1024
