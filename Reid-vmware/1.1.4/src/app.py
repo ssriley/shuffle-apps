@@ -489,7 +489,7 @@ class VMwareTools(AppBase):
             scsi_ctr = vim.vm.device.VirtualDeviceSpec()
             scsi_ctr.operation = vim.vm.device.VirtualDeviceSpec.Operation.add
             scsi_ctr.device = vim.vm.device.ParaVirtualSCSIController()
-            scsi_ctr.device.busNumber = 1
+            scsi_ctr.device.busNumber = 0
             scsi_ctr.device.hotAddRemove = True
             scsi_ctr.device.sharedBus = 'noSharing'
             scsi_ctr.device.scsiCtlrUnitNumber = 7
