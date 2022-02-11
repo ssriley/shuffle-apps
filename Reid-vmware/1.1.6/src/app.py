@@ -736,11 +736,11 @@ class VMwareTools(AppBase):
             clusters = self.get_all_obj(content, [vim.ResourcePool])
             cluster = list(clusters)[0]
 
-        # resource_pool = None
-        # if resource_pool:
-        #     resource_pool = self.search_for_obj(content, [vim.ResourcePool], resource_pool)
-        # else:
-        #     resource_pool = cluster.resourcePool
+        resource_pool = None
+        if resource_pool:
+            resource_pool = self.search_for_obj(content, [vim.ResourcePool], resource_pool)
+        else:
+            resource_pool = cluster.resourcePool
 
         # vmconf = vim.vm.ConfigSpec()
 
@@ -769,7 +769,7 @@ class VMwareTools(AppBase):
         # set relospec
         relospec = vim.vm.RelocateSpec()
         relospec.datastore = datastore
-        #relospec.pool = resource_pool
+        relospec.location.pool = resource_pool
 
         clonespec = vim.vm.CloneSpec()
         clonespec.location = relospec
