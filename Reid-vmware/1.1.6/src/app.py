@@ -767,12 +767,12 @@ class VMwareTools(AppBase):
         #     datastore = pchelper.get_obj(content, [vim.Datastore], real_datastore_name)
 
         # set relospec
-        relospec = vim.vm.RelocateSpec()
-        relospec.datastore = datastore
-        relospec.pool = resource_pool
+        relo_spec = vim.vm.RelocateSpec()
+        relo_spec.datastore = datastore
+        relo_spec.pool = resource_pool
 
         clonespec = vim.vm.CloneSpec()
-        clonespec.location = relospec
+        clonespec.location = relo_spec
         clonespec.powerOn = bool(power_on == "True")
 
         #print("cloning VM...")
