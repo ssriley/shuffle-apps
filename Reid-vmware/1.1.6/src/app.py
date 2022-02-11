@@ -736,6 +736,7 @@ class VMwareTools(AppBase):
             clusters = self.get_all_obj(content, [vim.ResourcePool])
             cluster = list(clusters)[0]
 
+        resource_pool = None
         if resource_pool:
             resource_pool = self.search_for_obj(content, [vim.ResourcePool], resource_pool)
         else:
