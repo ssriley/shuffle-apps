@@ -769,7 +769,7 @@ class VMwareTools(AppBase):
         # set relospec
         relospec = vim.vm.RelocateSpec()
         relospec.datastore = datastore
-        relospec.location.pool = resource_pool
+        relospec.pool = resource_pool
 
         clonespec = vim.vm.CloneSpec()
         clonespec.location = relospec
