@@ -418,68 +418,6 @@ class VMwareTools(AppBase):
             device_spec.device = cdrom
             config_spec = vim.vm.ConfigSpec(deviceChange=[device_spec])
             WaitForTask(vm.Reconfigure(config_spec))
-            # Setup computer name, user, password, license key
-            sysprep_user_spec = vim.vm.customization.UserData()
-            sysprep_name_spec = vim.vm.customization.VirtualMachineNameGenerator()
-            sysprep_user_spec.computerName = sysprep_name_spec
-            sysprep_user_spec.fullName = "Test Test"
-            sysprep_user_spec.orgName = "Research"
-            sysprep_user_spec.productId = license_key
-
-            sysprep_pw_spec = vim.vm.customization.Password()
-            sysprep_pw_spec.plainText = False
-            sysprep_pw_spec.value = vm_password
-
-            sysprep_guiUnattended_spec = vim.vm.customization.GuiUnattended()
-            sysprep_guiUnattended_spec.autoLogon = False
-            sysprep_guiUnattended_spec.autoLogonCount = 1
-            sysprep_guiUnattended_spec.password = sysprep_pw_spec
-            sysprep_guiUnattended_spec.timeZone = int("035")
-            # for linux vm's
-            sysprep_globalip_spec = vim.vm.customization.GlobalIPSettings()
-            sysprep_globalip_spec.dnsServerList = dns_list
-
-            sysprep_nic_spec = vim.vm.customization.AdapterMapping()
-            if static_ip_address:
-                sysprep_ip_spec = vim.vm.customization.IPSettings()
-                sysprep_fixed_ip_spec = vim.vm.customization.FixedIp()
-                sysprep_fixed_ip_spec.ipAddress = static_ip_address
-                sysprep_ip_spec.ip = sysprep_fixed_ip_spec
-            else:
-                sysprep_ip_spec = vim.vm.customization.IPSettings()
-                sysprep_dhcp_spec = vim.vm.customization.DhcpIpGenerator()
-                sysprep_ip_spec.ip = sysprep_dhcp_spec
-            #sysprep_ip_spec = vim.vm.customization.IPSettings()
-            sysprep_ip_spec.dnsDomain = domain_name
-            sysprep_ip_spec.dnsServerList = dns_list
-            sysprep_ip_spec.gateway = ip_gateway
-            sysprep_ip_spec.subnetMask = subnet_mask
-            
-            sysprep_nic_spec.adapter = sysprep_ip_spec
-
-            sysprep_identification_spec = vim.vm.customization.Identification()
-            # Join pc to domain or not
-            if domain_admin_user:
-                sysprep_admin_pw_spec = vim.vm.customization.Password()
-                sysprep_admin_pw_spec.plainText = False
-                sysprep_admin_pw_spec.value = admin_password
-                sysprep_identification_spec.domainAdmin = domain_admin_user
-                sysprep_identification_spec.domainAdminPassword = sysprep_admin_pw_spec
-                sysprep_identification_spec.joinDomain = domain_name
-            else:
-                sysprep_identification_spec = vim.vm.customization.Identification()
-            
-            sysprep_spec = vim.vm.customization.Sysprep()
-            sysprep_spec.guiUnattended = sysprep_guiUnattended_spec
-            sysprep_spec.identification = sysprep_identification_spec
-            sysprep_spec.userData = sysprep_user_spec
-            
-
-            customization_spec = vim.vm.customization.Specification()
-            customization_spec.identity = sysprep_spec
-            customization_spec.nicSettingMap = sysprep_nic_spec
-            customization_spec.globalIPSettings = sysprep_globalip_spec
-            WaitForTask(vm.CustomizeVM_Task(spec=customization_spec))
             result = {
                 "VM_Created": vm_name
             }
@@ -852,5 +790,95 @@ class VMwareTools(AppBase):
         #print("VM cloned.")
         return json.dumps({"Status": "Cloned vm to {0}".format(vm_name),
         "clone_name": vm_name})
+    def customize_vm_settings(
+    self,
+    host_ip, 
+    username,
+    password,
+    port,
+    vm_name, 
+    license_key = None,
+    vm_password = "BadPassword1",
+    domain_admin_user = None,
+    admin_password = None,
+    domain_name = "Example.internal",
+    static_ip_address = None,
+    subnet_mask = None,
+    ip_gateway = None,
+    dns_list = None
+    ):
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        vm = None
+        if vm_name:
+            content = si.RetrieveContent()
+            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        if vm is None:
+            result = {
+                "Error": "Cannot find VM"
+            }
+            return json.dumps(result)
+        # Setup computer name, user, password, license key
+        sysprep_user_spec = vim.vm.customization.UserData()
+        sysprep_name_spec = vim.vm.customization.VirtualMachineNameGenerator()
+        sysprep_user_spec.computerName = sysprep_name_spec
+        sysprep_user_spec.fullName = "Test Test"
+        sysprep_user_spec.orgName = "Research"
+        sysprep_user_spec.productId = license_key
+
+        sysprep_pw_spec = vim.vm.customization.Password()
+        sysprep_pw_spec.plainText = False
+        sysprep_pw_spec.value = vm_password
+
+        sysprep_guiUnattended_spec = vim.vm.customization.GuiUnattended()
+        sysprep_guiUnattended_spec.autoLogon = False
+        sysprep_guiUnattended_spec.autoLogonCount = 1
+        sysprep_guiUnattended_spec.password = sysprep_pw_spec
+        sysprep_guiUnattended_spec.timeZone = int("035")
+        # for linux vm's
+        sysprep_globalip_spec = vim.vm.customization.GlobalIPSettings()
+        sysprep_globalip_spec.dnsServerList = dns_list
+
+        sysprep_nic_spec = vim.vm.customization.AdapterMapping()
+        if static_ip_address:
+            sysprep_ip_spec = vim.vm.customization.IPSettings()
+            sysprep_fixed_ip_spec = vim.vm.customization.FixedIp()
+            sysprep_fixed_ip_spec.ipAddress = static_ip_address
+            sysprep_ip_spec.ip = sysprep_fixed_ip_spec
+        else:
+            sysprep_ip_spec = vim.vm.customization.IPSettings()
+            sysprep_dhcp_spec = vim.vm.customization.DhcpIpGenerator()
+            sysprep_ip_spec.ip = sysprep_dhcp_spec
+        #sysprep_ip_spec = vim.vm.customization.IPSettings()
+        sysprep_ip_spec.dnsDomain = domain_name
+        sysprep_ip_spec.dnsServerList = dns_list
+        sysprep_ip_spec.gateway = ip_gateway
+        sysprep_ip_spec.subnetMask = subnet_mask
+        
+        sysprep_nic_spec.adapter = sysprep_ip_spec
+
+        sysprep_identification_spec = vim.vm.customization.Identification()
+        # Join pc to domain or not
+        if domain_admin_user:
+            sysprep_admin_pw_spec = vim.vm.customization.Password()
+            sysprep_admin_pw_spec.plainText = False
+            sysprep_admin_pw_spec.value = admin_password
+            sysprep_identification_spec.domainAdmin = domain_admin_user
+            sysprep_identification_spec.domainAdminPassword = sysprep_admin_pw_spec
+            sysprep_identification_spec.joinDomain = domain_name
+        else:
+            sysprep_identification_spec = vim.vm.customization.Identification()
+        
+        sysprep_spec = vim.vm.customization.Sysprep()
+        sysprep_spec.guiUnattended = sysprep_guiUnattended_spec
+        sysprep_spec.identification = sysprep_identification_spec
+        sysprep_spec.userData = sysprep_user_spec
+        
+
+        customization_spec = vim.vm.customization.Specification()
+        customization_spec.identity = sysprep_spec
+        customization_spec.nicSettingMap = sysprep_nic_spec
+        customization_spec.globalIPSettings = sysprep_globalip_spec
+        WaitForTask(vm.CustomizeVM_Task(spec=customization_spec))
+        return json.dumps({"Status": "Customized vm {0}".format(vm_name)})
 if __name__ == "__main__":
     VMwareTools.run()
