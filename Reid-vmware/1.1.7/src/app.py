@@ -415,7 +415,7 @@ class VMwareTools(AppBase):
             config_spec = vim.vm.ConfigSpec(deviceChange=[device_spec])
             WaitForTask(vm.Reconfigure(config_spec))
 
-            sysprep_user_spec = vim.vm.Cusstomization.UserData()
+            sysprep_user_spec = vim.vm.Customization.UserData()
             sysprep_user_spec.computerName = vm_name
             sysprep_user_spec.fullName = "Test Test"
             sysprep_user_spec.orgName = "Research"
