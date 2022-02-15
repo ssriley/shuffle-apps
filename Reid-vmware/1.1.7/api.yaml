@@ -513,13 +513,6 @@ actions:
         example: "Optional dns server for  vm otherwise dhcp - 10.20.20.10,10.20.20.11"
         schema:
           type: string
-      - name: disableSslCertValidation
-        description: Turn off ssl validation
-        required: false
-        multiline: false
-        example: "True"
-        schema:
-          type: bool
     returns:
       schema:
         type: string

@@ -805,9 +805,10 @@ class VMwareTools(AppBase):
     static_ip_address = None,
     subnet_mask = None,
     ip_gateway = None,
-    dns_list = None
+    dns_list = None,
+    disableSslCertValidation=True
     ):
-        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=True)
         vm = None
         if vm_name:
             content = si.RetrieveContent()
