@@ -467,7 +467,7 @@ class VMwareTools(AppBase):
                 sysprep_identification_spec.domainAdminPassword = sysprep_admin_pw_spec
                 sysprep_identification_spec.joinDomain = domain_name
             else:
-                sysprep_identification_spec = None
+                sysprep_identification_spec = vim.vm.customization.Identification()
             
             sysprep_spec = vim.vm.customization.Sysprep()
             sysprep_spec.guiUnattended = sysprep_guiUnattended_spec
