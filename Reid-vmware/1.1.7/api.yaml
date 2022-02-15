@@ -155,7 +155,7 @@ actions:
         description: Optional - User to join the vm to domain
         required: false
         multiline: true
-        example: "Optional - Administrator"
+        example: "Optional domain acct to join to domain- Administrator"
         schema:
           type: string
       - name: admin_password
@@ -169,7 +169,35 @@ actions:
         description: Optional - domain name to join vm to
         required: false
         multiline: true
-        example: "Optional - research.local"
+        example: "Optional domain to join - research.local"
+        schema:
+          type: string
+      - name: static_ip_address
+        description: Optional - static ip for vm, otherwise dhcp
+        required: false
+        multiline: true
+        example: "Optional static ip otherwise dhcp - 10.20.136.199"
+        schema:
+          type: string
+      - name: subnet_mask
+        description: Optional - subnet mask if static ip
+        required: false
+        multiline: true
+        example: "Optional subnet mask otherwise dhcp - 255.255.255.0"
+        schema:
+          type: string
+      - name: ip_gateway
+        description: Optional - gateway for vm, otherwise dhcp
+        required: false
+        multiline: true
+        example: "Optional gateway for vm otherwise dhcp - 10.20.136.1"
+        schema:
+          type: string
+      - name: dns_list
+        description: Optional - dns servers for vm, otherwise dhcp
+        required: false
+        multiline: true
+        example: "Optional dns server for  vm otherwise dhcp - 10.20.20.10,10.20.20.11"
         schema:
           type: string
       - name: disableSslCertValidation
