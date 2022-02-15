@@ -432,7 +432,7 @@ class VMwareTools(AppBase):
 
             sysprep_guiUnattended_spec = vim.vm.customization.GuiUnattended()
             sysprep_guiUnattended_spec.autoLogon = False
-            sysprep_guiUnattended_spec.sutoLogonCount = 1
+            sysprep_guiUnattended_spec.autoLogonCount = 1
             sysprep_guiUnattended_spec.password = sysprep_pw_spec
             sysprep_guiUnattended_spec.timeZone = int("035")
             # for linux vm's
