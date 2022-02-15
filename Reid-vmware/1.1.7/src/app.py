@@ -477,7 +477,7 @@ class VMwareTools(AppBase):
 
             customization_spec = vim.vm.customization.Specification()
             customization_spec.identity = sysprep_spec
-            customization_spec.nicSettingsMap = sysprep_nic_spec
+            customization_spec.nicSettingMap = sysprep_nic_spec
             customization_spec.globalIPSettings = sysprep_globalip_spec
             WaitForTask(vm.CustomizeVM_Task(spec=customization_spec))
             result = {
