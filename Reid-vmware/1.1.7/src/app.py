@@ -441,13 +441,15 @@ class VMwareTools(AppBase):
 
             sysprep_nic_spec = vim.vm.customization.AdapterMapping()
             if static_ip_address:
+                sysprep_ip_spec = vim.vm.customization.IPSettings()
                 sysprep_fixed_ip_spec = vim.vm.customization.FixedIp()
                 sysprep_fixed_ip_spec.ipAddress = static_ip_address
                 sysprep_ip_spec.ip = sysprep_fixed_ip_spec
             else:
+                sysprep_ip_spec = vim.vm.customization.IPSettings()
                 sysprep_dhcp_spec = vim.vm.customization.DhcpIpGenerator()
                 sysprep_ip_spec.ip = sysprep_dhcp_spec
-            sysprep_ip_spec = vim.vm.customization.IPSettings()
+            #sysprep_ip_spec = vim.vm.customization.IPSettings()
             sysprep_ip_spec.dnsDomain = domain_name
             sysprep_ip_spec.dnsServerList = dns_list
             sysprep_ip_spec.gateway = ip_gateway
