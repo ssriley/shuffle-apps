@@ -473,10 +473,12 @@ class VMwareTools(AppBase):
             sysprep_spec.guiUnattended = sysprep_guiUnattended_spec
             sysprep_spec.identification = sysprep_identification_spec
             sysprep_spec.userData = sysprep_user_spec
-            sysprep_spec.nicSettingsMap = sysprep_nic_spec
+            
 
             customization_spec = vim.vm.customization.Specification()
             customization_spec.identity = sysprep_spec
+            customization_spec.nicSettingsMap = sysprep_nic_spec
+            customization_spec.globalIPSettings = sysprep_globalip_spec
             WaitForTask(vm.CustomizeVM_Task(spec=customization_spec))
             result = {
                 "VM_Created": vm_name
