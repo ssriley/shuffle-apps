@@ -332,7 +332,6 @@ class VMwareTools(AppBase):
     guest="otherGuest",
     annotation="Example",
     cpus=1,
-    computername="TESTTEST",
     license_key = None,
     vm_password = "BadPassword1",
     domain_admin_user = None,
@@ -417,7 +416,7 @@ class VMwareTools(AppBase):
             WaitForTask(vm.Reconfigure(config_spec))
 
             sysprep_user_spec = vim.vm.Cusstomization.UserData()
-            sysprep_user_spec.computerName = computername
+            sysprep_user_spec.computerName = vm_name
             sysprep_user_spec.fullName = "Test Test"
             sysprep_user_spec.orgName = "Research"
             sysprep_user_spec.productId = license_key
