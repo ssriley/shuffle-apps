@@ -1,5 +1,5 @@
 ---
-app_version: 1.1.4
+app_version: 1.1.8
 name: Test VMware Tools
 description: A tool for VMware Vcenter
 tags:
@@ -355,6 +355,282 @@ actions:
         example: "[Datastore1]folder/file.iso"
         schema:
           type: string
+    returns:
+      schema:
+        type: string
+  - name: delete_all_snapshots_vm
+    description: Delete all snapshots for a vm
+    parameters:
+      - name: vm_ip
+        description: Optional - The ip of the server in vcenter
+        required: false
+        multiline: false
+        example: "Optional 10.20.136.10"
+        schema:
+          type: string
+      - name: vm_dns_name
+        description: Optional - The DNS name of the vm of the server in vcenter
+        required: false
+        multiline: false
+        example: "Optional - vm1.research.local"
+        schema:
+          type: string
+      - name: vm_name
+        description: Optional - The name of the vm of the server in vcenter
+        required: false
+        multiline: false
+        example: "Optional My VM"
+        schema:
+          type: string
+    returns:
+      schema:
+        type: string
+  - name: clone_vm_template
+    description: creates a virtual machine
+    parameters:
+      - name: vm_name
+        description: The name of the new cloned vm
+        required: true
+        multiline: false
+        example: "Cool_VM"
+        schema:
+          type: string
+      - name: template
+        description: The template to clone from
+        required: true
+        multiline: false
+        example: "Win2019-Template"
+        schema:
+          type: string
+      - name: datacenter_name
+        description: The name of the datacenter
+        required: false
+        multiline: false
+        example: "Ops"
+        schema:
+          type: string
+      - name: datastore_name
+        description: What datastore to put the vm in
+        required: false
+        multiline: false
+        example: "NFS1"
+        schema:
+          type: string
+      - name: vm_folder
+        description: Folder to put the VM in
+        required: false
+        multiline: false
+        example: "My Folder"
+        schema:
+          type: string
+      - name: cluster_name
+        description: Name of the clusster to put the vm in
+        required: false
+        multiline: false
+        example: "Cluster1"
+        schema:
+          type: string
+      - name: power_on
+        description: Power on the VM after cloning
+        required: false
+        multiline: false
+        example: "False"
+        schema:
+          type: boolean
+      - name: license_key
+        description: License Key for Windows
+        required: false
+        multiline: true
+        example: "123456789"
+        schema:
+          type: string
+      - name: vm_password
+        description: Password for the vm
+        required: True
+        multiline: true
+        example: "BadPassword!"
+        schema:
+          type: string
+      - name: domain_admin_user
+        description: Optional - User to join the vm to domain
+        required: false
+        multiline: true
+        example: "Optional domain acct to join to domain- Administrator"
+        schema:
+          type: string
+      - name: admin_password
+        description: Optional - password of user to join vm to domain
+        required: false
+        multiline: true
+        example: "Optional - pw of user to join vm to domain"
+        schema:
+          type: string
+      - name: domain_name
+        description: Optional - domain name to join vm to
+        required: false
+        multiline: true
+        example: "Optional domain to join - research.local"
+        schema:
+          type: string
+      - name: static_ip_address
+        description: Optional - static ip for vm, otherwise dhcp
+        required: false
+        multiline: true
+        example: "Optional static ip otherwise dhcp - 10.20.136.199"
+        schema:
+          type: string
+      - name: subnet_mask
+        description: Optional - subnet mask if static ip
+        required: false
+        multiline: true
+        example: "Optional subnet mask otherwise dhcp - 255.255.255.0"
+        schema:
+          type: string
+      - name: ip_gateway
+        description: Optional - gateway for vm, otherwise dhcp
+        required: false
+        multiline: true
+        example: "Optional gateway for vm otherwise dhcp - 10.20.136.1"
+        schema:
+          type: string
+      - name: dns_list
+        description: Optional - dns servers for vm, otherwise dhcp
+        required: false
+        multiline: true
+        example: "Optional dns server for  vm otherwise dhcp - 10.20.20.10,10.20.20.11"
+        schema:
+          type: string
+    returns:
+      schema:
+        type: string
+  - name: customize_vm_settings
+    description: Customizes installation of os
+    parameters:
+      - name: vm_name
+        description: The name of the vm
+        required: true
+        multiline: false
+        example: "Cool_VM"
+        schema:
+          type: string
+      - name: license_key
+        description: License Key for Windows
+        required: false
+        multiline: true
+        example: "123456789"
+        schema:
+          type: string
+      - name: vm_password
+        description: Password for the vm
+        required: True
+        multiline: true
+        example: "BadPassword!"
+        schema:
+          type: string
+      - name: domain_admin_user
+        description: Optional - User to join the vm to domain
+        required: false
+        multiline: true
+        example: "Optional domain acct to join to domain- Administrator"
+        schema:
+          type: string
+      - name: admin_password
+        description: Optional - password of user to join vm to domain
+        required: false
+        multiline: true
+        example: "Optional - pw of user to join vm to domain"
+        schema:
+          type: string
+      - name: domain_name
+        description: Optional - domain name to join vm to
+        required: false
+        multiline: true
+        example: "Optional domain to join - research.local"
+        schema:
+          type: string
+      - name: static_ip_address
+        description: Optional - static ip for vm, otherwise dhcp
+        required: false
+        multiline: true
+        example: "Optional static ip otherwise dhcp - 10.20.136.199"
+        schema:
+          type: string
+      - name: subnet_mask
+        description: Optional - subnet mask if static ip
+        required: false
+        multiline: true
+        example: "Optional subnet mask otherwise dhcp - 255.255.255.0"
+        schema:
+          type: string
+      - name: ip_gateway
+        description: Optional - gateway for vm, otherwise dhcp
+        required: false
+        multiline: true
+        example: "Optional gateway for vm otherwise dhcp - 10.20.136.1"
+        schema:
+          type: string
+      - name: dns_list
+        description: Optional - dns servers for vm, otherwise dhcp
+        required: false
+        multiline: true
+        example: "Optional dns server for  vm otherwise dhcp - 10.20.20.10,10.20.20.11"
+        schema:
+          type: string
+    returns:
+      schema:
+        type: string
+  - name: change_vm_network
+    description: Change network NIC is on
+    parameters:
+      - name: vm_ip
+        description: Optional - The ip of the server in vcenter
+        required: false
+        multiline: false
+        example: "Optional 10.20.136.10"
+        schema:
+          type: string
+      - name: vm_dns_name
+        description: Optional - The DNS name of the vm of the server in vcenter
+        required: false
+        multiline: false
+        example: "Optional - vm1.research.local"
+        schema:
+          type: string
+      - name: vm_name
+        description: Optional - The name of the vm of the server in vcenter
+        required: false
+        multiline: false
+        example: "Optional My VM"
+        schema:
+          type: string
+      - name: network_name
+        description: Name of the port group to attach nic to.
+        required: true
+        multiline: false
+        example: "network_136"
+        schema:
+          type: string
+      - name: nic_number
+        description: The unit number of the nic
+        required: true
+        multiline: false
+        example: "1"
+        schema:
+          type: string
+      - name: nic_connect_on_start
+        description: Connect the nic when the vm boots
+        required: false
+        multiline: false
+        example: "True"
+        schema:
+          type: bool
+      - name: nic_connected
+        description: Connect the nic when created
+        required: false
+        multiline: false
+        example: "False"
+        schema:
+          type: bool
     returns:
       schema:
         type: string

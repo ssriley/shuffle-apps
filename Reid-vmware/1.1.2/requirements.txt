@@ -1,4 +1,0 @@
-pyvmomi
-pyvim
-requests
-liquidpy==0.7.1

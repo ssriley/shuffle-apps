@@ -1,4 +1,5 @@
 
+from ipaddress import ip_address
 from walkoff_app_sdk.app_base import AppBase
 import sys
 import atexit
@@ -11,7 +12,7 @@ from pyVmomi import vmodl
 import json
 from types import NoneType
 class VMwareTools(AppBase):
-    __version__ = "1.1.2"
+    __version__ = "1.1.8"
     app_name = (
         "Test VMware Tools"  # this needs to match "name" in api.yaml for WALKOFF to work
     )
@@ -331,7 +332,16 @@ class VMwareTools(AppBase):
     memory=4,
     guest="otherGuest",
     annotation="Example",
-    cpus=1
+    cpus=1,
+    license_key = None,
+    vm_password = "BadPassword1",
+    domain_admin_user = None,
+    admin_password = None,
+    domain_name = "Example.internal",
+    static_ip_address = None,
+    subnet_mask = None,
+    ip_gateway = None,
+    dns_list = None
     ):
         si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
         content = si.RetrieveContent()
@@ -343,6 +353,10 @@ class VMwareTools(AppBase):
         config = vim.vm.ConfigSpec()
         config.annotation = annotation
         config.memoryMB = int(memory)
+        '''
+        Possible Guest Names
+        https://vdc-download.vmware.com/vmwb-repository/dcr-public/bf660c0a-f060-46e8-a94d-4b5e6ffc77ad/208bc706-e281-49b6-a0ce-b402ec19ef82/SDK/vsphere-ws/docs/ReferenceGuide/vim.vm.GuestOsDescriptor.GuestOsIdentifier.html
+        '''
         config.guestId = guest
         config.name = vm_name
         config.numCPUs = int(cpus)
@@ -372,6 +386,27 @@ class VMwareTools(AppBase):
                 if isinstance(dev, vim.vm.device.VirtualIDEController):
                     if len(dev.device) < 2:
                         controller = dev
+            if controller is None:
+                dev_changes = []
+                spec = vim.vm.ConfigSpec()
+                
+                ide_ctr = vim.vm.device.VirtualDeviceSpec()
+                ide_ctr.operation = vim.vm.device.VirtualDeviceSpec.Operation.add
+                ide_ctr.device = vim.vm.device.VirtualIDEController()
+                ide_ctr.device.busNumber = 0
+                ide_ctr.device.hotAddRemove = True
+                ide_ctr.device.sharedBus = 'noSharing'
+                #ide_ctr.device.scsiCtlrUnitNumber = 7
+                dev_changes.append(ide_ctr)
+                spec.deviceChange = dev_changes
+                WaitForTask(vm.ReconfigVM_Task(spec=spec))
+                content = si.RetrieveContent()
+                vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+                cdrom = None
+                for dev in vm.config.hardware.device:
+                    if isinstance(dev, vim.vm.device.VirtualIDEController):
+                        if len(dev.device) < 2:
+                            controller = dev
             cdrom_operation = vim.vm.device.VirtualDeviceSpec.Operation
             device_spec = vim.vm.device.VirtualDeviceSpec()
             connectable = vim.vm.device.VirtualDevice.ConnectInfo()
@@ -431,28 +466,28 @@ class VMwareTools(AppBase):
         except NoneType as error:
             return json.dumps({"Status": "No Snapshots Found"})
 
-    # def create_snapshot(self,host_ip,username,password,port,disableSslCertValidation=True,vm_ip=None, vm_name=None,snap_name="Test",snap_description="TEST TEST", snap_memory=False,snap_quiesce=False):
-    #     si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
-    #     vm = None
-    #     if vm_ip:
-    #         vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
-    #     elif vm_name:
-    #         content = si.RetrieveContent()
-    #         vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
-    #     if vm is None:
-    #         result = {
-    #             "Error": "Cannot find VM"
-    #         }
-    #         return json.dumps(result)
-    #     try:
-    #         task = vm.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=snap_memory,quiesce=snap_quiesce)
-    #         WaitForTask(task)
-    #         return json.dumps({"Status": "Created snapshot for {0}".format(vm.name),
-    #         "Task": "Result of task ".format(task.info.result)})
-    #     except Exception as err:
-    #         raise Exception(json.dumps({"Error was {0}".format(err)}))
+    def create_snapshot(self,host_ip,username,password,port,disableSslCertValidation=True,vm_ip=None, vm_name=None,snap_name="Test",snap_description="TEST TEST", snap_memory=False,snap_quiesce=False):
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        vm = None
+        if vm_ip:
+            vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
+        elif vm_name:
+            content = si.RetrieveContent()
+            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        if vm is None:
+            result = {
+                "Error": "Cannot find VM"
+            }
+            return json.dumps(result)
+        try:
+            task = vm.CreateSnapshot_Task(name=snap_name,description=snap_description,memory=bool(snap_memory == "True"),quiesce=bool(snap_quiesce == "True"))
+            WaitForTask(task)
+            return json.dumps({"Status": "Created snapshot for {0}".format(vm.name),
+            "Task": "Result of task {0}".format(task.info.result)})
+        except Exception as err:
+            raise Exception(json.dumps({"Error was {0}".format(err)}))
 
-    def add_disk(self,host_ip,username,password,port,disableSslCertValidation=True,vm_name=None, disk_size=1024, disk_type="thin"):
+    def add_disk(self,host_ip,username,password,port,disableSslCertValidation=True,vm_name=None, disk_size=10, disk_type="thin"):
         """
         Add disk to vm
         """
@@ -477,13 +512,40 @@ class VMwareTools(AppBase):
                 if unit_number == 7:
                     unit_number += 1
                 if unit_number >= 16:
-                    print("we don't support this many disks")
-                    return -1
+                    #print("we don't support this many disks")
+                    return json.dumps({"Status": "we don't support this many disks"})
             if isinstance(device, vim.vm.device.VirtualSCSIController):
                 controller = device
         if controller is None:
-            print("Disk SCSI controller not found!")
-            return -1
+            #Add controller
+            dev_changes = []
+            spec = vim.vm.ConfigSpec()
+            
+            scsi_ctr = vim.vm.device.VirtualDeviceSpec()
+            scsi_ctr.operation = vim.vm.device.VirtualDeviceSpec.Operation.add
+            #scsi_ctr.device = vim.vm.device.ParaVirtualSCSIController()
+            scsi_ctr.device = vim.vm.device.VirtualLsiLogicSASController()
+            scsi_ctr.device.busNumber = 0
+            scsi_ctr.device.hotAddRemove = True
+            scsi_ctr.device.sharedBus = 'noSharing'
+            scsi_ctr.device.scsiCtlrUnitNumber = 7
+            dev_changes.append(scsi_ctr)
+            spec.deviceChange = dev_changes
+            WaitForTask(vm.ReconfigVM_Task(spec=spec))
+            content = si.RetrieveContent()
+            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+            for device in vm.config.hardware.device:
+                if hasattr(device.backing, 'fileName'):
+                    unit_number = int(device.unitNumber) + 1
+                    # unit_number 7 reserved for scsi controller
+                    if unit_number == 7:
+                        unit_number += 1
+                    if unit_number >= 16:
+                        #print("we don't support this many disks")
+                        return json.dumps({"Status": "we don't support this many disks"})
+                if isinstance(device, vim.vm.device.VirtualSCSIController):
+                    controller = device
+            #return json.dumps({"Status": "Disk SCSI controller not found!"})
         # add disk here
         dev_changes = []
         new_disk_kb = int(disk_size) * 1024 * 1024
@@ -502,7 +564,7 @@ class VMwareTools(AppBase):
         dev_changes.append(disk_spec)
         spec.deviceChange = dev_changes
         WaitForTask(vm.ReconfigVM_Task(spec=spec))
-        print("%sGB disk added to %s" % (disk_size, vm.config.name))
+        #print("%sGB disk added to %s" % (disk_size, vm.config.name))
         return json.dumps({"Status": "Complete"})
 
     def delete_vm(self,host_ip,username,password,port,disableSslCertValidation=True,vm_dns_name=None, vm_ip=None,vm_name=None):
@@ -529,7 +591,7 @@ class VMwareTools(AppBase):
             WaitForTask(TASK)
         TASK = vm.Destroy_Task()
         WaitForTask(TASK)
-        return json.dumps({"Status": "Deleted vm ".format(vm.name)})
+        return json.dumps({"Status": "Deleted vm {0}".format(vm.name)})
 
     def add_nic(self,host_ip,username,password,port,disableSslCertValidation=True,vm_dns_name=None, vm_ip=None,vm_name=None,network_name=None, nic_description="", nic_connect_on_start=True,nic_connected=False):
         si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
@@ -541,6 +603,11 @@ class VMwareTools(AppBase):
         elif vm_name:
             content = si.RetrieveContent()
             vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        if vm is None:
+            result = {
+                "Error": "Cannot find VM"
+            }
+            return json.dumps(result)
         try:
             spec = vim.vm.ConfigSpec()
             nic_changes = []
@@ -571,6 +638,403 @@ class VMwareTools(AppBase):
             nic_spec.device.backing.deviceName = network.name
             nic_spec.device.key = 4000
             nic_spec.device.deviceInfo.label = "Network Adapter 10"
+            nic_spec.device.connectable = vim.vm.device.VirtualDevice.ConnectInfo()
+            nic_spec.device.connectable.startConnected = bool(nic_connect_on_start == "True")
+            nic_spec.device.connectable.allowGuestControl = True
+            nic_spec.device.connectable.connected = bool(nic_connected == "True")
+            nic_spec.device.connectable.status = 'untried'
+            nic_spec.device.wakeOnLanEnabled = True
+            nic_spec.device.addressType = 'assigned'
+
+            nic_changes.append(nic_spec)
+            spec.deviceChange = nic_changes
+            WaitForTask(vm.ReconfigVM_Task(spec=spec))
+            return json.dumps({"Status": "Added Nic Card to Port Group {0}".format(network_name)})
+        except vmodl.MethodFault as error:
+            return json.dumps({"Error": "Error {0}".format(error.msg)})
+        except vmodl.RuntimeFault as rt:
+            return json.dumps({"Error": "Error {0}".format(rt.msg)})
+
+    def mount_iso(self,host_ip,username,password,port,disableSslCertValidation=True,vm_dns_name=None, vm_ip=None,vm_name=None, iso=None):
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        vm = None
+        if vm_dns_name:
+            vm = si.content.searchIndex.FindByDnsName(None, vm_dns_name, True)
+        elif vm_ip:
+            vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
+        elif vm_name:
+            content = si.RetrieveContent()
+            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        if vm is None:
+            result = {
+                "Error": "Cannot find VM"
+            }
+            return json.dumps(result)
+        for dev in vm.config.hardware.device:
+            if isinstance(dev, vim.vm.device.VirtualCdrom):
+                if 'CD/DVD' in dev.deviceInfo.label:
+                #if len(dev.device) < 2:
+                    controller = dev
+        cdrom_operation = vim.vm.device.VirtualDeviceSpec.Operation
+        device_spec = vim.vm.device.VirtualDeviceSpec()
+        connectable = vim.vm.device.VirtualDevice.ConnectInfo()
+        connectable.allowGuestControl = True
+        connectable.startConnected = True
+
+        cdrom = vim.vm.device.VirtualCdrom()
+        cdrom.controllerKey = controller.controllerKey
+        cdrom.key = controller.key
+        cdrom.connectable = connectable
+        #cdrom.backing = vim.vm.device.VirtualCdrom.IsoBackingInfo()
+        cdrom.backing = vim.vm.device.VirtualCdrom.IsoBackingInfo(fileName=iso)
+        device_spec.operation = cdrom_operation.edit
+        device_spec.device = cdrom
+        config_spec = vim.vm.ConfigSpec(deviceChange=[device_spec])
+        WaitForTask(vm.Reconfigure(config_spec))
+        return json.dumps({"Status": "Mounted Iso on {0}".format(vm.name)})
+
+    def delete_all_snapshots_vm(self,host_ip,username,password,port,disableSslCertValidation=True,vm_ip=None, vm_name=None):
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        vm = None
+        if vm_ip:
+            vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
+        elif vm_name:
+            content = si.RetrieveContent()
+            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        if vm is None:
+            result = {
+                "Error": "Cannot find VM"
+            }
+            return json.dumps(result)
+        try:
+            task = vm.RemoveAllSnapshots()
+            WaitForTask(task)
+            return json.dumps({"Status": "Removed all snapshots for {0}".format(vm.name),
+            "Task": "Result of task {0}".format(task.info.result)})
+        except Exception as err:
+            raise Exception(json.dumps({"Error was {0}".format(err)}))
+
+    def clone_vm_template(
+    self,
+    host_ip, 
+    username, 
+    password, 
+    port, 
+    template, 
+    vm_name, 
+    disableSslCertValidation=True, 
+    datacenter_name=None, 
+    vm_folder=None, 
+    datastore_name=None,
+    cluster_name=None, 
+    power_on=False,
+    license_key = None,
+    vm_password = "BadPassword1",
+    domain_admin_user = None,
+    admin_password = None,
+    domain_name = "Example.internal",
+    static_ip_address = None,
+    subnet_mask = None,
+    ip_gateway = None,
+    dns_list = None
+    ):
+        """
+        Clone a VM from a template/VM, datacenter_name, vm_folder, datastore_name
+        cluster_name, resource_pool, and power_on are all optional.
+        """
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        if template:
+            content = si.RetrieveContent()
+            template_vm = self.get_obj(content, [vim.VirtualMachine], template)
+        if template_vm is None:
+            result = {
+                "Error": "Cannot find template VM."
+            }
+            return json.dumps(result)
+        # if none git the first one
+        datacenter = self.get_obj(content, [vim.Datacenter], datacenter_name)
+
+        if vm_folder:
+            destfolder = self.search_for_obj(content, [vim.Folder], vm_folder)
+        else:
+            destfolder = datacenter.vmFolder
+
+        if datastore_name:
+            datastore = self.search_for_obj(content, [vim.Datastore], datastore_name)
+        else:
+            datastore = self.get_obj(
+                content, [vim.Datastore], template.datastore[0].info.name)
+
+        # if None, get the first one
+        cluster = self.search_for_obj(content, [vim.ClusterComputeResource], cluster_name)
+        if not cluster:
+            clusters = self.get_all_obj(content, [vim.ResourcePool])
+            cluster = list(clusters)[0]
+
+        resource_pool = None
+        if resource_pool:
+            resource_pool = self.search_for_obj(content, [vim.ResourcePool], resource_pool)
+        else:
+            resource_pool = cluster.resourcePool
+
+        # vmconf = vim.vm.ConfigSpec()
+
+        # if datastorecluster_name:
+        #     podsel = vim.storageDrs.PodSelectionSpec()
+        #     pod = pchelper.get_obj(content, [vim.StoragePod], datastorecluster_name)
+        #     podsel.storagePod = pod
+
+        #     storagespec = vim.storageDrs.StoragePlacementSpec()
+        #     storagespec.podSelectionSpec = podsel
+        #     storagespec.type = 'create'
+        #     storagespec.folder = destfolder
+        #     storagespec.resourcePool = resource_pool
+        #     storagespec.configSpec = vmconf
+
+        #     try:
+        #         rec = content.storageResourceManager.RecommendDatastores(
+        #             storageSpec=storagespec)
+        #         rec_action = rec.recommendations[0].action[0]
+        #         real_datastore_name = rec_action.destination.name
+        #     except Exception:
+        #         real_datastore_name = template.datastore[0].info.name
+
+        #     datastore = pchelper.get_obj(content, [vim.Datastore], real_datastore_name)
+
+        dns_server_list = []
+        ip_gateway_list = []
+        global_ip_dns_list = []
+        # Setup computer name, user, password, license key
+        sysprep_user_spec = vim.vm.customization.UserData()
+        sysprep_name_spec = vim.vm.customization.VirtualMachineNameGenerator()
+        sysprep_user_spec.computerName = sysprep_name_spec
+        sysprep_user_spec.fullName = "Test Test"
+        sysprep_user_spec.orgName = "Research"
+        sysprep_user_spec.productId = license_key
+
+        sysprep_pw_spec = vim.vm.customization.Password()
+        sysprep_pw_spec.plainText = True
+        sysprep_pw_spec.value = vm_password
+
+        sysprep_guiUnattended_spec = vim.vm.customization.GuiUnattended()
+        sysprep_guiUnattended_spec.autoLogon = False
+        sysprep_guiUnattended_spec.autoLogonCount = 1
+        sysprep_guiUnattended_spec.password = sysprep_pw_spec
+        sysprep_guiUnattended_spec.timeZone = int("035")
+        # for linux vm's
+        sysprep_globalip_spec = vim.vm.customization.GlobalIPSettings()
+        sysprep_globalip_spec.dnsServerList = global_ip_dns_list.append(dns_list)
+
+        sysprep_nic_spec = vim.vm.customization.AdapterMapping()
+        if static_ip_address:
+            sysprep_ip_spec = vim.vm.customization.IPSettings()
+            sysprep_fixed_ip_spec = vim.vm.customization.FixedIp()
+            sysprep_fixed_ip_spec.ipAddress = static_ip_address
+            sysprep_ip_spec.ip = sysprep_fixed_ip_spec
+        else:
+            sysprep_ip_spec = vim.vm.customization.IPSettings()
+            sysprep_dhcp_spec = vim.vm.customization.DhcpIpGenerator()
+            sysprep_ip_spec.ip = sysprep_dhcp_spec
+        #sysprep_ip_spec = vim.vm.customization.IPSettings()
+        sysprep_ip_spec.dnsDomain = domain_name
+        sysprep_ip_spec.dnsServerList = [dns_list]
+        sysprep_ip_spec.gateway = [ip_gateway]
+        sysprep_ip_spec.subnetMask = subnet_mask
+        
+        sysprep_nic_spec.adapter = sysprep_ip_spec
+
+        sysprep_identification_spec = vim.vm.customization.Identification()
+        # Join pc to domain or not
+        if domain_admin_user:
+            sysprep_admin_pw_spec = vim.vm.customization.Password()
+            sysprep_admin_pw_spec.plainText = True
+            sysprep_admin_pw_spec.value = admin_password
+            sysprep_identification_spec.domainAdmin = domain_admin_user
+            sysprep_identification_spec.domainAdminPassword = sysprep_admin_pw_spec
+            sysprep_identification_spec.joinDomain = domain_name
+        else:
+            sysprep_identification_spec = vim.vm.customization.Identification()
+        
+        sysprep_spec = vim.vm.customization.Sysprep()
+        sysprep_spec.guiUnattended = sysprep_guiUnattended_spec
+        sysprep_spec.identification = sysprep_identification_spec
+        sysprep_spec.userData = sysprep_user_spec
+        
+
+        customization_spec = vim.vm.customization.Specification()
+        customization_spec.identity = sysprep_spec
+        customization_spec.nicSettingMap = [sysprep_nic_spec]
+        customization_spec.globalIPSettings = sysprep_globalip_spec
+
+        # set relospec
+        relo_spec = vim.vm.RelocateSpec()
+        relo_spec.datastore = datastore
+        relo_spec.pool = resource_pool
+
+        clonespec = vim.vm.CloneSpec()
+        clonespec.location = relo_spec
+        clonespec.powerOn = bool(power_on == "True")
+        if static_ip_address or vm_password:
+            clonespec.customization = customization_spec
+
+        #print("cloning VM...")
+        task = template_vm.Clone(folder=destfolder, name=vm_name, spec=clonespec)
+        WaitForTask(task)
+        #print("VM cloned.")
+        return json.dumps({"Status": "Cloned vm to {0}".format(vm_name),
+        "clone_name": vm_name,
+        "ip_address": static_ip_address,
+        "ip_gateway": ip_gateway,
+        "subnet_mask": subnet_mask})
+    def customize_vm_settings(
+    self,
+    host_ip, 
+    username,
+    password,
+    port,
+    vm_name, 
+    license_key = None,
+    vm_password = "BadPassword1",
+    domain_admin_user = None,
+    admin_password = None,
+    domain_name = "Example.internal",
+    static_ip_address = None,
+    subnet_mask = None,
+    ip_gateway = None,
+    dns_list = None,
+    disableSslCertValidation=True
+    ):
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=True)
+        vm = None
+        if vm_name:
+            content = si.RetrieveContent()
+            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        if vm is None:
+            result = {
+                "Error": "Cannot find VM"
+            }
+            return json.dumps(result)
+        dns_server_list = []
+        ip_gateway_list = []
+        global_ip_dns_list = []
+        # Setup computer name, user, password, license key
+        sysprep_user_spec = vim.vm.customization.UserData()
+        sysprep_name_spec = vim.vm.customization.VirtualMachineNameGenerator()
+        sysprep_user_spec.computerName = sysprep_name_spec
+        sysprep_user_spec.fullName = "Test Test"
+        sysprep_user_spec.orgName = "Research"
+        sysprep_user_spec.productId = license_key
+
+        sysprep_pw_spec = vim.vm.customization.Password()
+        sysprep_pw_spec.plainText = True
+        sysprep_pw_spec.value = vm_password
+
+        sysprep_guiUnattended_spec = vim.vm.customization.GuiUnattended()
+        sysprep_guiUnattended_spec.autoLogon = False
+        sysprep_guiUnattended_spec.autoLogonCount = 1
+        sysprep_guiUnattended_spec.password = sysprep_pw_spec
+        sysprep_guiUnattended_spec.timeZone = int("035")
+        # for linux vm's
+        sysprep_globalip_spec = vim.vm.customization.GlobalIPSettings()
+        sysprep_globalip_spec.dnsServerList = global_ip_dns_list.append(dns_list)
+
+        sysprep_nic_spec = vim.vm.customization.AdapterMapping()
+        if static_ip_address:
+            sysprep_ip_spec = vim.vm.customization.IPSettings()
+            sysprep_fixed_ip_spec = vim.vm.customization.FixedIp()
+            sysprep_fixed_ip_spec.ipAddress = static_ip_address
+            sysprep_ip_spec.ip = sysprep_fixed_ip_spec
+        else:
+            sysprep_ip_spec = vim.vm.customization.IPSettings()
+            sysprep_dhcp_spec = vim.vm.customization.DhcpIpGenerator()
+            sysprep_ip_spec.ip = sysprep_dhcp_spec
+        #sysprep_ip_spec = vim.vm.customization.IPSettings()
+        sysprep_ip_spec.dnsDomain = domain_name
+        sysprep_ip_spec.dnsServerList = [dns_list]
+        sysprep_ip_spec.gateway = [ip_gateway]
+        sysprep_ip_spec.subnetMask = subnet_mask
+        
+        sysprep_nic_spec.adapter = sysprep_ip_spec
+
+        sysprep_identification_spec = vim.vm.customization.Identification()
+        # Join pc to domain or not
+        if domain_admin_user:
+            sysprep_admin_pw_spec = vim.vm.customization.Password()
+            sysprep_admin_pw_spec.plainText = True
+            sysprep_admin_pw_spec.value = admin_password
+            sysprep_identification_spec.domainAdmin = domain_admin_user
+            sysprep_identification_spec.domainAdminPassword = sysprep_admin_pw_spec
+            sysprep_identification_spec.joinDomain = domain_name
+        else:
+            sysprep_identification_spec = vim.vm.customization.Identification()
+        
+        sysprep_spec = vim.vm.customization.Sysprep()
+        sysprep_spec.guiUnattended = sysprep_guiUnattended_spec
+        sysprep_spec.identification = sysprep_identification_spec
+        sysprep_spec.userData = sysprep_user_spec
+        
+
+        customization_spec = vim.vm.customization.Specification()
+        customization_spec.identity = sysprep_spec
+        customization_spec.nicSettingMap = [sysprep_nic_spec]
+        customization_spec.globalIPSettings = sysprep_globalip_spec
+        WaitForTask(vm.CustomizeVM_Task(spec=customization_spec))
+        return json.dumps({"Status": "Customized vm {0}".format(vm_name)})
+
+    def change_vm_network(self,host_ip,username,password,port,disableSslCertValidation=True,vm_dns_name=None, vm_ip=None,vm_name=None,network_name=None, nic_number=1, nic_connect_on_start=True,nic_connected=False):
+        si = self.__connect(host_ip=host_ip,username=username,password=password,port=port,disableSslCertValidation=disableSslCertValidation)
+        vm = None
+        if vm_dns_name:
+            vm = si.content.searchIndex.FindByDnsName(None, vm_dns_name, True)
+        elif vm_ip:
+            vm = si.content.searchIndex.FindByIp(None, vm_ip, True)
+        elif vm_name:
+            content = si.RetrieveContent()
+            vm = self.get_obj(content, [vim.VirtualMachine], vm_name)
+        if vm is None:
+            result = {
+                "Error": "Cannot find VM"
+            }
+            return json.dumps(result)
+        try:
+            nic_prefix_label = 'Network adapter '
+            nic_label = nic_prefix_label + str(nic_number)
+            virtual_nic_device = None
+            for dev in vm.config.hardware.device:
+                if isinstance(dev, vim.vm.device.VirtualEthernetCard) \
+                and dev.deviceInfo.label == nic_label:
+                    virtual_nic_device = dev
+            if not virtual_nic_device:
+                raise RuntimeError('Virtual {} could not be found.'.format(nic_label))
+            spec = vim.vm.ConfigSpec()
+            nic_changes = []
+
+            nic_spec = vim.vm.device.VirtualDeviceSpec()
+            nic_spec.operation = vim.vm.device.VirtualDeviceSpec.Operation.edit
+
+            nic_spec.device = virtual_nic_device
+
+            # nic_spec.device.deviceInfo = vim.Description()
+            # nic_spec.device.deviceInfo.summary = nic_description
+            # nic_spec.device.deviceInfo.label = "Network Adapter 10"
+            net_content = si.RetrieveContent()
+            network = self.get_obj(net_content, [vim.Network], network_name)
+            #return json.dumps({"network": network.name})
+            
+            # if isinstance(network, vim.OpaqueNetwork):
+            #     nic_spec.device.backing = \
+            #         vim.vm.device.VirtualEthernetCard.OpaqueNetworkBackingInfo()
+            #     nic_spec.device.backing.opaqueNetworkType = \
+            #         network.summary.opaqueNetworkType
+            #     nic_spec.device.backing.opaqueNetworkId = \
+            #         network.summary.opaqueNetworkId
+            #else:
+            nic_spec.device.backing = vim.vm.device.VirtualEthernetCard.NetworkBackingInfo()
+            nic_spec.device.backing.useAutoDetect = False
+            #nic_spec.device.backing.network = network
+            nic_spec.device.backing.deviceName = network.name
+            nic_spec.device.key = 4000
+            #nic_spec.device.deviceInfo.label = "Network Adapter 10"
             nic_spec.device.connectable = vim.vm.device.VirtualDevice.ConnectInfo()
             nic_spec.device.connectable.startConnected = bool(nic_connect_on_start == "True")
             nic_spec.device.connectable.allowGuestControl = True
