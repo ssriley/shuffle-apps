@@ -847,7 +847,7 @@ class VMwareTools(AppBase):
         # Join pc to domain or not
         if domain_admin_user:
             sysprep_admin_pw_spec = vim.vm.customization.Password()
-            sysprep_admin_pw_spec.plainText = False
+            sysprep_admin_pw_spec.plainText = True
             sysprep_admin_pw_spec.value = admin_password
             sysprep_identification_spec.domainAdmin = domain_admin_user
             sysprep_identification_spec.domainAdminPassword = sysprep_admin_pw_spec
@@ -960,7 +960,7 @@ class VMwareTools(AppBase):
         # Join pc to domain or not
         if domain_admin_user:
             sysprep_admin_pw_spec = vim.vm.customization.Password()
-            sysprep_admin_pw_spec.plainText = False
+            sysprep_admin_pw_spec.plainText = True
             sysprep_admin_pw_spec.value = admin_password
             sysprep_identification_spec.domainAdmin = domain_admin_user
             sysprep_identification_spec.domainAdminPassword = sysprep_admin_pw_spec
