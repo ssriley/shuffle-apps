@@ -837,8 +837,8 @@ class VMwareTools(AppBase):
             sysprep_ip_spec.ip = sysprep_dhcp_spec
         #sysprep_ip_spec = vim.vm.customization.IPSettings()
         sysprep_ip_spec.dnsDomain = domain_name
-        sysprep_ip_spec.dnsServerList = dns_server_list.append(dns_list)
-        sysprep_ip_spec.gateway = ip_gateway_list.append(ip_gateway)
+        sysprep_ip_spec.dnsServerList = [dns_list]
+        sysprep_ip_spec.gateway = [ip_gateway]
         sysprep_ip_spec.subnetMask = subnet_mask
         
         sysprep_nic_spec.adapter = sysprep_ip_spec
@@ -950,8 +950,8 @@ class VMwareTools(AppBase):
             sysprep_ip_spec.ip = sysprep_dhcp_spec
         #sysprep_ip_spec = vim.vm.customization.IPSettings()
         sysprep_ip_spec.dnsDomain = domain_name
-        sysprep_ip_spec.dnsServerList = dns_server_list.append(dns_list)
-        sysprep_ip_spec.gateway = ip_gateway_list.append(ip_gateway)
+        sysprep_ip_spec.dnsServerList = [dns_list]
+        sysprep_ip_spec.gateway = [ip_gateway]
         sysprep_ip_spec.subnetMask = subnet_mask
         
         sysprep_nic_spec.adapter = sysprep_ip_spec
