@@ -818,6 +818,9 @@ class VMwareTools(AppBase):
                 "Error": "Cannot find VM"
             }
             return json.dumps(result)
+        dns_server_list = []
+        ip_gateway_list = []
+        global_ip_dns_list = []
         # Setup computer name, user, password, license key
         sysprep_user_spec = vim.vm.customization.UserData()
         sysprep_name_spec = vim.vm.customization.VirtualMachineNameGenerator()
@@ -837,7 +840,7 @@ class VMwareTools(AppBase):
         sysprep_guiUnattended_spec.timeZone = int("035")
         # for linux vm's
         sysprep_globalip_spec = vim.vm.customization.GlobalIPSettings()
-        sysprep_globalip_spec.dnsServerList = dns_list
+        sysprep_globalip_spec.dnsServerList = global_ip_dns_list.append(dns_list)
 
         sysprep_nic_spec = vim.vm.customization.AdapterMapping()
         if static_ip_address:
@@ -851,8 +854,8 @@ class VMwareTools(AppBase):
             sysprep_ip_spec.ip = sysprep_dhcp_spec
         #sysprep_ip_spec = vim.vm.customization.IPSettings()
         sysprep_ip_spec.dnsDomain = domain_name
-        sysprep_ip_spec.dnsServerList = dns_list
-        sysprep_ip_spec.gateway = ip_gateway
+        sysprep_ip_spec.dnsServerList = dns_server_list.append(dns_list)
+        sysprep_ip_spec.gateway = ip_gateway_list.append(ip_gateway)
         sysprep_ip_spec.subnetMask = subnet_mask
         
         sysprep_nic_spec.adapter = sysprep_ip_spec
