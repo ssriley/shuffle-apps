@@ -1,4 +1,5 @@
 
+from ipaddress import ip_address
 from walkoff_app_sdk.app_base import AppBase
 import sys
 import atexit
@@ -352,6 +353,10 @@ class VMwareTools(AppBase):
         config = vim.vm.ConfigSpec()
         config.annotation = annotation
         config.memoryMB = int(memory)
+        '''
+        Possible Guest Names
+        https://vdc-download.vmware.com/vmwb-repository/dcr-public/bf660c0a-f060-46e8-a94d-4b5e6ffc77ad/208bc706-e281-49b6-a0ce-b402ec19ef82/SDK/vsphere-ws/docs/ReferenceGuide/vim.vm.GuestOsDescriptor.GuestOsIdentifier.html
+        '''
         config.guestId = guest
         config.name = vm_name
         config.numCPUs = int(cpus)
@@ -710,8 +715,29 @@ class VMwareTools(AppBase):
             raise Exception(json.dumps({"Error was {0}".format(err)}))
 
     def clone_vm_template(
-            self, host_ip, username, password, port, template, vm_name, disableSslCertValidation=True, datacenter_name=None, vm_folder=None, datastore_name=None,
-            cluster_name=None, power_on=False):
+    self,
+    host_ip, 
+    username, 
+    password, 
+    port, 
+    template, 
+    vm_name, 
+    disableSslCertValidation=True, 
+    datacenter_name=None, 
+    vm_folder=None, 
+    datastore_name=None,
+    cluster_name=None, 
+    power_on=False,
+    license_key = None,
+    vm_password = "BadPassword1",
+    domain_admin_user = None,
+    admin_password = None,
+    domain_name = "Example.internal",
+    static_ip_address = None,
+    subnet_mask = None,
+    ip_gateway = None,
+    dns_list = None
+    ):
         """
         Clone a VM from a template/VM, datacenter_name, vm_folder, datastore_name
         cluster_name, resource_pool, and power_on are all optional.
@@ -775,6 +801,71 @@ class VMwareTools(AppBase):
 
         #     datastore = pchelper.get_obj(content, [vim.Datastore], real_datastore_name)
 
+        dns_server_list = []
+        ip_gateway_list = []
+        global_ip_dns_list = []
+        # Setup computer name, user, password, license key
+        sysprep_user_spec = vim.vm.customization.UserData()
+        sysprep_name_spec = vim.vm.customization.VirtualMachineNameGenerator()
+        sysprep_user_spec.computerName = sysprep_name_spec
+        sysprep_user_spec.fullName = "Test Test"
+        sysprep_user_spec.orgName = "Research"
+        sysprep_user_spec.productId = license_key
+
+        sysprep_pw_spec = vim.vm.customization.Password()
+        sysprep_pw_spec.plainText = False
+        sysprep_pw_spec.value = vm_password
+
+        sysprep_guiUnattended_spec = vim.vm.customization.GuiUnattended()
+        sysprep_guiUnattended_spec.autoLogon = False
+        sysprep_guiUnattended_spec.autoLogonCount = 1
+        sysprep_guiUnattended_spec.password = sysprep_pw_spec
+        sysprep_guiUnattended_spec.timeZone = int("035")
+        # for linux vm's
+        sysprep_globalip_spec = vim.vm.customization.GlobalIPSettings()
+        sysprep_globalip_spec.dnsServerList = global_ip_dns_list.append(dns_list)
+
+        sysprep_nic_spec = vim.vm.customization.AdapterMapping()
+        if static_ip_address:
+            sysprep_ip_spec = vim.vm.customization.IPSettings()
+            sysprep_fixed_ip_spec = vim.vm.customization.FixedIp()
+            sysprep_fixed_ip_spec.ipAddress = static_ip_address
+            sysprep_ip_spec.ip = sysprep_fixed_ip_spec
+        else:
+            sysprep_ip_spec = vim.vm.customization.IPSettings()
+            sysprep_dhcp_spec = vim.vm.customization.DhcpIpGenerator()
+            sysprep_ip_spec.ip = sysprep_dhcp_spec
+        #sysprep_ip_spec = vim.vm.customization.IPSettings()
+        sysprep_ip_spec.dnsDomain = domain_name
+        sysprep_ip_spec.dnsServerList = dns_server_list.append(dns_list)
+        sysprep_ip_spec.gateway = ip_gateway_list.append(ip_gateway)
+        sysprep_ip_spec.subnetMask = subnet_mask
+        
+        sysprep_nic_spec.adapter = sysprep_ip_spec
+
+        sysprep_identification_spec = vim.vm.customization.Identification()
+        # Join pc to domain or not
+        if domain_admin_user:
+            sysprep_admin_pw_spec = vim.vm.customization.Password()
+            sysprep_admin_pw_spec.plainText = False
+            sysprep_admin_pw_spec.value = admin_password
+            sysprep_identification_spec.domainAdmin = domain_admin_user
+            sysprep_identification_spec.domainAdminPassword = sysprep_admin_pw_spec
+            sysprep_identification_spec.joinDomain = domain_name
+        else:
+            sysprep_identification_spec = vim.vm.customization.Identification()
+        
+        sysprep_spec = vim.vm.customization.Sysprep()
+        sysprep_spec.guiUnattended = sysprep_guiUnattended_spec
+        sysprep_spec.identification = sysprep_identification_spec
+        sysprep_spec.userData = sysprep_user_spec
+        
+
+        customization_spec = vim.vm.customization.Specification()
+        customization_spec.identity = sysprep_spec
+        customization_spec.nicSettingMap = [sysprep_nic_spec]
+        customization_spec.globalIPSettings = sysprep_globalip_spec
+
         # set relospec
         relo_spec = vim.vm.RelocateSpec()
         relo_spec.datastore = datastore
@@ -783,13 +874,18 @@ class VMwareTools(AppBase):
         clonespec = vim.vm.CloneSpec()
         clonespec.location = relo_spec
         clonespec.powerOn = bool(power_on == "True")
+        if static_ip_address or vm_password:
+            clonespec.customization = customization_spec
 
         #print("cloning VM...")
         task = template_vm.Clone(folder=destfolder, name=vm_name, spec=clonespec)
         WaitForTask(task)
         #print("VM cloned.")
         return json.dumps({"Status": "Cloned vm to {0}".format(vm_name),
-        "clone_name": vm_name})
+        "clone_name": vm_name,
+        "ip_address": static_ip_address,
+        "ip_gateway": ip_gateway,
+        "subnet_mask": subnet_mask})
     def customize_vm_settings(
     self,
     host_ip, 
@@ -830,7 +926,7 @@ class VMwareTools(AppBase):
         sysprep_user_spec.productId = license_key
 
         sysprep_pw_spec = vim.vm.customization.Password()
-        sysprep_pw_spec.plainText = False
+        sysprep_pw_spec.plainText = True
         sysprep_pw_spec.value = vm_password
 
         sysprep_guiUnattended_spec = vim.vm.customization.GuiUnattended()
