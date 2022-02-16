@@ -813,7 +813,7 @@ class VMwareTools(AppBase):
         sysprep_user_spec.productId = license_key
 
         sysprep_pw_spec = vim.vm.customization.Password()
-        sysprep_pw_spec.plainText = False
+        sysprep_pw_spec.plainText = True
         sysprep_pw_spec.value = vm_password
 
         sysprep_guiUnattended_spec = vim.vm.customization.GuiUnattended()
