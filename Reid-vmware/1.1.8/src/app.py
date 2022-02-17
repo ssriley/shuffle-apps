@@ -1029,11 +1029,13 @@ class VMwareTools(AppBase):
             #     nic_spec.device.backing.opaqueNetworkId = \
             #         network.summary.opaqueNetworkId
             #else:
-            nic_spec.device.backing = vim.vm.device.VirtualEthernetCard.NetworkBackingInfo()
+            #nic_spec.device.backing = vim.vm.device.VirtualEthernetCard.NetworkBackingInfo()
+            nic_spec.device.backing = virtual_nic_device.backing
             nic_spec.device.backing.useAutoDetect = False
             #nic_spec.device.backing.network = network
             nic_spec.device.backing.deviceName = network.name
-            nic_spec.device.key = 4000
+            #nic_spec.device.key = 4000
+            nic_spec.device.key = virtual_nic_device.key
             #nic_spec.device.deviceInfo.label = "Network Adapter 10"
             nic_spec.device.connectable = vim.vm.device.VirtualDevice.ConnectInfo()
             nic_spec.device.connectable.startConnected = bool(nic_connect_on_start == "True")
