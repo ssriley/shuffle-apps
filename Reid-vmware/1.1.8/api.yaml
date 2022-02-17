@@ -603,6 +603,13 @@ actions:
         example: "Optional My VM"
         schema:
           type: string
+      - name: port_group_type
+        description: Dvs or standard port group.
+        required: true
+        multiline: false
+        example: "dvs or standard"
+        schema:
+          type: string
       - name: network_name
         description: Name of the port group to attach nic to.
         required: true
