@@ -1093,7 +1093,7 @@ class VMwareTools(AppBase):
                 nic_changes.append(nic_spec)
                 spec.deviceChange = nic_changes
                 WaitForTask(vm.ReconfigVM_Task(spec=spec))
-                return json.dumps({"Status": "Added Nic Card to Port Group {0}".format(network_name)})
+                return json.dumps({"Status": "Added vm nic to Port Group {0}".format(network_name)})
         except vmodl.MethodFault as error:
             return json.dumps({"Error": "Error {0}".format(error.msg)})
         except vmodl.RuntimeFault as rt:
