@@ -1071,7 +1071,7 @@ class VMwareTools(AppBase):
                 for port in ports:
                     if port.key == port_key:
                         connect_port = port
-                nic_spec.device.backing = vim.vm.device.VirtualEthernetCard.NetworkBackingInfo()
+                nic_spec.device.backing = vim.vm.device.VirtualEthernetCard.DistributedVirtualPortBackingInfo()
                 nic_spec.device.backing.port = vim.dvs.PortConnection()
                 nic_spec.device.backing.port.portgroupKey = connect_port.portgroupKey
                 nic_spec.device.backing.port.switchUuid = connect_port.dvsUuid
