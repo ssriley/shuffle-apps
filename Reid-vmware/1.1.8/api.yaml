@@ -614,7 +614,7 @@ actions:
         description: Name of the port group to attach nic to.
         required: true
         multiline: false
-        example: "network_136"
+        example: "network_136 this is the port group name"
         schema:
           type: string
       - name: nic_number
