@@ -1076,7 +1076,7 @@ class VMwareTools(AppBase):
                 nic_spec.device.backing.port.portgroupKey = connect_port.portgroupKey
                 nic_spec.device.backing.port.switchUuid = connect_port.dvsUuid
                 nic_spec.device.backing.port.portKey = connect_port.key
-                nic_spec.device.backing.useAutoDetect = False
+                #nic_spec.device.backing.useAutoDetect = False
                 #nic_spec.device.backing.network = network
                 nic_spec.device.backing.deviceName = network.name
                 #nic_spec.device.key = 4000
