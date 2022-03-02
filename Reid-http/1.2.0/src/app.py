@@ -1,6 +1,5 @@
 import time
 import json
-import json
 import random
 import socket
 import uncurl
