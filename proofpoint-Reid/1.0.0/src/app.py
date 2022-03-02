@@ -1,7 +1,7 @@
 import json
 import requests
 #from telnetlib import TLS
-import ssl
+
 
 from walkoff_app_sdk.app_base import AppBase
 
