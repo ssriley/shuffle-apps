@@ -329,7 +329,7 @@ class VMwareTools(AppBase):
     esxi_host_ip,
     disableSslCertValidation=True,
     datastore_name=None,
-    memory=4,
+    memory=4096,
     guest="otherGuest",
     annotation="Example",
     cpus=1,

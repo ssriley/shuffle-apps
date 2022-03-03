@@ -110,10 +110,10 @@ actions:
         schema:
           type: string
       - name: memory
-        description: Amount of memory for the VM
+        description: Amount of memory for the VM in MB
         required: true
         multiline: false
-        example: "4"
+        example: "4096"
         schema:
           type: string
       - name: cpus
