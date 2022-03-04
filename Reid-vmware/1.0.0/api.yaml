@@ -446,7 +446,7 @@ actions:
           type: string
       - name: vm_password
         description: Password for the vm
-        required: True
+        required: false
         multiline: true
         example: "BadPassword!"
         schema:
