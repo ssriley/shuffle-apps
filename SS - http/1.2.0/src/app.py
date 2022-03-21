@@ -1,6 +1,5 @@
 import time
 import json
-import json
 import random
 import socket
 import uncurl
@@ -12,7 +11,7 @@ from walkoff_app_sdk.app_base import AppBase
 
 class HTTP(AppBase):
     __version__ = "1.0.0"
-    app_name = "http"  
+    app_name = "SS - http"  
 
     def __init__(self, redis, logger, console_logger=None):
         print("INIT")
@@ -112,46 +111,90 @@ class HTTP(AppBase):
         else:
             return body
 
-    def GET(self, url, headers="", verify=True):
+    def fix_url(self, url):
+        # Random bugs seen by users
+        if "hhttp" in url:
+            url = url.replace("hhttp", "http")
+
+        if "http:/" in url and not "http://" in url:
+            url = url.replace("http:/", "http://", -1)
+        if "https:/" in url and not "https://" in url:
+            url = url.replace("https:/", "https://", -1)
+        if "http:///" in url:
+            url = url.replace("http:///", "http://", -1)
+        if "https:///" in url:
+            url = url.replace("https:///", "https://", -1)
+        if not "http://" in url and not "http" in url:
+            url = f"http://{url}" 
+
+        return url
+
+    def GET(self, url, headers="", username="", password="", verify=True):
+        url = self.fix_url(url)
+
         parsed_headers = self.splitheaders(headers)
         verify = self.checkverify(verify)
-        return requests.get(url, headers=parsed_headers, verify=verify).text
+        return requests.get(url, headers=parsed_headers, auth=requests.auth.HTTPBasicAuth(username, password), verify=verify).text
 
-    def POST(self, url, headers="", body="", verify=True):
+    def POST(self, url, headers="", body="", username="", password="", verify=True, data_type="data"):
+        url = self.fix_url(url)
+
         parsed_headers = self.splitheaders(headers)
         verify = self.checkverify(verify)
         body = self.checkbody(body)
-        return requests.post(url, headers=parsed_headers, data=body, verify=verify).text
-
+        if data_type == "data":
+            return requests.post(url, headers=parsed_headers, auth=requests.auth.HTTPBasicAuth(username, password), data=body, verify=verify).text
+        elif data_type == "json":
+            return requests.post(url, headers=parsed_headers, auth=requests.auth.HTTPBasicAuth(username, password), json=body, verify=verify).text
+        elif data_type == "json_rpc":
+            payload = {
+                "id": "2bc99d4c804576e0cd7b1b1463ce479e",
+                "jsonrpc": "2.0",
+                "method": "createAccount",
+                "params": body
+            }
+            return requests.post(url, headers=parsed_headers, auth=requests.auth.HTTPBasicAuth(username, password), data=json.dumps(body), verify=verify).text
+        else:
+            print("data type needs to be either data or json")
     # UNTESTED BELOW HERE
-    def PUT(self, url, headers="", body="", verify=True):
+    def PUT(self, url, headers="", body="", username="", password="", verify=True):
+        url = self.fix_url(url)
+
         parsed_headers = self.splitheaders(headers)
         verify = self.checkverify(verify)
         body = self.checkbody(body)
-        return requests.put(url, headers=parsed_headers, data=body, verify=verify).text
+        return requests.put(url, headers=parsed_headers, auth=requests.auth.HTTPBasicAuth(username, password), data=body, verify=verify).text
 
-    def PATCH(self, url, headers="", body="", verify=True):
+    def PATCH(self, url, headers="", body="", username="", password="", verify=True):
+        url = self.fix_url(url)
+
         parsed_headers = self.splitheaders(headers)
         verify = self.checkverify(verify)
         body = self.checkbody(body)
         return requests.patch(url, headers=parsed_headers, data=body, verify=verify).text
 
-    def DELETE(self, url, headers="", body="", verify=True):
+    def DELETE(self, url, headers="", body="", username="", password="", verify=True):
+        url = self.fix_url(url)
+
         parsed_headers = self.splitheaders(headers)
         verify = self.checkverify(verify)
-        return requests.delete(url, headers=parsed_headers, verify=verify).text
+        return requests.delete(url, headers=parsed_headers, auth=requests.auth.HTTPBasicAuth(username, password), verify=verify).text
 
-    def HEAD(self, url, headers="", body="", verify=True):
+    def HEAD(self, url, headers="", body="", username="", password="", verify=True):
+        url = self.fix_url(url)
+
         parsed_headers = self.splitheaders(headers)
         verify = self.checkverify(verify)
         body = self.checkbody(body)
-        return requests.head(url, headers=parsed_headers, verify=verify).text
+        return requests.head(url, headers=parsed_headers, auth=requests.auth.HTTPBasicAuth(username, password), verify=verify).text
 
-    def OPTIONS(self, url, headers="", body="", verify=True):
+    def OPTIONS(self, url, headers="", body="", username="", password="", verify=True):
+        url = self.fix_url(url)
+
         parsed_headers = self.splitheaders(headers)
         verify = self.checkverify(verify)
         body = self.checkbody(body)
-        return requests.options(url, headers=parsed_headers, verify=verify).text
+        return requests.options(url, headers=parsed_headers, auth=requests.auth.HTTPBasicAuth(username, password), verify=verify).text
 
 
 # Run the actual thing after we've checked params

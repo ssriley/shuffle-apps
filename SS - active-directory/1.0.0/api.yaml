@@ -1,5 +1,5 @@
 app_version: 1.0.1
-name: Active Directory Reids Version
+name: SS - Active Directory
 description: Active Directory and LDAP/LDAPS. For full usage of the action configure using LDAPS.
 contact_info:
   name: "@d4rkw0lv3s"

@@ -14,7 +14,7 @@ from types import NoneType
 class VMwareTools(AppBase):
     __version__ = "1.0.0"
     app_name = (
-        "Test VMware Tools"  # this needs to match "name" in api.yaml for WALKOFF to work
+        "SS - VMware Tools"  # this needs to match "name" in api.yaml for WALKOFF to work
     )
 
     def __init__(self, redis, logger, console_logger=None):

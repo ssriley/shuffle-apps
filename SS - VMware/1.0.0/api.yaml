@@ -1,6 +1,6 @@
 ---
 app_version: 1.0.0
-name: Test VMware Tools
+name: SS - VMware Tools
 description: A tool for VMware Vcenter
 tags:
   - Testing
@@ -9,9 +9,9 @@ categories:
   - Testing
   - vmware
 contact_info:
-  name: "Safe Systems"
-  url: https://safesystems.com
-  email: rd@safesystems.com
+  name: "SS"
+  url: https://example.com
+  email: rd@example.com
 authentication:
   required: true
   parameters:

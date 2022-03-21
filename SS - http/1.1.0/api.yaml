@@ -1,6 +1,6 @@
 walkoff_version: 1.1.0
-app_version: 1.2.0
-name: Reid-http
+app_version: 1.1.0
+name: SS - http
 description: HTTP app 
 tags:
   - Testing 
@@ -105,14 +105,7 @@ actions:
           - true
         example: "false"
         schema:
-          type: bool
-      - name: data_type 
-        description: The type of data to send in request. Needs to be data, json, or json_rpc
-        multiline: false 
-        required: false 
-        example: "data or json or json_rpc"
-        schema:
-          type: string
+          type: bool 
     returns:
       schema:
         type: string

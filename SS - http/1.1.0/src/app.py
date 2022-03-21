@@ -12,7 +12,7 @@ from walkoff_app_sdk.app_base import AppBase
 
 class HTTP(AppBase):
     __version__ = "1.0.0"
-    app_name = "http"  
+    app_name = "SS - http"  
 
     def __init__(self, redis, logger, console_logger=None):
         print("INIT")
