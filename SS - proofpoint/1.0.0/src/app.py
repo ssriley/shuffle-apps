@@ -7,7 +7,7 @@ from walkoff_app_sdk.app_base import AppBase
 
 class ProofPoint(AppBase):
     __version__ = "1.0.0"
-    app_name = "ProofPoint SmartSearch Reid"  # this needs to match "name" in api.yaml
+    app_name = "SS - ProofPoint SmartSearch"  # this needs to match "name" in api.yaml
 
     def __init__(self, redis, logger, console_logger=None):
         """

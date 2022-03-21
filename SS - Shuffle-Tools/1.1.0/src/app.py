@@ -39,7 +39,7 @@ class Tools(AppBase):
 
     __version__ = "1.1.0"
     app_name = (
-        "Shuffle Tools"  # this needs to match "name" in api.yaml for WALKOFF to work
+        "SS - Shuffle Tools"  # this needs to match "name" in api.yaml for WALKOFF to work
     )
 
     def __init__(self, redis, logger, console_logger=None):
