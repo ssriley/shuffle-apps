@@ -227,6 +227,13 @@ actions:
   - name: get_endpoint_list
     description: Gets a list of endpoints and their ID's
     parameters:
+      - name: filters
+        description: Filter based on the computer name. Can use * wildcard.
+        multiline: false 
+        required: false 
+        example: "Computer01 or *01"
+        schema:
+          type: string
       - name: verify 
         description: Check certificate
         multiline: false 
@@ -243,11 +250,11 @@ actions:
   - name: get_endpoint_details
     description: Gets the Details of an endpoint.
     parameters:
-      - name: filters
-        description: Search for the endpoint name. Can use wildcard *.
+      - name: endpoint_id
+        description: Gets Details of endpoint based on ID
         multiline: false 
         required: false 
-        example: "Computer01 or *01"
+        example: "5b7ac19bb1a43dfb107b23c6"
         schema:
           type: string
       - name: verify 

@@ -245,16 +245,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getPolicyDetails")
         return send_request
 
-    def get_endpoint_list(self, body={}, username="", password="", verify=True):
-        url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/network"
-        headers={"Content-Type": "application/json"}
-        #parsed_headers = self.splitheaders(headers)
-        verify = self.checkverify(verify)
-        #body = self.checkbody(body)
-        send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getEndpointsList")
-        return send_request
-
-    def get_endpoint_details(self, body={}, username="", password="", verify=True, filters=None):
+    def get_endpoint_list(self, body={}, username="", password="", verify=True, filters=None):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/network"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -266,6 +257,18 @@ class Bitdefender(AppBase):
                     "name": filters
                 }
             }
+        }
+        send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getEndpointsList")
+        return send_request
+
+    def get_endpoint_details(self, body={}, username="", password="", verify=True, endpoint_id=""):
+        url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/network"
+        headers={"Content-Type": "application/json"}
+        #parsed_headers = self.splitheaders(headers)
+        verify = self.checkverify(verify)
+        #body = self.checkbody(body)
+        body = {
+            "endpointId": endpoint_id 
         }
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getManagedEndpointDetails")
         return send_request
