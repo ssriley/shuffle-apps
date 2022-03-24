@@ -289,9 +289,11 @@ class Bitdefender(AppBase):
             hash_type = 1
         if hash_type == "md5":
             hash_type = 2
+        hashes = []
+        hashes.append(hash_list)
         body = {
             "hashType": hash_type,
-            "hashList": [hash_list],
+            "hashList": hashes,
             "sourceInfo": source_info
         }
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="addToBlocklist")
