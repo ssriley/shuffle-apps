@@ -308,7 +308,7 @@ class Bitdefender(AppBase):
                 "invalid": [],
             }
 
-        hash_list = [hash_list]
+            hash_list = [hash_list]
         body = {
             "hashType": hash_type,
             "hashList": hash_list,
