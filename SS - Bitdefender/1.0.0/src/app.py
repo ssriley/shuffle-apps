@@ -99,7 +99,7 @@ class Bitdefender(AppBase):
         base64_bytes = base64.b64encode(password_bytes)
         base64_string = base64_bytes.decode('ascii')
         headers={"Content-Type": "application/json",
-        "Authorization": "Basic " + base64_string
+        "Authorization": "Basic " + base64_string + "="
         }
         #parsed_headers = self.splitheaders(headers)
         verify = self.checkverify(verify)

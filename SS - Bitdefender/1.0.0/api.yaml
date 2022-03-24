@@ -25,13 +25,6 @@ actions:
   - name: get_push_event_settings
     description: Gets the Push Event Settings for the oOrg
     parameters:
-      - name: username 
-        description: The username to use
-        multiline: false 
-        required: false 
-        example: "Username"
-        schema:
-          type: string
       - name: verify 
         description: Check certificate
         multiline: false 
