@@ -404,7 +404,7 @@ actions:
     returns:
       schema:
         type: string
-  - name: create_connectoion_edr_rule
+  - name: create_connection_edr_rule
     description: Creates a custom edr rule based on network connection criteria.
     parameters:
       - name: rule_type
