@@ -111,6 +111,9 @@ actions:
         multiline: false 
         required: false 
         example: "data or json or json_rpc"
+        options:
+          - data
+          - json
         schema:
           type: string
     returns:

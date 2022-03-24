@@ -1,0 +1,556 @@
+walkoff_version: 1.1.0
+app_version: 1.0.0
+name: SS - Bitdefender
+description: HTTP Requests for Bitdefender API
+tags:
+  - Testing 
+  - HTTP
+categories:
+  - Testing 
+  - HTTP
+contact_info:
+  name: "SS"
+  url: https://github.com/
+  email: "rd@example.com"
+authentication:
+  required: true
+  parameters:
+    - name: username
+      description: "API Key including a : at the end"
+      example: "N8KzwcqVUxAI1RoPi5jyFJPkPlkDl9vF:"
+      required: true
+      schema:
+        type: string
+actions:
+  - name: get_push_event_settings
+    description: Gets the Push Event Settings for the oOrg
+    parameters:
+      - name: username 
+        description: The username to use
+        multiline: false 
+        required: false 
+        example: "Username"
+        schema:
+          type: string
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool 
+    returns:
+      schema:
+        type: string
+  - name: get_account_list
+    description: Gets a list of Bitdefender Accounts and Id's
+    parameters:
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool 
+    returns:
+      schema:
+        type: string
+  - name: update_user_account
+    description: Updates a Bitdefender User in the Console
+    parameters:
+      - name: account_id 
+        description: The Id of the account you want to change
+        multiline: false 
+        required: true 
+        example: "585d3d3faaed70970e8b45ed"
+        schema:
+          type: string
+      - name: email
+        description: Change the email address of user
+        multiline: false 
+        required: false 
+        example: "rd@example.com"
+        schema:
+          type: string
+      - name: bd_password
+        description: Change the password of the user
+        multiline: false 
+        required: false 
+        example: "GoDawgs"
+        schema:
+          type: string 
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool 
+    returns:
+      schema:
+        type: string
+  - name: delete_user_account
+    description: Deletes a user from the GravityZone Console
+    parameters:
+      - name: account_id 
+        description: The Id of the account you want to change
+        multiline: false 
+        required: true 
+        example: "585d3d3faaed70970e8b45ed"
+        schema:
+          type: string
+    returns:
+      schema:
+        type: string
+  - name: create_user_account
+    description: Create a user account in the GravityZone console
+    parameters:
+      - name: email
+        description: Change the email address of user
+        multiline: false 
+        required: true 
+        example: "rd@example.com"
+        schema:
+          type: string
+      - name: fullName
+        description: The Name of the User
+        multiline: false 
+        required: true 
+        example: "Steven Seagal"
+        schema:
+          type: string
+      - name: bd_password
+        description: Change the password of the user
+        multiline: false 
+        required: true 
+        example: "GoDawgs"
+        schema:
+          type: string
+      - name: role
+        description: The permissions of the new user
+        multiline: false 
+        required: true 
+        options:
+          - company_administrator
+          - network_administrator
+          - reporter
+          - partner
+        example: "company_administrator"
+        schema:
+          type: string
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool 
+    returns:
+      schema:
+        type: string
+  - name: send_test_push_event
+    description: Sends a test push event to the GravityZone API
+    parameters:
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool 
+    returns:
+      schema:
+        type: string
+  - name: get_push_event_stats
+    description: Gets stats on push events sent
+    parameters:
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool 
+    returns:
+      schema:
+        type: string
+  - name: get_policy_list
+    description: Gets a list of policies and their Id's
+    parameters:
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool 
+    returns:
+      schema:
+        type: string
+  - name: get_policy_details
+    description: Gets the policy details based on a policy ID
+    parameters:
+      - name: policy_id
+        description: Policy ID of the policy you want details for
+        multiline: false 
+        required: true 
+        example: "55828d66b1a43de92c712345"
+        schema:
+          type: string
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool 
+    returns:
+      schema:
+        type: string
+  - name: get_endpoint_list
+    description: Gets a list of endpoints and their ID's
+    parameters:
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool 
+    returns:
+      schema:
+        type: string
+  - name: get_endpoint_details
+    description: Gets the Details of an endpoint.
+    parameters:
+      - name: filters
+        description: Search for the endpoint name. Can use wildcard *.
+        multiline: false 
+        required: false 
+        example: "Computer01 or *01"
+        schema:
+          type: string
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool 
+    returns:
+      schema:
+        type: string
+  - name: get_company_list
+    description: Gets a list of companies.
+    parameters:
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool 
+    returns:
+      schema:
+        type: string
+  - name: add_to_block_list
+    description: Add a file hash to a block list.
+    parameters:
+      - name: hash_type
+        description: What type of hashed file is it?.
+        multiline: false 
+        required: true
+        options:
+          - sha256
+          - md5
+        example: "sha256"
+        schema:
+          type: string
+      - name: hash_list
+        description: List of file hashes.
+        multiline: true 
+        required: true
+        example: '["5b7ac19bb1a43dfb107b23c6","f696282aa4cd4f614aa995190cf442fe"]'
+        schema:
+          type: string
+      - name: source_info
+        description: Why are these blacklisted? Description.
+        multiline: true 
+        required: true
+        example: "Submitted by User A"
+        schema:
+          type: string
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool 
+    returns:
+      schema:
+        type: string
+  - name: get_block_list_items
+    description: Gets a list of currently blocked hashes.
+    parameters:
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool 
+    returns:
+      schema:
+        type: string
+  - name: remove_from_block_list
+    description: Removes a file has from the blocklist.
+    parameters:
+      - name: hash_item_id
+        description: The ID of the hash on the blocklist.
+        multiline: false 
+        required: true
+        example: "5b7ac19bb1a43dfb107b23c6"
+        schema:
+          type: string
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool 
+    returns:
+      schema:
+        type: string
+  - name: isolate_endpoint
+    description: Puts an endpoint in isolation.
+    parameters:
+      - name: endpoint_id
+        description: The ID of the endpoint to isolate.
+        multiline: false 
+        required: true
+        example: "5b7ac19bb1a43dfb107b23c6"
+        schema:
+          type: string
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool 
+    returns:
+      schema:
+        type: string
+  - name: restore_isolated_endpoint
+    description: Takes an endpoint out of isolation.
+    parameters:
+      - name: endpoint_id
+        description: The ID of the endpoint to isolate.
+        multiline: false 
+        required: true
+        example: "5b7ac19bb1a43dfb107b23c6"
+        schema:
+          type: string
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool 
+    returns:
+      schema:
+        type: string
+  - name: create_connectoion_edr_rule
+    description: Creates a custom edr rule based on network connection criteria.
+    parameters:
+      - name: rule_type
+        description: Detection or exclusion rule.
+        multiline: false 
+        required: true
+        options:
+          - detection
+          - exclusion
+        example: "detection"
+        schema:
+          type: string
+      - name: rule_name
+        description: The name of the custom rule.
+        multiline: true 
+        required: true
+        example: "Look for network traffic on port 5000"
+        schema:
+          type: string
+      - name: rule_description
+        description: A description of the custom rule
+        multiline: true 
+        required: true
+        example: "This was created by Alert from SIEM"
+        schema:
+          type: string
+      - name: field_1
+        description: What field do you want to search?.
+        multiline: false 
+        required: true
+        options:
+          - SourceIP
+          - DestinationIP
+          - SourcePort
+          - DestinationPort
+          - Process.Name
+          - Process.Path
+          - Process.FullPathName
+          - Process.CommandLine
+        example: "SourceIP"
+        schema:
+          type: string
+      - name: relation_1
+        description: Is it exact or contains or any?.
+        multiline: false 
+        required: true
+        options:
+          - is
+          - contains
+          - any
+        example: "is"
+        schema:
+          type: string
+      - name: value_1
+        description: What Value are you looking for.
+        multiline: false 
+        required: true
+        example: '"5000" or ["5000","25","1000"]'
+        schema:
+          type: string
+      - name: field_2
+        description: What field do you want to search?.
+        multiline: false 
+        required: false
+        options:
+          - SourceIP
+          - DestinationIP
+          - SourcePort
+          - DestinationPort
+          - Process.Name
+          - Process.Path
+          - Process.FullPathName
+          - Process.CommandLine
+        example: "SourceIP"
+        schema:
+          type: string
+      - name: relation_2
+        description: Is it exact or contains or any?.
+        multiline: false 
+        required: false
+        options:
+          - is
+          - contains
+          - any
+        example: "is"
+        schema:
+          type: string
+      - name: value_2
+        description: What Value are you looking for.
+        multiline: false 
+        required: false
+        example: '"5000 or ["5000","25","1000"]'
+        schema:
+          type: string
+      - name: field_3
+        description: What field do you want to search?.
+        multiline: false 
+        required: false
+        options:
+          - SourceIP
+          - DestinationIP
+          - SourcePort
+          - DestinationPort
+          - Process.Name
+          - Process.Path
+          - Process.FullPathName
+          - Process.CommandLine
+        example: "SourceIP"
+        schema:
+          type: string
+      - name: relation_3
+        description: Is it exact or contains or any?.
+        multiline: false 
+        required: false
+        options:
+          - is
+          - contains
+          - any
+        example: "is"
+        schema:
+          type: string
+      - name: value_3
+        description: What Value are you looking for.
+        multiline: false 
+        required: false
+        example: '"5000 or ["5000","25","1000"]'
+        schema:
+          type: string
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool
+    returns:
+      schema:
+        type: string
+large_image: data:image/png;base64,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

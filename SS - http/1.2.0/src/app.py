@@ -10,7 +10,7 @@ import subprocess
 from walkoff_app_sdk.app_base import AppBase
 
 class HTTP(AppBase):
-    __version__ = "1.0.0"
+    __version__ = "1.2.0"
     app_name = "SS - http"  
 
     def __init__(self, redis, logger, console_logger=None):
@@ -141,7 +141,7 @@ class HTTP(AppBase):
 
         parsed_headers = self.splitheaders(headers)
         verify = self.checkverify(verify)
-        body = self.checkbody(body)
+        #body = self.checkbody(body)
         if data_type == "data":
             return requests.post(url, headers=parsed_headers, auth=requests.auth.HTTPBasicAuth(username, password), data=body, verify=verify).text
         elif data_type == "json":
