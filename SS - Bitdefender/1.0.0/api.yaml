@@ -298,7 +298,7 @@ actions:
         required: true
         example: '["5b7ac19bb1a43dfb107b23c6","f696282aa4cd4f614aa995190cf442fe"]'
         schema:
-          type: string
+          type: array
       - name: source_info
         description: Why are these blacklisted? Description.
         multiline: true 
