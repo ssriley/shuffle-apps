@@ -152,12 +152,12 @@ class Bitdefender(AppBase):
             "email": email,
             "password": bd_password
         }
-        if email == None:
+        if email is None:
             body = {
                 "accountId": account_id,
                 "password": bd_password
             }
-        if password == None:
+        if password is None:
             body = {
                 "accountId": account_id,
                 "email": email
