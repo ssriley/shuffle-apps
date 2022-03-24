@@ -252,7 +252,7 @@ class Bitdefender(AppBase):
         verify = self.checkverify(verify)
         #body = self.checkbody(body)
         body = {
-            "isManaged": bool(is_managed==True),
+            "isManaged": bool(is_managed=="true"),
             "filters": {
                 "depth": {
                     "allItemsRecursively": True
