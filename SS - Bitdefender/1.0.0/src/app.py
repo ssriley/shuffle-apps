@@ -253,6 +253,9 @@ class Bitdefender(AppBase):
         #body = self.checkbody(body)
         body = {
             "filters": {
+                "depth": {
+                    "allItemsRecursively": True
+                },
                 "details": {
                     "name": filters
                 }
