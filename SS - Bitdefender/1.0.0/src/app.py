@@ -148,7 +148,7 @@ class Bitdefender(AppBase):
             "method": method,
             "params": body
         }
-        return requests.post(url, headers=headers, auth=requests.auth.HTTPBasicAuth(username, password), json=payload, verify=verify).json
+        return requests.post(url, headers=headers, auth=requests.auth.HTTPBasicAuth(username, password), json=payload, verify=verify).text
 
     # UNTESTED BELOW HERE
     def get_push_event_settings(self, body="", username="", password="", verify=True):
@@ -173,7 +173,7 @@ class Bitdefender(AppBase):
     def get_account_list(self, body="", username="", password="", verify=True):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/accounts"
         headers={"Content-Type": "application/json"}
-        parsed_headers = self.splitheaders(headers)
+        #parsed_headers = self.splitheaders(headers)
         verify = self.checkverify(verify)
         #body = self.checkbody(body)
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getAccountsList")
