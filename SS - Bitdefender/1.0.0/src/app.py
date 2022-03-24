@@ -279,7 +279,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getManagedEndpointDetails")
         return send_request
 
-    def add_to_block_list(self, body={}, username="", password="", verify=True, hash_type="",hash_list=None,source_info=""):
+    def add_to_block_list(self, body={}, username="", password="", verify=True, hash_type="",hash_list=[],source_info=""):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/incidents"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
