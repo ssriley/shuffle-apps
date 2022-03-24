@@ -289,11 +289,29 @@ class Bitdefender(AppBase):
             hash_type = 1
         if hash_type == "md5":
             hash_type = 2
-        hashes = []
-        hashes.append(hash_list)
+        try:
+            #input_list = eval(input_list)  # nosec
+            hash_list = json.loads(hash_list)
+        except Exception:
+            try:
+                hash_list = hash_list.replace("'", '"', -1)
+                hash_list = json.loads(hash_list)
+            except Exception:
+                print("[WARNING] Error parsing string to array. Continuing anyway.")
+
+        # Workaround D:
+        if not isinstance(input_list, list):
+            return {
+                "success": False,
+                "reason": "Error: input isnt a list. Remove # to use this action.", 
+                "valid": [],
+                "invalid": [],
+            }
+
+        hash_list = [hash_list]
         body = {
             "hashType": hash_type,
-            "hashList": hashes,
+            "hashList": hash_list,
             "sourceInfo": source_info
         }
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="addToBlocklist")
