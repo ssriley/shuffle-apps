@@ -138,7 +138,9 @@ class Bitdefender(AppBase):
 
     def POST(self, url, headers="", body={}, username="", password="", verify=True, method=None):
         #url = self.fix_url(url)
-        headers={"Content-Type": "application/json"}
+        headers={"Content-Type": "application/json",
+        "Authorization": "Basic " + username
+        }
         #parsed_headers = self.splitheaders(headers)
         verify = self.checkverify(verify)
         #body = self.checkbody(body)
@@ -148,7 +150,7 @@ class Bitdefender(AppBase):
             "method": method,
             "params": body
         }
-        return requests.post(url, headers=headers, auth=requests.auth.HTTPBasicAuth(username, password), json=payload, verify=verify).text
+        return requests.post(url, headers=headers, json=payload, verify=verify).text
 
     # UNTESTED BELOW HERE
     def get_push_event_settings(self, body={}, username="", password="", verify=True):
