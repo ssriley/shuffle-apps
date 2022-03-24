@@ -300,7 +300,7 @@ class Bitdefender(AppBase):
                 print("[WARNING] Error parsing string to array. Continuing anyway.")
 
         # Workaround D:
-        if not isinstance(input_list, list):
+        if not isinstance(hash_list, list):
             return {
                 "success": False,
                 "reason": "Error: input isnt a list. Remove # to use this action.", 
