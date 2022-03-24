@@ -1,9 +1,5 @@
-import time
+import base64
 import json
-import random
-import socket
-import uncurl
-import asyncio
 import requests
 import subprocess
 
@@ -23,38 +19,6 @@ class Bitdefender(AppBase):
         """
         super().__init__(redis, logger, console_logger)
 
-    # This is dangerously fun :)
-    # Do we care about arbitrary code execution here?
-    def curl(self, statement):
-        process = subprocess.Popen(statement, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
-        stdout = process.communicate()
-        item = ""
-        if len(stdout[0]) > 0:
-            print("Succesfully ran bash!")
-            item = stdout[0]
-        else:
-            print("FAILED to run bash!")
-            item = stdout[1]
-    
-        try:
-            ret = item.decode("utf-8")
-            return ret 
-        except:
-            return item
-
-        return item
-        #try: 
-        #    if not statement.startswith("curl "):
-        #        statement = "curl %s" % statement
-
-        #    data = uncurl.parse(statement)
-        #    request = eval(data)
-        #    if isinstance(request, requests.models.Response):
-        #        return request.text
-        #    else:
-        #        return "Unable to parse the curl parameter. Remember to start with curl "
-        #except:
-        #    return "An error occurred during curl parsing"
 
     def splitheaders(self, headers):
         parsed_headers = {}
@@ -129,17 +93,13 @@ class Bitdefender(AppBase):
 
         return url
 
-    def GET(self, url, headers="", username="", password="", verify=True):
-        url = self.fix_url(url)
-
-        parsed_headers = self.splitheaders(headers)
-        verify = self.checkverify(verify)
-        return requests.get(url, headers=headers, auth=requests.auth.HTTPBasicAuth(username, password), verify=verify).text
-
     def POST(self, url, headers="", body={}, username="", password="", verify=True, method=None):
         #url = self.fix_url(url)
+        password_bytes = password.encode('ascii')
+        base64_bytes = base64.b64encode(password_bytes)
+        base64_string = base64_bytes.decode('ascii')
         headers={"Content-Type": "application/json",
-        "Authorization": "Basic " + username
+        "Authorization": "Basic " + base64_string
         }
         #parsed_headers = self.splitheaders(headers)
         verify = self.checkverify(verify)
@@ -163,7 +123,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getPushEventSettings")
         return send_request
 
-    def set_event_settings(self, body="", username="", password="", verify=True):
+    def set_event_settings(self, body={}, username="", password="", verify=True):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/push"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -172,7 +132,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="setPushEventSettings")
         return send_request
 
-    def get_account_list(self, body="", username="", password="", verify=True):
+    def get_account_list(self, body={}, username="", password="", verify=True):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/accounts"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -181,7 +141,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getAccountsList")
         return send_request
 
-    def update_user_account(self, body="", username="", password="", verify=True, account_id=None,email=None,bd_password=None):
+    def update_user_account(self, body={}, username="", password="", verify=True, account_id=None,email=None,bd_password=None):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/accounts"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -195,7 +155,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="updateAccount")
         return send_request
 
-    def delete_user_account(self, body="", username="", password="", verify=True, account_id=None):
+    def delete_user_account(self, body={}, username="", password="", verify=True, account_id=None):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/accounts"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -207,7 +167,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="deleteAccount")
         return send_request
 
-    def create_user_account(self, body="", username="", password="", verify=True, email="", fullName="",bd_password=None,role=None):
+    def create_user_account(self, body={}, username="", password="", verify=True, email="", fullName="",bd_password=None,role=None):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/accounts"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -234,7 +194,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="createAccount")
         return send_request
 
-    def send_test_push_event(self, body="", username="", password="", verify=True):
+    def send_test_push_event(self, body={}, username="", password="", verify=True):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/push"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -243,7 +203,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="sendTestPushEvent")
         return send_request
 
-    def get_push_event_stats(self, body="", username="", password="", verify=True):
+    def get_push_event_stats(self, body={}, username="", password="", verify=True):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/push"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -252,7 +212,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getPushEventStats")
         return send_request
 
-    def get_policy_list(self, body="", username="", password="", verify=True):
+    def get_policy_list(self, body={}, username="", password="", verify=True):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/policies/"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -261,7 +221,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getPoliciesList")
         return send_request
 
-    def get_policy_details(self, body="", username="", password="", verify=True, policy_id=""):
+    def get_policy_details(self, body={}, username="", password="", verify=True, policy_id=""):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/policies/"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -273,7 +233,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getPolicyDetails")
         return send_request
 
-    def get_endpoint_list(self, body="", username="", password="", verify=True):
+    def get_endpoint_list(self, body={}, username="", password="", verify=True):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/network"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -282,7 +242,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getEndpointsList")
         return send_request
 
-    def get_endpoint_details(self, body="", username="", password="", verify=True, filters=None):
+    def get_endpoint_details(self, body={}, username="", password="", verify=True, filters=None):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/network"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -298,7 +258,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getManagedEndpointDetails")
         return send_request
 
-    def get_company_list(self, body="", username="", password="", verify=True):
+    def get_company_list(self, body={}, username="", password="", verify=True):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/network"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -307,7 +267,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getManagedEndpointDetails")
         return send_request
 
-    def add_to_block_list(self, body="", username="", password="", verify=True, hash_type="",hash_list=[],source_info=""):
+    def add_to_block_list(self, body={}, username="", password="", verify=True, hash_type="",hash_list=[],source_info=""):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/incidents"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -325,7 +285,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="addToBlocklist")
         return send_request
 
-    def get_block_list_items(self, body="", username="", password="", verify=True):
+    def get_block_list_items(self, body={}, username="", password="", verify=True):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/incidents"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -336,7 +296,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getBlocklistItems")
         return send_request
 
-    def remove_from_block_list(self, body="", username="", password="", verify=True, hash_item_id=""):
+    def remove_from_block_list(self, body={}, username="", password="", verify=True, hash_item_id=""):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/incidents"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -348,7 +308,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="removeFromBlocklist")
         return send_request
 
-    def isolate_endpoint(self, body="", username="", password="", verify=True, endpoint_id=""):
+    def isolate_endpoint(self, body={}, username="", password="", verify=True, endpoint_id=""):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/incidents"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -360,7 +320,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="createIsolateEndpointTask")
         return send_request
 
-    def restore_isolated_endpoint(self, body="", username="", password="", verify=True, endpoint_id=""):
+    def restore_isolated_endpoint(self, body={}, username="", password="", verify=True, endpoint_id=""):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/incidents"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -373,7 +333,7 @@ class Bitdefender(AppBase):
         return send_request
 
     def create_connection_edr_rule(self, 
-    body="", 
+    body={}, 
     username="", 
     password="", 
     verify=True, 
@@ -428,19 +388,6 @@ class Bitdefender(AppBase):
         return send_request
 
 # Run the actual thing after we've checked params
-def run(request):
-    print("Starting cloud!")
-    action = request.get_json() 
-    print(action)
-    print(type(action))
-    authorization_key = action.get("authorization")
-    current_execution_id = action.get("execution_id")
-	
-    if action and "name" in action and "app_name" in action:
-        Bitdefender.run(action)
-        return f'Attempting to execute function {action["name"]} in app {action["app_name"]}' 
-    else:
-        return f'Invalid action'
 
 if __name__ == "__main__":
     Bitdefender.run()

@@ -15,7 +15,7 @@ contact_info:
 authentication:
   required: true
   parameters:
-    - name: username
+    - name: password
       description: "API Key including a : at the end"
       example: "N8KzwcqVUxAI1RoPi5jyFJPkPlkDl9vF:"
       required: true
