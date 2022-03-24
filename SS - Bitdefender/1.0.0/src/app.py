@@ -136,7 +136,7 @@ class Bitdefender(AppBase):
         verify = self.checkverify(verify)
         return requests.get(url, headers=headers, auth=requests.auth.HTTPBasicAuth(username, password), verify=verify).text
 
-    def POST(self, url, headers="", body="", username="", password="", verify=True, method=None):
+    def POST(self, url, headers="", body={}, username="", password="", verify=True, method=None):
         #url = self.fix_url(url)
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
@@ -151,7 +151,7 @@ class Bitdefender(AppBase):
         return requests.post(url, headers=headers, auth=requests.auth.HTTPBasicAuth(username, password), json=payload, verify=verify).text
 
     # UNTESTED BELOW HERE
-    def get_push_event_settings(self, body="", username="", password="", verify=True):
+    def get_push_event_settings(self, body={}, username="", password="", verify=True):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/push"
 
         #parsed_headers = self.splitheaders(headers)
