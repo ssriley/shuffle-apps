@@ -147,11 +147,6 @@ class Bitdefender(AppBase):
         #parsed_headers = self.splitheaders(headers)
         verify = self.checkverify(verify)
         #body = self.checkbody(body)
-        body = {
-            "accountId": account_id,
-            "email": email,
-            "password": bd_password
-        }
         if email is None:
             body = {
                 "accountId": account_id,
@@ -162,7 +157,12 @@ class Bitdefender(AppBase):
                 "accountId": account_id,
                 "email": email
             }
-
+        if bd_password is not None and email is not None:
+            body = {
+                "accountId": account_id,
+                "email": email,
+                "password": bd_password
+            }
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="updateAccount")
         return send_request
 
