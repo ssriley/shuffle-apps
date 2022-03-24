@@ -234,6 +234,16 @@ actions:
         example: "Computer01 or *01"
         schema:
           type: string
+      - name: is_managed
+        description: Search for managed or unmanaged endpoints.
+        multiline: false 
+        required: true
+        options:
+          - true
+          - false
+        example: "true"
+        schema:
+          type: string
       - name: verify 
         description: Check certificate
         multiline: false 

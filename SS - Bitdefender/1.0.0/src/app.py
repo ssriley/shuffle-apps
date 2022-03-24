@@ -245,13 +245,14 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getPolicyDetails")
         return send_request
 
-    def get_endpoint_list(self, body={}, username="", password="", verify=True, filters=None):
+    def get_endpoint_list(self, body={}, username="", password="", verify=True, filters=None, is_managed=True):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/network"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
         verify = self.checkverify(verify)
         #body = self.checkbody(body)
         body = {
+            "isManaged": is_managed,
             "filters": {
                 "depth": {
                     "allItemsRecursively": True
