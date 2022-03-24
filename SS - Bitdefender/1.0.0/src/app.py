@@ -141,7 +141,7 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getAccountsList")
         return send_request
 
-    def update_user_account(self, body={}, username="", password="", verify=True, account_id=None,email=None,bd_password=None):
+    def update_user_account(self, body={}, username="", password="", verify=True, account_id=None, email=None, bd_password=None):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/accounts"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
