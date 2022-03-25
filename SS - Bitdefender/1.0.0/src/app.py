@@ -393,21 +393,147 @@ class Bitdefender(AppBase):
         #parsed_headers = self.splitheaders(headers)
         verify = self.checkverify(verify)
         #body = self.checkbody(body)
-        criteria_list = [{
-            "field": "Connection." + field_1,
-            "relation": "Connection." + relation_1,
-            "value": [value_1]
-        },
-        {
-            "field": "Connection." + field_2,
-            "relation": "Connection." + relation_2,
-            "value": [value_2]
-        },
-        {
-            "field": "Connection." + field_3,
-            "relation": "Connection." + relation_3,
-            "value": [value_3]
-        }]
+        if value_1 is not None and value_2 is not None and value_3 is not None:
+            try:
+                #input_list = eval(input_list)  # nosec
+                value_1 = json.loads(value_1)
+            except Exception:
+                try:
+                    value_1 = value_1.replace("'", '"', -1)
+                    value_1 = json.loads(value_1)
+                except Exception:
+                    print("[WARNING] Error parsing string to array. Continuing anyway.")
+
+            # Workaround D:
+            if not isinstance(value_1, list):
+                return {
+                    "success": False,
+                    "reason": "Error: input isnt a list. Remove # to use this action.", 
+                    "valid": [],
+                    "invalid": [],
+                }
+            try:
+                #input_list = eval(input_list)  # nosec
+                value_2 = json.loads(value_2)
+            except Exception:
+                try:
+                    value_2 = value_2.replace("'", '"', -1)
+                    value_2 = json.loads(value_2)
+                except Exception:
+                    print("[WARNING] Error parsing string to array. Continuing anyway.")
+
+            # Workaround D:
+            if not isinstance(value_2, list):
+                return {
+                    "success": False,
+                    "reason": "Error: input isnt a list. Remove # to use this action.", 
+                    "valid": [],
+                    "invalid": [],
+                }
+            try:
+                #input_list = eval(input_list)  # nosec
+                value_3 = json.loads(value_3)
+            except Exception:
+                try:
+                    value_3 = value_3.replace("'", '"', -1)
+                    value_3 = json.loads(value_3)
+                except Exception:
+                    print("[WARNING] Error parsing string to array. Continuing anyway.")
+
+            # Workaround D:
+            if not isinstance(value_3, list):
+                return {
+                    "success": False,
+                    "reason": "Error: input isnt a list. Remove # to use this action.", 
+                    "valid": [],
+                    "invalid": [],
+                }
+            criteria_list = [{
+                "field": "Connection." + field_1,
+                "relation": "Connection." + relation_1,
+                "value": value_1
+            },
+            {
+                "field": "Connection." + field_2,
+                "relation": "Connection." + relation_2,
+                "value": value_2
+            },
+            {
+                "field": "Connection." + field_3,
+                "relation": "Connection." + relation_3,
+                "value": value_3
+            }]
+        if value_1 is not None and value_2 is not None and value_3 is None:
+            try:
+                #input_list = eval(input_list)  # nosec
+                value_1 = json.loads(value_1)
+            except Exception:
+                try:
+                    value_1 = value_1.replace("'", '"', -1)
+                    value_1 = json.loads(value_1)
+                except Exception:
+                    print("[WARNING] Error parsing string to array. Continuing anyway.")
+
+            # Workaround D:
+            if not isinstance(value_1, list):
+                return {
+                    "success": False,
+                    "reason": "Error: input isnt a list. Remove # to use this action.", 
+                    "valid": [],
+                    "invalid": [],
+                }
+            try:
+                #input_list = eval(input_list)  # nosec
+                value_2 = json.loads(value_2)
+            except Exception:
+                try:
+                    value_2 = value_2.replace("'", '"', -1)
+                    value_2 = json.loads(value_2)
+                except Exception:
+                    print("[WARNING] Error parsing string to array. Continuing anyway.")
+
+            # Workaround D:
+            if not isinstance(value_2, list):
+                return {
+                    "success": False,
+                    "reason": "Error: input isnt a list. Remove # to use this action.", 
+                    "valid": [],
+                    "invalid": [],
+                }
+            criteria_list = [{
+                "field": "Connection." + field_1,
+                "relation": "Connection." + relation_1,
+                "value": value_1
+            },
+            {
+                "field": "Connection." + field_2,
+                "relation": "Connection." + relation_2,
+                "value": value_2
+            }]
+        if value_1 is not None and value_2 is None and value_3 is None:
+            try:
+                #input_list = eval(input_list)  # nosec
+                value_1 = json.loads(value_1)
+            except Exception:
+                try:
+                    value_1 = value_1.replace("'", '"', -1)
+                    value_1 = json.loads(value_1)
+                except Exception:
+                    print("[WARNING] Error parsing string to array. Continuing anyway.")
+
+            # Workaround D:
+            if not isinstance(value_1, list):
+                return {
+                    "success": False,
+                    "reason": "Error: input isnt a list. Remove # to use this action.", 
+                    "valid": [],
+                    "invalid": [],
+                }
+            criteria_list = [{
+                "field": "Connection." + field_1,
+                "relation": "Connection." + relation_1,
+                "value": value_1
+            }]
         if rule_type == "detection":
             rule_type = 1
         if rule_type == "exclusion":
