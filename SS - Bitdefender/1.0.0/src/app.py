@@ -549,7 +549,7 @@ class Bitdefender(AppBase):
                 "criteriaList": criteria_list
             }
         }
-        send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="createRestoreEndpointFromIsolationTask")
+        send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="createCustomRule")
         return send_request
 
 # Run the actual thing after we've checked params
