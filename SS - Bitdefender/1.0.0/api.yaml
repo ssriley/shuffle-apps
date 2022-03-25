@@ -239,8 +239,8 @@ actions:
         multiline: false 
         required: true
         options:
-          - true
-          - false
+          - "true"
+          - "false"
         example: "true"
         schema:
           type: string
