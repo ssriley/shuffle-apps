@@ -39,7 +39,7 @@ class Tools(AppBase):
     logging set up behind the scenes.
     """
 
-    __version__ = "1.1.0"
+    __version__ = "1.2.0"
     app_name = (
         "SS - Shuffle Tools"  # this needs to match "name" in api.yaml for WALKOFF to work
     )
