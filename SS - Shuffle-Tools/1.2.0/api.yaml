@@ -9,9 +9,9 @@ categories:
   - Testing
   - Shuffle
 contact_info:
-  name: "@frikkylikeme"
-  url: https://shuffler.io
-  email: frikky@shuffler.io
+  name: "RD"
+  url: rd@example.com
+  email: rd@example.com
 actions:
   - name: repeat_back_to_me
     description: Repeats the call parameter
