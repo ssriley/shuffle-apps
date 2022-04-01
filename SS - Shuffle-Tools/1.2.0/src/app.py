@@ -1728,5 +1728,9 @@ class Tools(AppBase):
         result = {"random_password": password}
         return result
 
+    def convert_epoch_to_datetime(self,epoch):
+        my_datetime = datetime.datetime.fromtimestamp(int(epoch)).strftime('%c')
+        return my_datetime
+
 if __name__ == "__main__":
     Tools.run()
