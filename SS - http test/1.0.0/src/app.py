@@ -159,7 +159,7 @@ class HTTP(AppBase):
     def generate_password(self,length):
         characters = string.ascii_letters + string.digits + string.punctuation
         password = ''.join(random.choice(characters) for i in range(int(length)))
-        result = {"random_password": password}
+        result = {"password": password}
         return result
 
     def convert_epoch_to_datetime(self,epoch):
