@@ -7,6 +7,9 @@ import uncurl
 import asyncio
 import requests
 import subprocess
+import datetime
+import random
+import string
 
 from walkoff_app_sdk.app_base import AppBase
 
@@ -153,6 +156,15 @@ class HTTP(AppBase):
         body = self.checkbody(body)
         return requests.options(url, headers=parsed_headers, verify=verify).text
 
+    def generate_password(self,length):
+        characters = string.ascii_letters + string.digits + string.punctuation
+        password = ''.join(random.choice(characters) for i in range(int(length)))
+        result = {"random_password": password}
+        return result
+
+    def convert_epoch_to_datetime(self,epoch):
+        my_datetime = datetime.datetime.fromtimestamp(int(epoch)).strftime('%c')
+        return my_datetime
 
 # Run the actual thing after we've checked params
 def run(request):
