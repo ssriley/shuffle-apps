@@ -1,6 +1,5 @@
----
-app_version: 1.0.0
 walkoff_version: 1.1.0
+app_version: 1.0.0
 name: SS - Safe-Systems-Tools
 description: A tool  app for Shuffle. Gives access to most missing features along with Liquid.
 tags:
