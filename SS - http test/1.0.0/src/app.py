@@ -165,6 +165,9 @@ class HTTP(AppBase):
     def convert_epoch_to_datetime(self,epoch):
         my_datetime = datetime.datetime.fromtimestamp(int(epoch)).strftime('%c')
         return my_datetime
+    
+    def repeat_to_me(self,phrase):
+        return phrase
 
 # Run the actual thing after we've checked params
 def run(request):
