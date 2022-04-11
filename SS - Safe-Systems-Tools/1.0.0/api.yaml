@@ -1,12 +1,10 @@
 app_version: 1.0.0
-name: SS - Safe-Systems-Tools
+name: SS - Tools
 description: A tool  app for Shuffle. Gives access to most missing features along with Liquid.
 tags:
   - Testing
-  - Shuffle
 categories:
   - Testing
-  - Shuffle
 contact_info:
   name: "RD"
   url: rd@example.com
