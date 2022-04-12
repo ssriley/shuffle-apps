@@ -15,7 +15,7 @@ class SS_Tools(AppBase):
 
     __version__ = "1.0.0"
     app_name = (
-        "SSTools"  # this needs to match "name" in api.yaml for WALKOFF to work
+        "SS - Tools"  # this needs to match "name" in api.yaml for WALKOFF to work
     )
 
     def __init__(self, redis, logger, console_logger=None):
