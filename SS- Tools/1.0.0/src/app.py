@@ -30,12 +30,12 @@ class SS_Tools(AppBase):
     def generate_password(self,length):
         characters = string.ascii_letters + string.digits + string.punctuation
         password = ''.join(random.choice(characters) for i in range(int(length)))
-        result = {"random_password": password}
+        result = {"password": password}
         return result
 
     def convert_epoch_to_datetime(self,epoch):
         my_datetime = datetime.datetime.fromtimestamp(int(epoch)).strftime('%c')
-        return my_datetime
+        return {"date": str(my_datetime)}
 
 if __name__ == "__main__":
     SS_Tools.run()
