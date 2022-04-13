@@ -35,7 +35,7 @@ class SS_Tools(AppBase):
 
     def convert_epoch_to_datetime(self,epoch):
         my_datetime = datetime.datetime.utcfromtimestamp(int(epoch)).strftime('%Y-%m-%dT%H:%M:%S')
-        my_datetime = datetime.datetime.utcfromtimestamp(int(epoch))
+        #my_datetime = datetime.datetime.utcfromtimestamp(int(epoch))
         return {"date": my_datetime}
 
 if __name__ == "__main__":
