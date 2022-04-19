@@ -227,6 +227,13 @@ actions:
   - name: get_endpoint_list
     description: Gets a list of endpoints and their ID's
     parameters:
+      - name: parent_id
+        description: The Company ID or Group ID
+        multiline: false 
+        required: false 
+        example: "5b7ac19bb1a43dfb107b23c6"
+        schema:
+          type: string
       - name: filters
         description: Filter based on the computer name. Can use * wildcard.
         multiline: false 
@@ -262,13 +269,6 @@ actions:
     parameters:
       - name: endpoint_id
         description: Gets Details of endpoint based on ID
-        multiline: false 
-        required: false 
-        example: "5b7ac19bb1a43dfb107b23c6"
-        schema:
-          type: string
-      - name: parent_id
-        description: The Company ID or Group ID
         multiline: false 
         required: false 
         example: "5b7ac19bb1a43dfb107b23c6"
