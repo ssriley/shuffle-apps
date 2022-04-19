@@ -245,13 +245,14 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getPolicyDetails")
         return send_request
 
-    def get_endpoint_list(self, body={}, username="", password="", verify=True, filters=None, is_managed="true"):
+    def get_endpoint_list(self, body={}, username="", password="", verify=True, filters=None, is_managed="true", parent_id=None):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/network"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
         verify = self.checkverify(verify)
         #body = self.checkbody(body)
         body = {
+            "parentId": parent_id,
             "isManaged": bool(is_managed=="true"),
             "filters": {
                 "depth": {
@@ -283,7 +284,7 @@ class Bitdefender(AppBase):
         #parsed_headers = self.splitheaders(headers)
         verify = self.checkverify(verify)
         #body = self.checkbody(body)
-        send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getManagedEndpointDetails")
+        send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="getCompaniesList")
         return send_request
 
     def add_to_block_list(self, body={}, username="", password="", verify=True, hash_type="",hash_list=None,source_info=""):

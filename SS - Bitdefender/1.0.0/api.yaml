@@ -267,6 +267,13 @@ actions:
         example: "5b7ac19bb1a43dfb107b23c6"
         schema:
           type: string
+      - name: parent_id
+        description: The Company ID or Group ID
+        multiline: false 
+        required: false 
+        example: "5b7ac19bb1a43dfb107b23c6"
+        schema:
+          type: string
       - name: verify 
         description: Check certificate
         multiline: false 
