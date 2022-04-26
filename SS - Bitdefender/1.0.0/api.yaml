@@ -428,6 +428,43 @@ actions:
     returns:
       schema:
         type: string
+  - name: create_scan_task
+    description: Takes an endpoint out of isolation.
+    parameters:
+      - name: scan_type
+        description: The type of scan to create.
+        multiline: false 
+        required: true
+        example: "quick, full, memory"
+        schema:
+          type: string
+      - name: target_list
+        description: A list of endpoint IDs to run the scan on.
+        multiline: true 
+        required: true
+        example: "[5b7ac19bb1a43dfb107b23c6, 5b7ac19bb1a43dfb107b23c6]"
+        schema:
+          type: string
+      - name: scan_name
+        description: Name of the Scan.
+        multiline: false 
+        required: false
+        example: "Incident Scan"
+        schema:
+          type: string
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool 
+    returns:
+      schema:
+        type: string
   - name: create_connection_edr_rule
     description: Creates a custom edr rule based on network connection criteria.
     parameters:

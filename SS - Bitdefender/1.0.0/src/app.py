@@ -325,6 +325,48 @@ class Bitdefender(AppBase):
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="addToBlocklist")
         return send_request
 
+    def create_scan_task(self, body={}, username="", password="", verify=True, scan_type="",target_list=None,scan_name=None):
+        url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/network/computers"
+        headers={"Content-Type": "application/json"}
+        #parsed_headers = self.splitheaders(headers)
+        verify = self.checkverify(verify)
+        #body = self.checkbody(body)
+        if scan_type == "quick":
+            scan_type = 1
+        if scan_type == "full":
+            scan_type = 2
+        if scan_type == "memory":
+            scan_type = 3
+        if scan_type == "custom":
+            scan_type = 4
+        try:
+            #input_list = eval(input_list)  # nosec
+            target_list = json.loads(target_list)
+        except Exception:
+            try:
+                target_list = target_list.replace("'", '"', -1)
+                target_list = json.loads(target_list)
+            except Exception:
+                print("[WARNING] Error parsing string to array. Continuing anyway.")
+
+        # Workaround D:
+        if not isinstance(target_list, list):
+            return {
+                "success": False,
+                "reason": "Error: input isnt a list. Remove # to use this action.", 
+                "valid": [],
+                "invalid": [],
+            }
+
+            hash_list = [hash_list]
+        body = {
+            "targetIds": target_list,
+            "type": scan_type,
+            "name": scan_name
+        }
+        send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="createScanTask")
+        return send_request
+
     def get_block_list_items(self, body={}, username="", password="", verify=True):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/incidents"
         headers={"Content-Type": "application/json"}
