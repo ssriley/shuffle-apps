@@ -365,7 +365,7 @@ class Bitdefender(AppBase):
             "name": scan_name
         }
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="createScanTask")
-        return {"result": "{0}".format(send_request)}
+        return send_request
 
     def get_block_list_items(self, body={}, username="", password="", verify=True):
         url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/incidents"
