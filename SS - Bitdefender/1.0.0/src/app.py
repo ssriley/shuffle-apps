@@ -362,7 +362,11 @@ class Bitdefender(AppBase):
         body = {
             "targetIds": target_list,
             "type": scan_type,
-            "name": scan_name
+            "name": scan_name,
+            "customScanSettings": {
+                "scanDepth": 1,
+                "scanPath": ["localDrives"]
+            }
         }
         send_request = self.POST(url, headers=headers, body=body, username=username, password=password, verify=True, method="createScanTask")
         return send_request
