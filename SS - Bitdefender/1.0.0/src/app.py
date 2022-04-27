@@ -326,7 +326,7 @@ class Bitdefender(AppBase):
         return send_request
 
     def create_scan_task(self, body={}, username="", password="", verify=True, scan_type="",target_list=None,scan_name=None):
-        url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/network/computers"
+        url = "https://cloud.gravityzone.bitdefender.com/api/v1.0/jsonrpc/network"
         headers={"Content-Type": "application/json"}
         #parsed_headers = self.splitheaders(headers)
         verify = self.checkverify(verify)
