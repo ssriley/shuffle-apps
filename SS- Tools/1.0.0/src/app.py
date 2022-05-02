@@ -43,17 +43,13 @@ class SS_Tools(AppBase):
 
     def convert_xml_to_json(self,xml):
         xml_to_json = xmltodict.parse(xml)
-        return xml_to_json['soapenv:Envelope']['soapenv:Body']['notifications']
+        #return xml_to_json['soapenv:Envelope']['soapenv:Body']['notifications']['notification']
         try:
-            xml_to_json = xml_to_json['soapenv:Envelope']['soapenv:Body']['notifications']
-            xml_to_json = xml_to_json.replace("sf:", " ")
-            xml_to_json = xml_to_json.replace("@xsi:", " ")
-            xml_to_json = xml_to_json.replace("@xmlns:", " ")
-            return xml_to_json
+            xml_to_json = xml_to_json['soapenv:Envelope']['soapenv:Body']['notifications']['notification']
+            xml_str = json.dumps(xml_to_json).replace('sf:', " ").replace('@xsi:', " ").replace('@xmlns:', " ")
+            return json.loads(xml_str)
         except exception as e:
-        #my_datetime = datetime.datetime.utcfromtimestamp(int(epoch))
-            #print(str(e))
-            return str(e)
+            return xml_to_json
 
 if __name__ == "__main__":
     SS_Tools.run()
