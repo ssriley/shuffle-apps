@@ -1,5 +1,6 @@
 
 import datetime
+from logging import exception
 import random
 import string
 import xmltodict
@@ -41,8 +42,15 @@ class SS_Tools(AppBase):
 
     def convert_xml_to_json(self,xml):
         xml_to_json = xmltodict.parse(xml)
+        try:
+            xml_to_json = xml_to_json['soapenv:Envelope']['soapenv:Body']['notifications']
+            xml_to_json = xml_to_json.replace("sf:", " ")
+            xml_to_json = xml_to_json.replace("@xsi:", " ")
+            xml_to_json = xml_to_json.replace("@xmlns:", " ")
+            return xml_to_json
+        except exception as e:
         #my_datetime = datetime.datetime.utcfromtimestamp(int(epoch))
-        return xml_to_json
+            return xml_to_json
 
 if __name__ == "__main__":
     SS_Tools.run()
