@@ -2,6 +2,7 @@
 import datetime
 import random
 import string
+import xmltodict
 
 from walkoff_app_sdk.app_base import AppBase
 
@@ -37,6 +38,11 @@ class SS_Tools(AppBase):
         my_datetime = datetime.datetime.utcfromtimestamp(int(epoch)).strftime('%Y-%m-%dT%H:%M:%S')
         #my_datetime = datetime.datetime.utcfromtimestamp(int(epoch))
         return {"date": my_datetime}
+
+    def convert_xml_to_json(self,xml):
+        xml_to_json = xmltodict.parse(xml)
+        #my_datetime = datetime.datetime.utcfromtimestamp(int(epoch))
+        return xml_to_json
 
 if __name__ == "__main__":
     SS_Tools.run()
