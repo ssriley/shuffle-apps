@@ -45,7 +45,7 @@ class SS_Tools(AppBase):
         xml_to_json = xmltodict.parse(xml)
         #return xml_to_json['soapenv:Envelope']['soapenv:Body']['notifications']['notification']
         #try:
-        xml_to_json = xml_to_json['soapenv:Envelope']['soapenv:Body']['notifications']['notification']
+        xml_to_json = xml_to_json['soapenv:Envelope']['soapenv:Body']['notifications']['Notification']
         xml_str = json.dumps(xml_to_json).replace('sf:', '_')
         return json.loads(xml_str)
         #except exception as e:
