@@ -44,12 +44,12 @@ class SS_Tools(AppBase):
     def convert_xml_to_json(self,xml):
         xml_to_json = xmltodict.parse(xml)
         #return xml_to_json['soapenv:Envelope']['soapenv:Body']['notifications']['notification']
-        #try:
-        xml_to_json = xml_to_json['soapenv:Envelope']['soapenv:Body']['notifications']['Notification']
-        xml_str = json.dumps(xml_to_json).replace('sf:', '_')
-        return json.loads(xml_str)
-        #except exception as e:
-        #return xml_to_json
+        try:
+            xml_to_json = xml_to_json['soapenv:Envelope']['soapenv:Body']['notifications']['Notification']
+            xml_str = json.dumps(xml_to_json).replace('sf:', ' ')
+            return json.loads(xml_str)
+        except exception as e:
+            return xml_to_json
 
 if __name__ == "__main__":
     SS_Tools.run()
