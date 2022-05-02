@@ -4,6 +4,7 @@ from logging import exception
 import random
 import string
 import xmltodict
+import json
 
 from walkoff_app_sdk.app_base import AppBase
 
@@ -42,6 +43,7 @@ class SS_Tools(AppBase):
 
     def convert_xml_to_json(self,xml):
         xml_to_json = xmltodict.parse(xml)
+        return xml_to_json['soapenv:Envelope']['soapenv:Body']['notifications']
         try:
             xml_to_json = xml_to_json['soapenv:Envelope']['soapenv:Body']['notifications']
             xml_to_json = xml_to_json.replace("sf:", " ")
@@ -50,7 +52,8 @@ class SS_Tools(AppBase):
             return xml_to_json
         except exception as e:
         #my_datetime = datetime.datetime.utcfromtimestamp(int(epoch))
-            return xml_to_json
+            #print(str(e))
+            return str(e)
 
 if __name__ == "__main__":
     SS_Tools.run()
