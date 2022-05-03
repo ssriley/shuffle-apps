@@ -42,14 +42,14 @@ class SS_Tools(AppBase):
         return {"date": my_datetime}
 
     def convert_xml_to_json(self,xml):
-        xml_to_json = xmltodict.parse(xml)
+        xml_to_json_org = xmltodict.parse(xml)
         #return xml_to_json['soapenv:Envelope']['soapenv:Body']['notifications']['notification']
         try:
-            xml_to_json = xml_to_json['soapenv:Envelope']['soapenv:Body']['notifications']['Notification']
+            xml_to_json = xml_to_json_org['soapenv:Envelope']['soapenv:Body']['notifications']['Notification']
             xml_str = json.dumps(xml_to_json).replace('sf:', ' ')
             return json.loads(xml_str)
         except exception as e:
-            return xml_to_json
+            return xml_to_json_org
 
 if __name__ == "__main__":
     SS_Tools.run()
