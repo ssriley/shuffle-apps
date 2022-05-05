@@ -50,7 +50,7 @@ actions:
       schema:
         type: string
   - name: generate_uuid_hex
-    description: Generates a uuid in hex format.
+    description: Generates a uuid in hex format. Good for unique IDs.
     returns:
       schema:
         type: string
