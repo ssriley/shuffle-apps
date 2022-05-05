@@ -5,6 +5,7 @@ import random
 import string
 import xmltodict
 import json
+import uuid
 
 from walkoff_app_sdk.app_base import AppBase
 
@@ -50,6 +51,9 @@ class SS_Tools(AppBase):
             return json.loads(xml_str)
         except exception as e:
             return xml_to_json_org
+
+    def generate_uuid_hex(self):
+        return {"uuid": uuid.uuid4().hex}
 
 if __name__ == "__main__":
     SS_Tools.run()
