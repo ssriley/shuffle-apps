@@ -36,7 +36,7 @@ actions:
     returns:
       schema:
         type: string
-  - name: convert_xml_to_json
+  - name: salesforce_to_json
     description: Converts xml to json.
     parameters:
       - name: xml

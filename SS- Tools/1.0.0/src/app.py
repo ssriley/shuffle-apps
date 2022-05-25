@@ -42,12 +42,14 @@ class SS_Tools(AppBase):
         #my_datetime = datetime.datetime.utcfromtimestamp(int(epoch))
         return {"date": my_datetime}
 
-    def convert_xml_to_json(self,xml):
+    def salesforce_to_json(self,xml):
         xml_to_json_org = xmltodict.parse(xml)
         #return xml_to_json['soapenv:Envelope']['soapenv:Body']['notifications']['notification']
         try:
             xml_to_json = xml_to_json_org['soapenv:Envelope']['soapenv:Body']['notifications']['Notification']
-            xml_str = json.dumps(xml_to_json).replace('sf:', ' ')
+            xml_str = json.dumps(xml_to_json).replace('sf:', '')
+            xml_str = xml_str.replace('__c', '')
+            xml_str = xml_str.replace('_', '')
             return json.loads(xml_str)
         except exception as e:
             return xml_to_json_org
