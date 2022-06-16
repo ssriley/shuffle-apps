@@ -390,6 +390,20 @@ class ActiveDirectory(AppBase):
         c.add('cn=' + samaccountname + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
         {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname, 'homeDirectory': home_directory, 'homeDrive': home_drive})
 
+        c.search(
+            search_base=base_dn,
+            search_filter=f"(cn={samaccountname})",
+            attributes=ALL_ATTRIBUTES,
+        )
+        result = json.loads(c.response_to_json())["entries"][0]
+        
+        account_name = result['attributes']['distinguishedName']
+
+        displayName = firstname + ' ' + lastname
+
+        c.modify(account_name,{'name': [(MODIFY_REPLACE, [displayName])]})
+
+        modify_result = c.result['description']
         #print(c.result)
         user_create_result = json.dumps(c.result)
         full_return = {
@@ -399,7 +413,10 @@ class ActiveDirectory(AppBase):
             'email': email,
             'upn_suffix': upn_suffix,
             'organization_unit': organizational_unit,
-            'result_of_operation': user_create_result
+            'result_of_operation': user_create_result,
+            'home_directory': home_directory,
+            'home_drive': home_drive,
+            'name_att_change': modify_result
         }
         return json.dumps(full_return)
     
