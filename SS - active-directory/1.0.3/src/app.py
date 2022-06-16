@@ -401,7 +401,7 @@ class ActiveDirectory(AppBase):
 
         displayName = firstname + ' ' + lastname
 
-        #c.modify(account_name,{'name': [(MODIFY_REPLACE, [displayName])]})
+        c.modify(account_name,{'name': [(MODIFY_REPLACE, [displayName])]})
 
         #modify_result = c.result['description']
         #print(c.result)
