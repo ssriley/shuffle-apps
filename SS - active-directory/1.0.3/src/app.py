@@ -18,7 +18,7 @@ from ldap3 import (
 from walkoff_app_sdk.app_base import AppBase
 
 class ActiveDirectory(AppBase):
-    __version__ = "1.0.4"
+    __version__ = "1.0.3"
     app_name = "SS - Active Directory"  # this needs to match "name" in api.yaml
 
     def __init__(self, redis, logger, console_logger=None):

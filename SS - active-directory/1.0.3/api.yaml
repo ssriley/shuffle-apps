@@ -1,4 +1,4 @@
-app_version: 1.0.4
+app_version: 1.0.3
 name: SS - Active Directory
 description: Active Directory and LDAP/LDAPS. For full usage of the action configure using LDAPS.
 contact_info:
