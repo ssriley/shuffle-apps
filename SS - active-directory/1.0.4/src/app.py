@@ -434,8 +434,8 @@ class ActiveDirectory(AppBase):
         login_user,
         password,
         use_ssl,
-        distiguished_groupname,
-        distiguished_username
+        distinguished_groupname,
+        distinguished_username
     ):
         # if search_base:
         #     base_dn = search_base
@@ -459,14 +459,14 @@ class ActiveDirectory(AppBase):
         
         # account_name = result['attributes']['distinguishedName']
 
-        c.modify(distiguished_groupname,{'member': [(MODIFY_ADD, [distiguished_username])]})
+        c.modify(distinguished_groupname,{'member': [(MODIFY_ADD, [distinguished_username])]})
 
         modify_result = c.result['description']
         final_result = {
             'action': 'Add user to Group',
             'result': modify_result,
-            'group_name': distiguished_groupname,
-            'user_name': distiguished_username
+            'group_name': distinguished_groupname,
+            'user_name': distinguished_username
         }
         #print(str(final_result))
         return json.dumps(final_result)
@@ -479,8 +479,8 @@ class ActiveDirectory(AppBase):
         login_user,
         password,
         use_ssl,
-        distiguished_groupname,
-        distiguished_username
+        distinguished_groupname,
+        distinguished_username
     ):
         # if search_base:
         #     base_dn = search_base
@@ -504,14 +504,14 @@ class ActiveDirectory(AppBase):
         
         # account_name = result['attributes']['distinguishedName']
 
-        c.modify(distiguished_groupname,{'member': [(MODIFY_DELETE, [distiguished_username])]})
+        c.modify(distinguished_groupname,{'member': [(MODIFY_DELETE, [distinguished_username])]})
 
         modify_result = c.result['description']
         final_result = {
             'action': 'Add user to Group',
             'result': modify_result,
-            'group_name': distiguished_groupname,
-            'user_name': distiguished_username
+            'group_name': distinguished_groupname,
+            'user_name': distinguished_username
         }
         #print(str(final_result))
         return json.dumps(final_result)
