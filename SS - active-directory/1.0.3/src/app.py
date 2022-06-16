@@ -1,4 +1,5 @@
 import json
+from operator import mod
 #from telnetlib import TLS
 import ssl
 from typing import Any
@@ -403,7 +404,7 @@ class ActiveDirectory(AppBase):
 
         c.modify(account_name,{'name': [(MODIFY_REPLACE, [displayName])]})
 
-        #modify_result = c.result['description']
+        modify_result = c.result['description']
         #print(c.result)
         user_create_result = json.dumps(c.result)
         full_return = {
@@ -417,7 +418,8 @@ class ActiveDirectory(AppBase):
             'home_directory': home_directory,
             'home_drive': home_drive,
             'display_name': displayName,
-            'cn': account_name
+            'cn': account_name,
+            'name_mod': modify_result
         }
         return json.dumps(full_return)
     
