@@ -401,9 +401,9 @@ class ActiveDirectory(AppBase):
 
         displayName = firstname + ' ' + lastname
 
-        c.modify(account_name,{'name': [(MODIFY_REPLACE, [displayName])]})
+        #c.modify(account_name,{'name': [(MODIFY_REPLACE, [displayName])]})
 
-        modify_result = c.result['description']
+        #modify_result = c.result['description']
         #print(c.result)
         user_create_result = json.dumps(c.result)
         full_return = {
@@ -416,7 +416,8 @@ class ActiveDirectory(AppBase):
             'result_of_operation': user_create_result,
             'home_directory': home_directory,
             'home_drive': home_drive,
-            'name_att_change': modify_result
+            'display_name': displayName,
+            'cn': account_name
         }
         return json.dumps(full_return)
     
