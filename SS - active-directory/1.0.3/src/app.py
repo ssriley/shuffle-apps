@@ -389,7 +389,7 @@ class ActiveDirectory(AppBase):
             server, port, domain, login_user, password, use_ssl
         )
         c.add('cn=' + samaccountname + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
-        {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname, 'homeDirectory': home_directory, 'homeDrive': home_drive})
+        {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'fullName': firstname + ' ' + lastname, 'homeDirectory': home_directory, 'homeDrive': home_drive})
 
         c.search(
             search_base=base_dn,
