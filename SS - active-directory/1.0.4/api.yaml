@@ -276,7 +276,7 @@ actions:
         example: 'CN=Admins,CN=Users,DC=hostcomply,DC=com'
         schema:
           type: string
-      - name: distiguished_username
+      - name: distinguished_username
         description: The disguished username to add to the group
         required: true
         multiline: false
@@ -296,7 +296,7 @@ actions:
         example: 'CN=Admins,CN=Users,DC=hostcomply,DC=com'
         schema:
           type: string
-      - name: distiguished_username
+      - name: distinguished_username
         description: The disguished username to add to the group
         required: true
         multiline: false
