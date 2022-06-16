@@ -1,4 +1,4 @@
-app_version: 1.0.4
+app_version: 1.0.3
 name: SS - Active Directory
 description: Active Directory and LDAP/LDAPS. For full usage of the action configure using LDAPS.
 contact_info:
@@ -269,18 +269,25 @@ actions:
   - name: add_group_member
     description: Add a user to a group
     parameters:
-      - name: distinguished_groupname
-        description: This is the distiguished name of the group
+      - name: groupname
+        description: group to add the user to
         required: true
         multiline: false
-        example: 'CN=Admins,CN=Users,DC=hostcomply,DC=com'
+        example: 'Domain Admins'
         schema:
           type: string
-      - name: distiguished_username
-        description: The disguished username to add to the group
+      - name: samaccountname
+        description: The username to add to the group
         required: true
         multiline: false
-        example: 'CN=Chipper Jones,CN=Users,DC=example,DC=com'
+        example: 'Ishuffle'
+        schema:
+          type: string
+      - name: search_base
+        description: "If empty it will use the base_dn."
+        required: false
+        multiline: false
+        example: "OU=Users,DC=mycompany,DC=com"
         schema:
           type: string
     returns:
@@ -289,18 +296,25 @@ actions:
   - name: delete_group_member
     description: Remove a user from a group
     parameters:
-      - name: distinguished_groupname
-        description: This is the distiguished name of the group
+      - name: groupname
+        description: group to remove the user from
         required: true
         multiline: false
-        example: 'CN=Admins,CN=Users,DC=hostcomply,DC=com'
+        example: 'Domain Admins'
         schema:
           type: string
-      - name: distiguished_username
-        description: The disguished username to add to the group
+      - name: samaccountname
+        description: The username to remove from the group
         required: true
         multiline: false
-        example: 'CN=Chipper Jones,CN=Users,DC=example,DC=com'
+        example: 'Ishuffle'
+        schema:
+          type: string
+      - name: search_base
+        description: "If empty it will use the base_dn."
+        required: false
+        multiline: false
+        example: "OU=Users,DC=mycompany,DC=com"
         schema:
           type: string
     returns:

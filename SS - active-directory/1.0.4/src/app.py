@@ -6,6 +6,8 @@ import ssl
 from typing import Any
 import ldap3
 import asyncio
+from ldap3.extend.microsoft.addMembersToGroups import ad_add_members_to_groups as addUsersInGroups
+from ldap3.extend.microsoft.removeMembersFromGroups import ad_remove_members_from_groups as removeUsersInGroups
 from ldap3 import (
     Server,
     Connection,
@@ -18,7 +20,7 @@ from ldap3 import (
 from walkoff_app_sdk.app_base import AppBase
 
 class ActiveDirectory(AppBase):
-    __version__ = "1.0.4"
+    __version__ = "1.0.3"
     app_name = "SS - Active Directory"  # this needs to match "name" in api.yaml
 
     def __init__(self, redis, logger, console_logger=None):
@@ -433,40 +435,44 @@ class ActiveDirectory(AppBase):
         domain,
         login_user,
         password,
+        base_dn,
         use_ssl,
-        distiguished_groupname,
-        distiguished_username
+        groupname,
+        samaccountname,
+        search_base,
     ):
-        # if search_base:
-        #     base_dn = search_base
+        if search_base:
+            base_dn = search_base
 
         c = self.__ldap_connection(server, port, domain, login_user, password, use_ssl)
 
-        # c.search(
-        #     search_base=base_dn,
-        #     search_filter=f"(cn={groupname})",
-        #     attributes=ALL_ATTRIBUTES,
-        # )
-        # result = json.loads(c.response_to_json())["entries"][0]
+        c.search(
+            search_base=base_dn,
+            search_filter=f"(cn={groupname})",
+            attributes=ALL_ATTRIBUTES,
+        )
+        result = json.loads(c.response_to_json())["entries"][0]
 
-        # group_name = result['attributes']['distinguishedName']
-        # c.search(
-        #     search_base=base_dn,
-        #     search_filter=f"(cn={samaccountname})",
-        #     attributes=ALL_ATTRIBUTES,
-        # )
-        # result = json.loads(c.response_to_json())["entries"][0]
+        group_name = result['attributes']['distinguishedName']
+        c.search(
+            search_base=base_dn,
+            search_filter=f"(cn={samaccountname})",
+            attributes=ALL_ATTRIBUTES,
+        )
+        result = json.loads(c.response_to_json())["entries"][0]
         
-        # account_name = result['attributes']['distinguishedName']
+        account_name = result['attributes']['distinguishedName']
 
-        c.modify(distiguished_groupname,{'member': [(MODIFY_ADD, [distiguished_username])]})
+        #c.modify(group_name,{'member': [(MODIFY_ADD, [account_name])]})
+
+        addUsersInGroups(c, account_name, group_name)
 
         modify_result = c.result['description']
         final_result = {
             'action': 'Add user to Group',
             'result': modify_result,
-            'group_name': distiguished_groupname,
-            'user_name': distiguished_username
+            'group_name': group_name,
+            'user_name': account_name
         }
         #print(str(final_result))
         return json.dumps(final_result)
@@ -478,40 +484,42 @@ class ActiveDirectory(AppBase):
         domain,
         login_user,
         password,
+        base_dn,
         use_ssl,
-        distiguished_groupname,
-        distiguished_username
+        groupname,
+        samaccountname,
+        search_base,
     ):
-        # if search_base:
-        #     base_dn = search_base
+        if search_base:
+            base_dn = search_base
 
         c = self.__ldap_connection(server, port, domain, login_user, password, use_ssl)
 
-        # c.search(
-        #     search_base=base_dn,
-        #     search_filter=f"(cn={groupname})",
-        #     attributes=ALL_ATTRIBUTES,
-        # )
-        # result = json.loads(c.response_to_json())["entries"][0]
+        c.search(
+            search_base=base_dn,
+            search_filter=f"(cn={groupname})",
+            attributes=ALL_ATTRIBUTES,
+        )
+        result = json.loads(c.response_to_json())["entries"][0]
 
-        # group_name = result['attributes']['distinguishedName']
-        # c.search(
-        #     search_base=base_dn,
-        #     search_filter=f"(cn={samaccountname})",
-        #     attributes=ALL_ATTRIBUTES,
-        # )
-        # result = json.loads(c.response_to_json())["entries"][0]
+        group_name = result['attributes']['distinguishedName']
+        c.search(
+            search_base=base_dn,
+            search_filter=f"(cn={samaccountname})",
+            attributes=ALL_ATTRIBUTES,
+        )
+        result = json.loads(c.response_to_json())["entries"][0]
         
-        # account_name = result['attributes']['distinguishedName']
+        account_name = result['attributes']['distinguishedName']
 
-        c.modify(distiguished_groupname,{'member': [(MODIFY_DELETE, [distiguished_username])]})
+        c.modify(group_name,{'member': [(MODIFY_DELETE, [account_name])]})
 
         modify_result = c.result['description']
         final_result = {
-            'action': 'Add user to Group',
+            'action': 'Delete user from Group',
             'result': modify_result,
-            'group_name': distiguished_groupname,
-            'user_name': distiguished_username
+            'group_name': group_name,
+            'user_name': account_name
         }
         #print(str(final_result))
         return json.dumps(final_result)
