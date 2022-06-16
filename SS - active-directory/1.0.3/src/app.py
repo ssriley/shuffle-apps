@@ -6,6 +6,8 @@ import ssl
 from typing import Any
 import ldap3
 import asyncio
+from ldap3.extend.microsoft.addMembersToGroups import ad_add_members_to_groups as addUsersInGroups
+from ldap3.extend.microsoft.removeMembersFromGroups import ad_remove_members_from_groups as removeUsersInGroups
 from ldap3 import (
     Server,
     Connection,
@@ -461,7 +463,9 @@ class ActiveDirectory(AppBase):
         
         account_name = result['attributes']['distinguishedName']
 
-        c.modify(group_name,{'member': [(MODIFY_ADD, [account_name])]})
+        #c.modify(group_name,{'member': [(MODIFY_ADD, [account_name])]})
+
+        addUsersInGroups(c, account_name, group_name)
 
         modify_result = c.result['description']
         final_result = {
