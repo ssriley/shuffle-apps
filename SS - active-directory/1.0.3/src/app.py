@@ -1,3 +1,4 @@
+from dis import dis
 import json
 from operator import mod
 #from telnetlib import TLS
@@ -402,7 +403,9 @@ class ActiveDirectory(AppBase):
 
         displayName = firstname + ' ' + lastname
 
-        c.modify(account_name,{'name': [(MODIFY_REPLACE, [displayName])]})
+        #c.modify(account_name,{'name': [(MODIFY_REPLACE, [displayName])]})
+
+        c.modify_dn(account_name, 'cn=' + displayName)
 
         modify_result = c.result['description']
         #print(c.result)
