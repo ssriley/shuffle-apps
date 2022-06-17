@@ -396,13 +396,17 @@ class ActiveDirectory(AppBase):
             
             c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
             {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname, 'homeDirectory': home_directory, 'homeDrive': home_drive, 'logonHours': base64.b64decode(logon_hours)})
+            c.unbind()
 
-            c.search(
+            conn = self.__ldap_connection(
+                server, port, domain, login_user, password, use_ssl
+            )
+            conn.search(
                 search_base=base_dn,
                 search_filter=f"(cn={samaccountname})",
                 attributes=ALL_ATTRIBUTES,
             )
-            result = json.loads(c.response_to_json())["entries"][0]
+            result = json.loads(conn.response_to_json())["entries"][0]
             
             account_name = result['attributes']['distinguishedName']
 
