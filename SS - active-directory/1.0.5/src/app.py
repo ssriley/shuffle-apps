@@ -393,47 +393,12 @@ class ActiveDirectory(AppBase):
             )
 
             displayName = firstname + ' ' + lastname
-            
+            dn_name = 'cn=' + displayName + ',' + organizational_unit + ',' + base_dn
             c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
             {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname, 'homeDirectory': home_directory, 'homeDrive': home_drive, 'logonHours': base64.b64decode(logon_hours)})
             user_create_result = json.dumps(c.result)            
             c.unbind()
 
-            conn = self.__ldap_connection(
-                server, port, domain, login_user, password, use_ssl
-            )
-            conn.search(
-                search_base=base_dn,
-                search_filter=f"(cn={samaccountname})",
-                attributes=ALL_ATTRIBUTES,
-            )
-            #result = json.loads(conn.response_to_json())["entries"][0]
-            
-            #account_name = result['attributes']['distinguishedName']
-
-            # displayName = firstname + ' ' + lastname
-
-            #c.modify(account_name,{'name': [(MODIFY_REPLACE, [displayName])]})
-
-            # c.modify_dn(account_name, 'cn=' + displayName)
-            # c.unbind()
-            # conn = self.__ldap_connection(
-            #     server, port, domain, login_user, password, use_ssl
-            # )
-    
-            # # need to get the new distinguished name after renaming it
-            # conn.search(
-            #     search_base=base_dn,
-            #     search_filter=f"(samAccountName={samaccountname})",
-            #     attributes=ALL_ATTRIBUTES,
-            # )
-
-            # dn_result = json.loads(conn.response_to_json())["entries"][0]
-            
-            # new_dn_name = dn_result['attributes']['distinguishedName']
-
-            #modify_result = c.result['description']
-            #print(c.result)
 
             full_return = {
                 'samaccountname': samaccountname,
@@ -445,7 +410,8 @@ class ActiveDirectory(AppBase):
                 'result_of_operation': user_create_result,
                 'home_directory': home_directory,
                 'home_drive': home_drive,
-                'display_name': displayName
+                'display_name': displayName,
+                'cn': dn_name
             }
             return json.dumps(full_return)
         except Exception as err:
