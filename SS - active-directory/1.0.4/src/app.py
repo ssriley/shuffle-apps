@@ -389,9 +389,6 @@ class ActiveDirectory(AppBase):
         c = self.__ldap_connection(
             server, port, domain, login_user, password, use_ssl
         )
-        conn = self.__ldap_connection(
-            server, port, domain, login_user, password, use_ssl
-        )
         c.add('cn=' + samaccountname + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
         {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname, 'homeDirectory': home_directory, 'homeDrive': home_drive})
 
@@ -409,6 +406,10 @@ class ActiveDirectory(AppBase):
         #c.modify(account_name,{'name': [(MODIFY_REPLACE, [displayName])]})
 
         c.modify_dn(account_name, 'cn=' + displayName)
+
+        conn = self.__ldap_connection(
+            server, port, domain, login_user, password, use_ssl
+        )
 
         # need to get the new distinguished name after renaming it
         conn.search(
