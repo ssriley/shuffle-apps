@@ -407,9 +407,9 @@ class ActiveDirectory(AppBase):
                 search_filter=f"(cn={samaccountname})",
                 attributes=ALL_ATTRIBUTES,
             )
-            result = json.loads(conn.response_to_json())["entries"][0]
+            #result = json.loads(conn.response_to_json())["entries"][0]
             
-            account_name = result['attributes']['distinguishedName']
+            #account_name = result['attributes']['distinguishedName']
 
             # displayName = firstname + ' ' + lastname
 
@@ -445,8 +445,7 @@ class ActiveDirectory(AppBase):
                 'result_of_operation': user_create_result,
                 'home_directory': home_directory,
                 'home_drive': home_drive,
-                'display_name': displayName,
-                'cn': account_name
+                'display_name': displayName
             }
             return json.dumps(full_return)
         except Exception as err:
