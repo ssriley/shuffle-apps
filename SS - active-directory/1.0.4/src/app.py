@@ -407,20 +407,20 @@ class ActiveDirectory(AppBase):
 
         c.modify_dn(account_name, 'cn=' + displayName)
 
-        conn = self.__ldap_connection(
-            server, port, domain, login_user, password, use_ssl
-        )
+        # conn = self.__ldap_connection(
+        #     server, port, domain, login_user, password, use_ssl
+        # )
 
-        # need to get the new distinguished name after renaming it
-        conn.search(
-            search_base=base_dn,
-            search_filter=f"(cn={samaccountname})",
-            attributes=ALL_ATTRIBUTES,
-        )
+        # # need to get the new distinguished name after renaming it
+        # conn.search(
+        #     search_base=base_dn,
+        #     search_filter=f"(cn={samaccountname})",
+        #     attributes=ALL_ATTRIBUTES,
+        # )
 
-        dn_result = json.loads(conn.response_to_json())["entries"][0]
+        # dn_result = json.loads(conn.response_to_json())["entries"][0]
         
-        new_dn_name = dn_result['attributes']['distinguishedName']
+        # new_dn_name = dn_result['attributes']['distinguishedName']
 
         modify_result = c.result['description']
         #print(c.result)
