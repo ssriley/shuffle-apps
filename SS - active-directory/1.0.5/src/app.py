@@ -381,7 +381,7 @@ class ActiveDirectory(AppBase):
         lastname,
         email,
         upn_suffix,
-        logon_hours=None,
+        logon_hours,
         organizational_unit='ou=onboarding',
         home_drive='Z:',
         home_directory=None
