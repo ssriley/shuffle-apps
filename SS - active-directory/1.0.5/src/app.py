@@ -381,71 +381,73 @@ class ActiveDirectory(AppBase):
         lastname,
         email,
         upn_suffix,
+        logon_hours,
         organizational_unit='ou=onboarding',
         home_drive='Z:',
-        home_directory=None,
-        logon_hours=None
+        home_directory=None
     ):
 
+        try:
+            c = self.__ldap_connection(
+                server, port, domain, login_user, password, use_ssl
+            )
 
-        c = self.__ldap_connection(
-            server, port, domain, login_user, password, use_ssl
-        )
+            displayName = firstname + ' ' + lastname
+            
+            c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
+            {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname, 'homeDirectory': home_directory, 'homeDrive': home_drive, 'logonHours': base64.b64decode(logon_hours)})
 
-        displayName = firstname + ' ' + lastname
-        
-        c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
-        {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname, 'homeDirectory': home_directory, 'homeDrive': home_drive, 'logonHours': base64.b64decode(str(logon_hours))})
+            c.search(
+                search_base=base_dn,
+                search_filter=f"(cn={samaccountname})",
+                attributes=ALL_ATTRIBUTES,
+            )
+            result = json.loads(c.response_to_json())["entries"][0]
+            
+            account_name = result['attributes']['distinguishedName']
 
-        c.search(
-            search_base=base_dn,
-            search_filter=f"(cn={samaccountname})",
-            attributes=ALL_ATTRIBUTES,
-        )
-        result = json.loads(c.response_to_json())["entries"][0]
-        
-        account_name = result['attributes']['distinguishedName']
+            # displayName = firstname + ' ' + lastname
 
-        # displayName = firstname + ' ' + lastname
+            #c.modify(account_name,{'name': [(MODIFY_REPLACE, [displayName])]})
 
-        #c.modify(account_name,{'name': [(MODIFY_REPLACE, [displayName])]})
-
-        # c.modify_dn(account_name, 'cn=' + displayName)
-        # c.unbind()
-        # conn = self.__ldap_connection(
-        #     server, port, domain, login_user, password, use_ssl
-        # )
-  
-        # # need to get the new distinguished name after renaming it
-        # conn.search(
-        #     search_base=base_dn,
-        #     search_filter=f"(samAccountName={samaccountname})",
-        #     attributes=ALL_ATTRIBUTES,
-        # )
-
-        # dn_result = json.loads(conn.response_to_json())["entries"][0]
-        
-        # new_dn_name = dn_result['attributes']['distinguishedName']
-
-        modify_result = c.result['description']
-        #print(c.result)
-        user_create_result = json.dumps(c.result)
-        full_return = {
-            'samaccountname': samaccountname,
-            'firstname': firstname,
-            'lastname': lastname,
-            'email': email,
-            'upn_suffix': upn_suffix,
-            'organization_unit': organizational_unit,
-            'result_of_operation': user_create_result,
-            'home_directory': home_directory,
-            'home_drive': home_drive,
-            'display_name': displayName,
-            'cn': account_name,
-            'dn_name_rename_result': modify_result
-        }
-        return json.dumps(full_return)
+            # c.modify_dn(account_name, 'cn=' + displayName)
+            # c.unbind()
+            # conn = self.__ldap_connection(
+            #     server, port, domain, login_user, password, use_ssl
+            # )
     
+            # # need to get the new distinguished name after renaming it
+            # conn.search(
+            #     search_base=base_dn,
+            #     search_filter=f"(samAccountName={samaccountname})",
+            #     attributes=ALL_ATTRIBUTES,
+            # )
+
+            # dn_result = json.loads(conn.response_to_json())["entries"][0]
+            
+            # new_dn_name = dn_result['attributes']['distinguishedName']
+
+            modify_result = c.result['description']
+            #print(c.result)
+            user_create_result = json.dumps(c.result)
+            full_return = {
+                'samaccountname': samaccountname,
+                'firstname': firstname,
+                'lastname': lastname,
+                'email': email,
+                'upn_suffix': upn_suffix,
+                'organization_unit': organizational_unit,
+                'result_of_operation': user_create_result,
+                'home_directory': home_directory,
+                'home_drive': home_drive,
+                'display_name': displayName,
+                'cn': account_name,
+                'dn_name_rename_result': modify_result
+            }
+            return json.dumps(full_return)
+        except Exception as err:
+            json_error = {"Error": str(err)}
+            return json_error
     def add_group_member(
         self,
         server,
