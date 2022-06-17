@@ -546,18 +546,23 @@ class ActiveDirectory(AppBase):
     ):
 
         c = self.__ldap_connection(server, port, domain, login_user, password, use_ssl)
+        try:
+            c.modify(object_to_edit,{attribute_to_edit: [(mod_action, [new_attribute_value])]})
 
-        c.modify(object_to_edit,{attribute_to_edit: [(mod_action, [new_attribute_value])]})
-
-        modify_result = c.result['description']
-        final_result = {
-            'action': mod_action,
-            'result': modify_result,
-            'object_edited': object_to_edit,
-            'new_value': new_attribute_value
-        }
-        #print(str(final_result))
-        return json.dumps(final_result)
-
+            modify_result = c.result['description']
+            final_result = {
+                'action': mod_action,
+                'result': modify_result,
+                'object_edited': object_to_edit,
+                'new_value': new_attribute_value
+            }
+            #print(str(final_result))
+            return json.dumps(final_result)
+        except Exception as err:
+            error_result =  {
+                'Error': str(err)
+            }
+            return error_result
+            
 if __name__ == "__main__":
     ActiveDirectory.run()
