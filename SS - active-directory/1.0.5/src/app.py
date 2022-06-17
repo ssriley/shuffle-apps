@@ -381,7 +381,7 @@ class ActiveDirectory(AppBase):
         lastname,
         email,
         upn_suffix,
-        logon_hours,
+        logon_hours=None,
         organizational_unit='ou=onboarding',
         home_drive='Z:',
         home_directory=None
@@ -427,7 +427,7 @@ class ActiveDirectory(AppBase):
             
             # new_dn_name = dn_result['attributes']['distinguishedName']
 
-            modify_result = c.result['description']
+            #modify_result = c.result['description']
             #print(c.result)
             user_create_result = json.dumps(c.result)
             full_return = {
@@ -441,8 +441,7 @@ class ActiveDirectory(AppBase):
                 'home_directory': home_directory,
                 'home_drive': home_drive,
                 'display_name': displayName,
-                'cn': account_name,
-                'dn_name_rename_result': modify_result
+                'cn': account_name
             }
             return json.dumps(full_return)
         except Exception as err:
