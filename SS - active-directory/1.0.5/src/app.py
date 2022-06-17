@@ -396,6 +396,7 @@ class ActiveDirectory(AppBase):
             
             c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
             {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname, 'homeDirectory': home_directory, 'homeDrive': home_drive, 'logonHours': base64.b64decode(logon_hours)})
+            user_create_result = json.dumps(c.result)            
             c.unbind()
 
             conn = self.__ldap_connection(
@@ -433,7 +434,7 @@ class ActiveDirectory(AppBase):
 
             #modify_result = c.result['description']
             #print(c.result)
-            user_create_result = json.dumps(c.result)
+
             full_return = {
                 'samaccountname': samaccountname,
                 'firstname': firstname,
