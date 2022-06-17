@@ -554,6 +554,7 @@ class ActiveDirectory(AppBase):
                 'action': mod_action,
                 'result': modify_result,
                 'object_edited': object_to_edit,
+                'attribute_edited': attribute_to_edit,
                 'new_value': new_attribute_value
             }
             #print(str(final_result))
@@ -563,6 +564,6 @@ class ActiveDirectory(AppBase):
                 'Error': str(err)
             }
             return error_result
-            
+
 if __name__ == "__main__":
     ActiveDirectory.run()
