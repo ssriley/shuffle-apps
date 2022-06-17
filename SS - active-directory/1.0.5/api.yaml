@@ -256,6 +256,13 @@ actions:
         example: "\\servername\\homedir\\username"
         schema:
           type: string
+      - name: logon_hours
+        description: "The base64 encoded byte string of logon hours"
+        required: false
+        multiline: false
+        example: "HwAA4P//////////////////////"
+        schema:
+          type: string
       - name: organizational_unit
         description: "What OU to put the new user in. Defaults to ou=onboarding + base dn "
         required: false

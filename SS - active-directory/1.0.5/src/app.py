@@ -1,3 +1,4 @@
+import base64
 from dis import dis
 import json
 from operator import mod
@@ -382,7 +383,8 @@ class ActiveDirectory(AppBase):
         upn_suffix,
         organizational_unit='ou=onboarding',
         home_drive='Z:',
-        home_directory=None
+        home_directory=None,
+        logon_hours=None
     ):
 
 
@@ -393,7 +395,7 @@ class ActiveDirectory(AppBase):
         displayName = firstname + ' ' + lastname
 
         c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
-        {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname, 'homeDirectory': home_directory, 'homeDrive': home_drive})
+        {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname, 'homeDirectory': home_directory, 'homeDrive': home_drive, 'logonHours': base64.b64decode(logon_hours)})
 
         c.search(
             search_base=base_dn,
