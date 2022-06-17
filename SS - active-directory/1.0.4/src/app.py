@@ -418,7 +418,7 @@ class ActiveDirectory(AppBase):
             attributes=ALL_ATTRIBUTES,
         )
 
-        dn_result = json.loads(c.response_to_json())["entries"][0]
+        dn_result = json.loads(conn.response_to_json())["entries"][0]
         
         new_dn_name = dn_result['attributes']['distinguishedName']
 
