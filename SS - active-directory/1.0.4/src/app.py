@@ -436,7 +436,7 @@ class ActiveDirectory(AppBase):
             'home_directory': home_directory,
             'home_drive': home_drive,
             'display_name': displayName,
-            'cn': new_dn_name,
+            'cn': account_name,
             'dn_name_rename_result': modify_result
         }
         return json.dumps(full_return)
