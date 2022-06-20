@@ -431,7 +431,7 @@ class ActiveDirectory(AppBase):
                 'home_directory': home_directory,
                 'home_drive': home_drive,
                 'display_name': displayName,
-                'cn': dn_name
+                'dn': dn_name
             }
             return json.dumps(full_return)
         except Exception:
