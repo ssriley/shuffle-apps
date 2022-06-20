@@ -148,7 +148,8 @@ class ActiveDirectory(AppBase):
 
             return json.dumps(result)
         except Exception:
-            not_found = {"result": traceback.format_exc()}
+            not_found = {"result": "User_Not_Found",
+            "reason":  traceback.format_exc()}
             return not_found
 
     # Change User Password
@@ -166,22 +167,26 @@ class ActiveDirectory(AppBase):
         repeat_password,
         search_base,
     ):
-        if search_base:
-            base_dn = search_base
+        try:
+            if search_base:
+                base_dn = search_base
 
-        if new_password != repeat_password:
-            return "Password does not match!"
-        else:
-            c = self.__ldap_connection(
-                server, port, domain, login_user, password, use_ssl
-            )
+            if new_password != repeat_password:
+                return "Password does not match!"
+            else:
+                c = self.__ldap_connection(
+                    server, port, domain, login_user, password, use_ssl
+                )
 
-            result = json.loads( self.user_attributes( server, port, domain, login_user, password, base_dn, use_ssl, samaccountname, search_base,))
+                result = json.loads( self.user_attributes( server, port, domain, login_user, password, base_dn, use_ssl, samaccountname, search_base,))
 
-            user_dn = result["dn"]
-            c.extend.microsoft.modify_password(user_dn, new_password)
+                user_dn = result["dn"]
+                c.extend.microsoft.modify_password(user_dn, new_password)
 
-            return json.dumps(c.result)
+                return json.dumps(c.result)
+        except Exception:
+            my_error = {"result": traceback.format_exc()}
+            return my_error
 
     # Change User Password at Next Logon
     def change_password_at_next_logon(
@@ -196,35 +201,39 @@ class ActiveDirectory(AppBase):
         samaccountname,
         search_base,
     ):
-        if search_base:
-            base_dn = search_base
+        try:
+            if search_base:
+                base_dn = search_base
 
-        c = self.__ldap_connection(server, port, domain, login_user, password, use_ssl)
+            c = self.__ldap_connection(server, port, domain, login_user, password, use_ssl)
 
-        result = json.loads(
-            self.user_attributes(
-                server,
-                port,
-                domain,
-                login_user,
-                password,
-                base_dn,
-                use_ssl,
-                samaccountname,
-                search_base,
+            result = json.loads(
+                self.user_attributes(
+                    server,
+                    port,
+                    domain,
+                    login_user,
+                    password,
+                    base_dn,
+                    use_ssl,
+                    samaccountname,
+                    search_base,
+                )
             )
-        )
-        userAccountControl = result["attributes"]["userAccountControl"]
+            userAccountControl = result["attributes"]["userAccountControl"]
 
-        if "DONT_EXPIRE_PASSWORD" in userAccountControl:
-            return "Error: Flag DONT_EXPIRE_PASSWORD is set."
-        else:
-            user_dn = result["dn"]
-            password_expire = {"pwdLastSet": (MODIFY_REPLACE, [0])}
-            c.modify(dn=user_dn, changes=password_expire)
-            c.result["samAccountName"] = samaccountname
+            if "DONT_EXPIRE_PASSWORD" in userAccountControl:
+                return "Error: Flag DONT_EXPIRE_PASSWORD is set."
+            else:
+                user_dn = result["dn"]
+                password_expire = {"pwdLastSet": (MODIFY_REPLACE, [0])}
+                c.modify(dn=user_dn, changes=password_expire)
+                c.result["samAccountName"] = samaccountname
 
-            return json.dumps(c.result)
+                return json.dumps(c.result)
+        except Exception:
+            my_error = {"result": traceback.format_exc()}
+            return my_error
 
     # Enable User
     def enable_user(
@@ -239,47 +248,50 @@ class ActiveDirectory(AppBase):
         samaccountname,
         search_base,
     ):
+        try:
+            if search_base:
+                base_dn = search_base
 
-        if search_base:
-            base_dn = search_base
+            c = self.__ldap_connection(server, port, domain, login_user, password, use_ssl)
 
-        c = self.__ldap_connection(server, port, domain, login_user, password, use_ssl)
-
-        result = json.loads(
-            self.user_attributes(
-                server,
-                port,
-                domain,
-                login_user,
-                password,
-                base_dn,
-                use_ssl,
-                samaccountname,
-                search_base,
+            result = json.loads(
+                self.user_attributes(
+                    server,
+                    port,
+                    domain,
+                    login_user,
+                    password,
+                    base_dn,
+                    use_ssl,
+                    samaccountname,
+                    search_base,
+                )
             )
-        )
-        userAccountControl = result["attributes"]["userAccountControl"]
+            userAccountControl = result["attributes"]["userAccountControl"]
 
-        if "ACCOUNTDISABLED" in userAccountControl:
-            userAccountControl.remove("ACCOUNTDISABLED")
-            userAccountControl_code = self.__getUserAccountControlCode(
-                userAccountControl
-            )
-            new_userAccountControl = {
-                "userAccountControl": (MODIFY_REPLACE, userAccountControl_code)
-            }
-            user_dn = result["dn"]
-            c.modify(dn=user_dn, changes=new_userAccountControl)
-            c.result["samAccountName"] = samaccountname
+            if "ACCOUNTDISABLED" in userAccountControl:
+                userAccountControl.remove("ACCOUNTDISABLED")
+                userAccountControl_code = self.__getUserAccountControlCode(
+                    userAccountControl
+                )
+                new_userAccountControl = {
+                    "userAccountControl": (MODIFY_REPLACE, userAccountControl_code)
+                }
+                user_dn = result["dn"]
+                c.modify(dn=user_dn, changes=new_userAccountControl)
+                c.result["samAccountName"] = samaccountname
 
-            return json.dumps(c.result)
-        else:
-            result = {}
-            result["samAccountName"] = samaccountname
-            result["status"] = "success"
-            result["description"] = "Account already enable"
+                return json.dumps(c.result)
+            else:
+                result = {}
+                result["samAccountName"] = samaccountname
+                result["status"] = "success"
+                result["description"] = "Account already enable"
 
-            return json.dumps(result)
+                return json.dumps(result)
+        except Exception:
+            my_error = {"result": traceback.format_exc()}
+            return my_error
 
     # Disable User
     def disable_user(
@@ -294,47 +306,50 @@ class ActiveDirectory(AppBase):
         samaccountname,
         search_base,
     ):
+        try:
+            if search_base:
+                base_dn = search_base
 
-        if search_base:
-            base_dn = search_base
+            c = self.__ldap_connection(server, port, domain, login_user, password, use_ssl)
 
-        c = self.__ldap_connection(server, port, domain, login_user, password, use_ssl)
-
-        result = json.loads(
-            self.user_attributes(
-                server,
-                port,
-                domain,
-                login_user,
-                password,
-                base_dn,
-                use_ssl,
-                samaccountname,
-                search_base,
+            result = json.loads(
+                self.user_attributes(
+                    server,
+                    port,
+                    domain,
+                    login_user,
+                    password,
+                    base_dn,
+                    use_ssl,
+                    samaccountname,
+                    search_base,
+                )
             )
-        )
-        userAccountControl = result["attributes"]["userAccountControl"]
+            userAccountControl = result["attributes"]["userAccountControl"]
 
-        if "ACCOUNTDISABLED" in userAccountControl:
-            result = {}
-            result["samAccountName"] = samaccountname
-            result["status"] = "success"
-            result["description"] = "Account already disable"
+            if "ACCOUNTDISABLED" in userAccountControl:
+                result = {}
+                result["samAccountName"] = samaccountname
+                result["status"] = "success"
+                result["description"] = "Account already disable"
 
-            return json.dumps(result)
-        else:
-            userAccountControl.append("ACCOUNTDISABLED")
-            userAccountControl_code = self.__getUserAccountControlCode(
-                userAccountControl
-            )
-            new_userAccountControl = {
-                "userAccountControl": (MODIFY_REPLACE, userAccountControl_code)
-            }
-            user_dn = result["dn"]
-            c.modify(dn=user_dn, changes=new_userAccountControl)
-            c.result["samAccountName"] = samaccountname
+                return json.dumps(result)
+            else:
+                userAccountControl.append("ACCOUNTDISABLED")
+                userAccountControl_code = self.__getUserAccountControlCode(
+                    userAccountControl
+                )
+                new_userAccountControl = {
+                    "userAccountControl": (MODIFY_REPLACE, userAccountControl_code)
+                }
+                user_dn = result["dn"]
+                c.modify(dn=user_dn, changes=new_userAccountControl)
+                c.result["samAccountName"] = samaccountname
 
-            return json.dumps(c.result)
+                return json.dumps(c.result)
+        except Exception:
+                my_error = {"result": traceback.format_exc()}
+                return my_error
 
     def group_attributes(
         self,
@@ -348,25 +363,29 @@ class ActiveDirectory(AppBase):
         groupname,
         search_base,
     ):
-        if search_base:
-            base_dn = search_base
+        try:
+            if search_base:
+                base_dn = search_base
 
-        c = self.__ldap_connection(server, port, domain, login_user, password, use_ssl)
+            c = self.__ldap_connection(server, port, domain, login_user, password, use_ssl)
 
-        c.search(
-            search_base=base_dn,
-            search_filter=f"(cn={groupname})",
-            attributes=ALL_ATTRIBUTES,
-        )
-        result = json.loads(c.response_to_json())["entries"][0]
+            c.search(
+                search_base=base_dn,
+                search_filter=f"(cn={groupname})",
+                attributes=ALL_ATTRIBUTES,
+            )
+            result = json.loads(c.response_to_json())["entries"][0]
 
-        result = {
-            "group_name": result['attributes']['distinguishedName'],
-            "group_members": result['attributes']['member'],
-            'group_member_total': len(result['attributes']['member'])
-        }
-        #print(str(result))
-        return json.dumps(result)
+            result = {
+                "group_name": result['attributes']['distinguishedName'],
+                "group_members": result['attributes']['member'],
+                'group_member_total': len(result['attributes']['member'])
+            }
+            #print(str(result))
+            return json.dumps(result)
+        except Exception:
+            my_error = {"result": traceback.format_exc()}
+            return my_error
 
     def create_user(
         self,
@@ -415,9 +434,10 @@ class ActiveDirectory(AppBase):
                 'cn': dn_name
             }
             return json.dumps(full_return)
-        except Exception as err:
-            json_error = {"Error": str(err)}
-            return json_error
+        except Exception:
+            my_error = {"result": traceback.format_exc()}
+            return my_error
+
     def add_group_member(
         self,
         server,
@@ -429,39 +449,43 @@ class ActiveDirectory(AppBase):
         distinguished_groupname,
         distinguished_username
     ):
-        # if search_base:
-        #     base_dn = search_base
+        try:
+            # if search_base:
+            #     base_dn = search_base
 
-        c = self.__ldap_connection(server, port, domain, login_user, password, use_ssl)
+            c = self.__ldap_connection(server, port, domain, login_user, password, use_ssl)
 
-        # c.search(
-        #     search_base=base_dn,
-        #     search_filter=f"(cn={groupname})",
-        #     attributes=ALL_ATTRIBUTES,
-        # )
-        # result = json.loads(c.response_to_json())["entries"][0]
+            # c.search(
+            #     search_base=base_dn,
+            #     search_filter=f"(cn={groupname})",
+            #     attributes=ALL_ATTRIBUTES,
+            # )
+            # result = json.loads(c.response_to_json())["entries"][0]
 
-        # group_name = result['attributes']['distinguishedName']
-        # c.search(
-        #     search_base=base_dn,
-        #     search_filter=f"(cn={samaccountname})",
-        #     attributes=ALL_ATTRIBUTES,
-        # )
-        # result = json.loads(c.response_to_json())["entries"][0]
-        
-        # account_name = result['attributes']['distinguishedName']
+            # group_name = result['attributes']['distinguishedName']
+            # c.search(
+            #     search_base=base_dn,
+            #     search_filter=f"(cn={samaccountname})",
+            #     attributes=ALL_ATTRIBUTES,
+            # )
+            # result = json.loads(c.response_to_json())["entries"][0]
+            
+            # account_name = result['attributes']['distinguishedName']
 
-        c.modify(distinguished_groupname,{'member': [(MODIFY_ADD, [distinguished_username])]})
+            c.modify(distinguished_groupname,{'member': [(MODIFY_ADD, [distinguished_username])]})
 
-        modify_result = c.result['description']
-        final_result = {
-            'action': 'Add user to Group',
-            'result': modify_result,
-            'group_name': distinguished_groupname,
-            'user_name': distinguished_username
-        }
-        #print(str(final_result))
-        return json.dumps(final_result)
+            modify_result = c.result['description']
+            final_result = {
+                'action': 'Add user to Group',
+                'result': modify_result,
+                'group_name': distinguished_groupname,
+                'user_name': distinguished_username
+            }
+            #print(str(final_result))
+            return json.dumps(final_result)
+        except Exception:
+            my_error = {"result": traceback.format_exc()}
+            return my_error
 
     def delete_group_member(
         self,
@@ -474,39 +498,43 @@ class ActiveDirectory(AppBase):
         distinguished_groupname,
         distinguished_username
     ):
-        # if search_base:
-        #     base_dn = search_base
+        try:
+            # if search_base:
+            #     base_dn = search_base
 
-        c = self.__ldap_connection(server, port, domain, login_user, password, use_ssl)
+            c = self.__ldap_connection(server, port, domain, login_user, password, use_ssl)
 
-        # c.search(
-        #     search_base=base_dn,
-        #     search_filter=f"(cn={groupname})",
-        #     attributes=ALL_ATTRIBUTES,
-        # )
-        # result = json.loads(c.response_to_json())["entries"][0]
+            # c.search(
+            #     search_base=base_dn,
+            #     search_filter=f"(cn={groupname})",
+            #     attributes=ALL_ATTRIBUTES,
+            # )
+            # result = json.loads(c.response_to_json())["entries"][0]
 
-        # group_name = result['attributes']['distinguishedName']
-        # c.search(
-        #     search_base=base_dn,
-        #     search_filter=f"(cn={samaccountname})",
-        #     attributes=ALL_ATTRIBUTES,
-        # )
-        # result = json.loads(c.response_to_json())["entries"][0]
-        
-        # account_name = result['attributes']['distinguishedName']
+            # group_name = result['attributes']['distinguishedName']
+            # c.search(
+            #     search_base=base_dn,
+            #     search_filter=f"(cn={samaccountname})",
+            #     attributes=ALL_ATTRIBUTES,
+            # )
+            # result = json.loads(c.response_to_json())["entries"][0]
+            
+            # account_name = result['attributes']['distinguishedName']
 
-        c.modify(distinguished_groupname,{'member': [(MODIFY_DELETE, [distinguished_username])]})
+            c.modify(distinguished_groupname,{'member': [(MODIFY_DELETE, [distinguished_username])]})
 
-        modify_result = c.result['description']
-        final_result = {
-            'action': 'Add user to Group',
-            'result': modify_result,
-            'group_name': distinguished_groupname,
-            'user_name': distinguished_username
-        }
-        #print(str(final_result))
-        return json.dumps(final_result)
+            modify_result = c.result['description']
+            final_result = {
+                'action': 'Add user to Group',
+                'result': modify_result,
+                'group_name': distinguished_groupname,
+                'user_name': distinguished_username
+            }
+            #print(str(final_result))
+            return json.dumps(final_result)
+        except Exception:
+            my_error = {"result": traceback.format_exc()}
+            return my_error
 
     def edit_ad_attribute(
         self,
@@ -536,11 +564,9 @@ class ActiveDirectory(AppBase):
             }
             #print(str(final_result))
             return json.dumps(final_result)
-        except Exception as err:
-            error_result =  {
-                'Error': str(err)
-            }
-            return error_result
+        except Exception:
+            my_error = {"result": traceback.format_exc()}
+            return my_error
 
 if __name__ == "__main__":
     ActiveDirectory.run()
