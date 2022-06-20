@@ -403,7 +403,7 @@ class ActiveDirectory(AppBase):
         upn_suffix,
         logon_hours='////////////////////////////',
         organizational_unit='ou=onboarding',
-        home_drive='Z:',
+        home_drive=None,
         home_directory=None
     ):
 
@@ -414,10 +414,16 @@ class ActiveDirectory(AppBase):
 
             displayName = firstname + ' ' + lastname
             dn_name = 'cn=' + displayName + ',' + organizational_unit + ',' + base_dn
-            c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
-            {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname, 'homeDirectory': home_directory, 'homeDrive': home_drive, 'logonHours': base64.b64decode(logon_hours)})
-            user_create_result = json.dumps(c.result)            
-            c.unbind()
+            if home_drive is None:
+                c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
+                {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname, 'logonHours': base64.b64decode(logon_hours)})
+                user_create_result = json.dumps(c.result)            
+                c.unbind()
+            else:
+                c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
+                {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname, 'homeDirectory': home_directory, 'homeDrive': home_drive, 'logonHours': base64.b64decode(logon_hours)})
+                user_create_result = json.dumps(c.result)            
+                c.unbind()
 
 
             full_return = {
