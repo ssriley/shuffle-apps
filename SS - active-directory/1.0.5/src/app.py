@@ -7,6 +7,7 @@ import ssl
 from typing import Any
 import ldap3
 import asyncio
+import traceback
 from ldap3 import (
     Server,
     Connection,
@@ -146,8 +147,8 @@ class ActiveDirectory(AppBase):
             )
 
             return json.dumps(result)
-        except Exception as err:
-            not_found = {"result": "User_Not_Found"}
+        except Exception:
+            not_found = {"result": traceback.format_exc()}
             return not_found
 
     # Change User Password
