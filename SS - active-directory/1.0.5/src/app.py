@@ -403,8 +403,8 @@ class ActiveDirectory(AppBase):
         upn_suffix,
         logon_hours='////////////////////////////',
         organizational_unit='ou=onboarding',
-        home_drive=" ",
-        home_directory=" "
+        home_drive=None,
+        home_directory=None
     ):
 
         try:
