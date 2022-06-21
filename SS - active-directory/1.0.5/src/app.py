@@ -403,8 +403,8 @@ class ActiveDirectory(AppBase):
         upn_suffix,
         logon_hours='////////////////////////////',
         organizational_unit='ou=onboarding',
-        home_drive="",
-        home_directory=""
+        home_drive=None,
+        home_directory=None
     ):
 
         try:
@@ -437,6 +437,8 @@ class ActiveDirectory(AppBase):
                     server, port, domain, login_user, password, use_ssl
                 )
                 # add user
+                home_directory=""
+                home_drive="Z:"
                 displayName = firstname + ' ' + lastname
                 dn_name = 'cn=' + displayName + ',' + organizational_unit + ',' + base_dn
                 c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
