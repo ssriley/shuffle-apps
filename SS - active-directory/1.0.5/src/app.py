@@ -414,9 +414,14 @@ class ActiveDirectory(AppBase):
             # add user
             displayName = firstname + ' ' + lastname
             dn_name = 'cn=' + displayName + ',' + organizational_unit + ',' + base_dn
-            c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
-            {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname, 'homeDirectory': home_directory, 'homeDrive': home_drive, 'logonHours': base64.b64decode(logon_hours)})
-            user_create_result = json.dumps(c.result)         
+            if home_drive is not None:
+                c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
+                {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname, 'homeDirectory': home_directory, 'homeDrive': home_drive, 'logonHours': base64.b64decode(logon_hours)})
+                user_create_result = json.dumps(c.result)
+            else:
+                c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
+                {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname, 'homeDirectory': "", 'homeDrive': " ", 'logonHours': base64.b64decode(logon_hours)})
+                user_create_result = json.dumps(c.result)
             full_return = {
                 'samaccountname': samaccountname,
                 'firstname': firstname,
