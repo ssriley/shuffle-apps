@@ -403,34 +403,57 @@ class ActiveDirectory(AppBase):
         upn_suffix,
         logon_hours='////////////////////////////',
         organizational_unit='ou=onboarding',
-        home_drive="",
-        home_directory=""
+        home_drive=None,
+        home_directory=None
     ):
 
         try:
-            c = self.__ldap_connection(
-                server, port, domain, login_user, password, use_ssl
-            )
-            # add user
-            displayName = firstname + ' ' + lastname
-            dn_name = 'cn=' + displayName + ',' + organizational_unit + ',' + base_dn
-            c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
-            {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname, 'homeDirectory': home_directory, 'homeDrive': home_drive, 'logonHours': base64.b64decode(logon_hours)})
-            user_create_result = json.dumps(c.result)
-            full_return = {
-                'samaccountname': samaccountname,
-                'firstname': firstname,
-                'lastname': lastname,
-                'email': email,
-                'upn_suffix': upn_suffix,
-                'organization_unit': organizational_unit,
-                'result_of_operation': user_create_result,
-                'home_directory': home_directory,
-                'home_drive': home_drive,
-                'display_name': displayName,
-                'dn': dn_name
-            }
-            return json.dumps(full_return)
+            if home_drive is not None:
+                c = self.__ldap_connection(
+                    server, port, domain, login_user, password, use_ssl
+                )
+                # add user
+                displayName = firstname + ' ' + lastname
+                dn_name = 'cn=' + displayName + ',' + organizational_unit + ',' + base_dn
+                c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
+                {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname, 'homeDirectory': home_directory, 'homeDrive': home_drive, 'logonHours': base64.b64decode(logon_hours)})
+                user_create_result = json.dumps(c.result)
+                full_return = {
+                    'samaccountname': samaccountname,
+                    'firstname': firstname,
+                    'lastname': lastname,
+                    'email': email,
+                    'upn_suffix': upn_suffix,
+                    'organization_unit': organizational_unit,
+                    'result_of_operation': user_create_result,
+                    'home_directory': home_directory,
+                    'home_drive': home_drive,
+                    'display_name': displayName,
+                    'dn': dn_name
+                }
+                return json.dumps(full_return)
+            else:
+                c = self.__ldap_connection(
+                    server, port, domain, login_user, password, use_ssl
+                )
+                # add user
+                displayName = firstname + ' ' + lastname
+                dn_name = 'cn=' + displayName + ',' + organizational_unit + ',' + base_dn
+                c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
+                {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname})
+                user_create_result = json.dumps(c.result)
+                full_return = {
+                    'samaccountname': samaccountname,
+                    'firstname': firstname,
+                    'lastname': lastname,
+                    'email': email,
+                    'upn_suffix': upn_suffix,
+                    'organization_unit': organizational_unit,
+                    'result_of_operation': user_create_result,
+                    'display_name': displayName,
+                    'dn': dn_name
+                }
+                return json.dumps(full_return)
         except Exception:
             my_error = {"result": traceback.format_exc()}
             return my_error
