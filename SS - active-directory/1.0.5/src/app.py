@@ -437,7 +437,7 @@ class ActiveDirectory(AppBase):
                     server, port, domain, login_user, password, use_ssl
                 )
                 # add user
-                home_directory=""
+                home_directory="\\"
                 home_drive="Z:"
                 displayName = firstname + ' ' + lastname
                 dn_name = 'cn=' + displayName + ',' + organizational_unit + ',' + base_dn
