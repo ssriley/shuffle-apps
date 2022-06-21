@@ -440,7 +440,7 @@ class ActiveDirectory(AppBase):
                 displayName = firstname + ' ' + lastname
                 dn_name = 'cn=' + displayName + ',' + organizational_unit + ',' + base_dn
                 c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
-                {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname, 'name': firstname + ' ' + lastname})
+                {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname})
                 user_create_result = json.dumps(c.result)
                 full_return = {
                     'samaccountname': samaccountname,
