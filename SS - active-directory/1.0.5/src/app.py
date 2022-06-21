@@ -411,7 +411,7 @@ class ActiveDirectory(AppBase):
             c = self.__ldap_connection(
                 server, port, domain, login_user, password, use_ssl
             )
-
+            # add user
             displayName = firstname + ' ' + lastname
             dn_name = 'cn=' + displayName + ',' + organizational_unit + ',' + base_dn
             c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
