@@ -426,8 +426,6 @@ class ActiveDirectory(AppBase):
                     'upn_suffix': upn_suffix,
                     'organization_unit': organizational_unit,
                     'result_of_operation': user_create_result,
-                    'home_directory': home_directory,
-                    'home_drive': home_drive,
                     'display_name': displayName,
                     'dn': dn_name
                 }
@@ -444,6 +442,8 @@ class ActiveDirectory(AppBase):
                     'upn_suffix': upn_suffix,
                     'organization_unit': organizational_unit,
                     'result_of_operation': user_create_result,
+                    'home_directory': home_directory,
+                    'home_drive': home_drive,
                     'display_name': displayName,
                     'dn': dn_name
                 }
