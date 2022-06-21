@@ -4,6 +4,7 @@ import ssl
 from typing import Any
 import ldap3
 import asyncio
+import traceback
 from ldap3 import (
     Server,
     Connection,
@@ -378,25 +379,32 @@ class ActiveDirectory(AppBase):
         organizational_unit='ou=onboarding'
     ):
 
+        try:
+            c = self.__ldap_connection(
+                server, port, domain, login_user, password, use_ssl
+            )
+            displayName = firstname + ' ' + lastname
+            dn_name = 'cn=' + displayName + ',' + organizational_unit + ',' + base_dn
+            c.add('cn=' + displayName + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
+            {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname})
 
-        c = self.__ldap_connection(
-            server, port, domain, login_user, password, use_ssl
-        )
-        c.add('cn=' + samaccountname + ',' + organizational_unit + ',' + base_dn, ['top', 'person', 'user', 'organizationalPerson'], 
-        {'userPrincipalName': samaccountname + upn_suffix, 'sAMAccountName': samaccountname, 'givenName': firstname, 'sn': lastname, 'mail': email, 'displayName': firstname + ' ' + lastname})
-
-        #print(c.result)
-        user_create_result = json.dumps(c.result)
-        full_return = {
-            'samaccountname': samaccountname,
-            'firstname': firstname,
-            'lastname': lastname,
-            'email': email,
-            'upn_suffix': upn_suffix,
-            'organization_unit': organizational_unit,
-            'result_of_operation': user_create_result
-        }
-        return json.dumps(full_return)
+            #print(c.result)
+            user_create_result = json.dumps(c.result)
+            full_return = {
+                'samaccountname': samaccountname,
+                'firstname': firstname,
+                'lastname': lastname,
+                'email': email,
+                'upn_suffix': upn_suffix,
+                'organization_unit': organizational_unit,
+                'result_of_operation': user_create_result,
+                'dn': dn_name,
+                'display_name': displayName
+            }
+            return json.dumps(full_return)
+        except Exception:
+            my_error = {"result": traceback.format_exc()}
+            return my_error
     
     def add_group_member(
         self,
