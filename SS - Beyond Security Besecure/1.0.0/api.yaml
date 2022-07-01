@@ -25,6 +25,13 @@ actions:
   - name: get_account_details
     description: Gets details about a user based on email address
     parameters:
+      - name: url
+        description: The Beyond Security API Url
+        multiline: false 
+        required: true 
+        example: "https://cloud.beyondsecurity.com/json.cgi"
+        schema:
+          type: string
       - name: search_email 
         description: Search for a user account based on email address
         multiline: false 
@@ -48,6 +55,13 @@ actions:
   - name: create_account
     description: Create a new user account
     parameters:
+      - name: url
+        description: The Beyond Security API Url
+        multiline: false 
+        required: true 
+        example: "https://cloud.beyondsecurity.com/json.cgi"
+        schema:
+          type: string
       - name: username 
         description: the username of the new account
         multiline: false 
@@ -95,6 +109,13 @@ actions:
   - name: delete_account
     description: Gets details about a user based on email address
     parameters:
+      - name: url
+        description: The Beyond Security API Url
+        multiline: false 
+        required: true 
+        example: "https://cloud.beyondsecurity.com/json.cgi"
+        schema:
+          type: string
       - name: user_id
         description: The ID of the user to delete
         multiline: false 

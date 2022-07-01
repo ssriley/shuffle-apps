@@ -102,8 +102,8 @@ class BeyondSecurity(AppBase):
 
         return requests.post(url, headers=headers, data=body, verify=verify).text
 
-    def get_account_details(self, api_key, search_email,verify=True):
-        url = "https://cloud2.beyondsecurity.com/json.cgi"
+    def get_account_details(self, api_key, url, search_email,verify=True):
+        
 
         verify = self.checkverify(verify)
         #body = self.checkbody(body)
@@ -111,8 +111,8 @@ class BeyondSecurity(AppBase):
         send_request = self.POST(url, body=body, verify=True)
         return send_request
 
-    def create_account(self, api_key, username, password, retype_password, security_profile, user_profile="E513CAF7", language="2", timezone="UTC", verify=True):
-        url = "https://cloud2.beyondsecurity.com/json.cgi"
+    def create_account(self, api_key, username, password, retype_password, security_profile, url, user_profile="E513CAF7", language="2", timezone="UTC", verify=True):
+        
 
         verify = self.checkverify(verify)
         #body = self.checkbody(body)
@@ -124,8 +124,8 @@ class BeyondSecurity(AppBase):
         send_request = self.POST(url, body=body, verify=True)
         return send_request
 
-    def delete_account(self, api_key, user_id, verify=True):
-        url = "https://cloud2.beyondsecurity.com/json.cgi"
+    def delete_account(self, api_key, url, user_id, verify=True):
+        
 
         verify = self.checkverify(verify)
         #body = self.checkbody(body)
