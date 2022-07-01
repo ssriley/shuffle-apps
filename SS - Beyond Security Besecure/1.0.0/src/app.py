@@ -118,8 +118,8 @@ class BeyondSecurity(AppBase):
         #body = self.checkbody(body)
         if security_profile == "Default":
             security_profile = "031F28B7"
-        if security_profile == "Safe-Systems Security Profile":
-            security_profile = "C40CE609"
+        if security_profile == "Safe Systems Security Profile":
+            security_profile = "031F28B7"
         body = "primary=admin&secondary=accounts&action=create&apikey=" + api_key + "&username=" + username + "&password=" + password + "&password_retype=" + retype_password + "&securityprofile=" + security_profile + "&userprofile=" + user_profile + "&language=" + language + "&timezone=" + timezone
         send_request = self.POST(url, body=body, verify=True)
         return send_request
