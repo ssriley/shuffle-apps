@@ -62,10 +62,9 @@ class SS_MS_SQL(AppBase):
             conn = self.connection(sql_server,database,username,password)
             cursor = conn.cursor()
             cursor.execute(query)
-            row_headers = [x[0] for x in cursor.description]
             json_data = []
             for result in cursor.fetchall():
-                json_data.append(dict(zip(row_headers, result)))
+                json_data.append(dict(zip('result', result)))
             result = cursor
             cursor.close()
             conn.commit()
