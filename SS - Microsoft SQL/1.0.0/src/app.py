@@ -62,13 +62,13 @@ class SS_MS_SQL(AppBase):
             conn = self.connection(sql_server,database,username,password)
             cursor = conn.cursor()
             cursor.execute(query)
-            json_data = []
-            result = cursor
-            json_data.append(dict(zip('result', result)))
+            #json_data = []
+            #result = cursor
+            #json_data.append(dict(zip('result', result)))
             cursor.close()
             conn.commit()
             conn.close()
-            return json.dumps(json_data, indent=4)
+            return {"result": "finished"}
         except Exception:
             my_error = {"result": traceback.format_exc()}
             return my_error
