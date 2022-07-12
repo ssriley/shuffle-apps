@@ -63,8 +63,8 @@ class SS_MS_SQL(AppBase):
             cursor = conn.cursor()
             cursor.execute(query)
             json_data = []
-            json_data.append(dict(zip('result', result)))
             result = cursor
+            json_data.append(dict(zip('result', result)))
             cursor.close()
             conn.commit()
             conn.close()
