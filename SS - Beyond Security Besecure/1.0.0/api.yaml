@@ -3,10 +3,10 @@ app_version: 1.0.0
 name: SS - Beyond Security BeSecure
 description: HTTP Requests for Beyond Security BeSecure API
 tags:
-  - Testing 
+  - VSCAN 
   - HTTP
 categories:
-  - Testing 
+  - VSCAN 
   - HTTP
 contact_info:
   name: "SS"
@@ -16,7 +16,7 @@ authentication:
   required: true
   parameters:
     - name: api_key
-      description: "API Key frome Beyond Security"
+      description: "API Key from Beyond Security"
       example: "N8KzwcqVUxAI1RoPi5jyFJPkPlkDl9vF"
       required: true
       schema:
@@ -29,7 +29,7 @@ actions:
         description: The Beyond Security API Url
         multiline: false 
         required: true 
-        example: "https://cloud.beyondsecurity.com/json.cgi"
+        example: "https://safesystems.beyondsecurity.com/json.cgi"
         schema:
           type: string
       - name: search_email 
@@ -59,7 +59,7 @@ actions:
         description: The Beyond Security API Url
         multiline: false 
         required: true 
-        example: "https://cloud.beyondsecurity.com/json.cgi"
+        example: "https://safesystems.beyondsecurity.com/json.cgi"
         schema:
           type: string
       - name: username 
@@ -88,9 +88,9 @@ actions:
         multiline: false 
         required: true
         options:
-          - Safe-Systems Security Profile
+          - Safe Systems Security Profile
           - Default
-        example: "Safe-Systems Security Profile"
+        example: "Safe Systems Security Profile"
         schema:
           type: string 
       - name: verify 
@@ -113,7 +113,7 @@ actions:
         description: The Beyond Security API Url
         multiline: false 
         required: true 
-        example: "https://cloud.beyondsecurity.com/json.cgi"
+        example: "https://safesystems.beyondsecurity.com/json.cgi"
         schema:
           type: string
       - name: user_id

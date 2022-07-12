@@ -68,7 +68,7 @@ class BeyondSecurity(AppBase):
             # Not sure if loading is necessary
             # Seemed to work with plain string into data=body too, and not parsed json=body
             #try:
-            #    body = json.loads(body)
+            #    body = json.loads(body) 
             #except json.decoder.JSONDecodeError as e:
             #    return body
 
