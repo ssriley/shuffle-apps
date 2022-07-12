@@ -35,6 +35,7 @@ class SS_MS_SQL(AppBase):
                               'DATABASE=' + database + ';'
                               'UID=' + username + ';'
                               'PWD=' + password + ';'
+                              'TrustServerCertificate=NO;'
                               )
         return conn
                                                     
