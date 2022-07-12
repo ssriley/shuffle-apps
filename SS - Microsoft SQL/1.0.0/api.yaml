@@ -47,6 +47,42 @@ actions:
         required: True
         schema:
           type: string
+  - name: insert_sql
+    description: Execute a INSERT query against the sql database.
+    parameters:
+      - name: query
+        description: The query to run
+        multiline: true
+        example: "INSERT INTO product (product_id, product_name, price)
+                VALUES
+                (5,'Chair',120),
+                (6,'Tablet',300)"
+        required: True
+        schema:
+          type: string
+  - name: delete_sql
+    description: Execute an Update query against the sql database.
+    parameters:
+      - name: query
+        description: The query to run
+        multiline: true
+        example: "DELETE FROM product 
+                WHERE product_id in (5,6)"
+        required: True
+        schema:
+          type: string
+  - name: update_sql
+    description: Execute an Update query against the sql database.
+    parameters:
+      - name: query
+        description: The query to run
+        multiline: true
+        example: "UPDATE products
+                SET price = 350
+                WHERE product_id = 5"
+        required: True
+        schema:
+          type: string
     returns:
       schema:
         type: string

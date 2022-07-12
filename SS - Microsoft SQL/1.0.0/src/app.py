@@ -57,5 +57,59 @@ class SS_MS_SQL(AppBase):
             my_error = {"result": traceback.format_exc()}
             return my_error
 
+    def insert_sql(self, sql_server, database, username, password, query=None):
+        try:
+            conn = self.connection(sql_server,database,username,password)
+            cursor = conn.cursor()
+            cursor.execute(query)
+            row_headers = [x[0] for x in cursor.description]
+            json_data = []
+            for result in cursor.fetchall():
+                json_data.append(dict(zip(row_headers, result)))
+            result = cursor
+            cursor.close()
+            conn.commit()
+            conn.close()
+            return json.dumps(json_data, indent=4)
+        except Exception:
+            my_error = {"result": traceback.format_exc()}
+            return my_error
+
+    def delete_sql(self, sql_server, database, username, password, query=None):
+        try:
+            conn = self.connection(sql_server,database,username,password)
+            cursor = conn.cursor()
+            cursor.execute(query)
+            row_headers = [x[0] for x in cursor.description]
+            json_data = []
+            for result in cursor.fetchall():
+                json_data.append(dict(zip(row_headers, result)))
+            result = cursor
+            cursor.close()
+            conn.commit()
+            conn.close()
+            return json.dumps(json_data, indent=4)
+        except Exception:
+            my_error = {"result": traceback.format_exc()}
+            return my_error
+
+    def update_sql(self, sql_server, database, username, password, query=None):
+        try:
+            conn = self.connection(sql_server,database,username,password)
+            cursor = conn.cursor()
+            cursor.execute(query)
+            row_headers = [x[0] for x in cursor.description]
+            json_data = []
+            for result in cursor.fetchall():
+                json_data.append(dict(zip(row_headers, result)))
+            result = cursor
+            cursor.close()
+            conn.commit()
+            conn.close()
+            return json.dumps(json_data, indent=4)
+        except Exception:
+            my_error = {"result": traceback.format_exc()}
+            return my_error
+
 if __name__ == "__main__":
     SS_MS_SQL.run()
