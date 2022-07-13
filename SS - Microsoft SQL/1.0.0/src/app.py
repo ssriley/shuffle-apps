@@ -59,6 +59,21 @@ class SS_MS_SQL(AppBase):
 
     def insert_sql(self, sql_server, database, username, password, table_name=None, columns=None, values=None, column_number_variable=None):
         try:
+            value_list = values.replace("'", '"', -1)
+            value_list = json.loads(value_list)
+        except Exception:
+            print("[WARNING] Error parsing string to array. Continuing anyway.")
+
+        # Workaround D:
+        if not isinstance(value_list, list):
+            return {
+                "success": False,
+                "reason": "Error: input isnt a list. Remove # to use this action.", 
+                "valid": [],
+                "invalid": [],
+            }
+        
+        try:
             conn = self.connection(sql_server,database,username,password)
             conn.autocommit=False
             cursor = conn.cursor()
