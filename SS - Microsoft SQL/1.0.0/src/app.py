@@ -57,18 +57,24 @@ class SS_MS_SQL(AppBase):
             my_error = {"result": traceback.format_exc()}
             return my_error
 
-    def insert_sql(self, sql_server, database, username, password, query=None):
+    def insert_sql(self, sql_server, database, username, password, table_name=None, columns=None, values=None, column_number_variable=None):
         try:
             conn = self.connection(sql_server,database,username,password)
+            conn.autocommit=False
             cursor = conn.cursor()
-            cursor.execute(query)
+            cursor.execute("INSERT INTO " + table_name + " " + columns + " " + "VALUES " + column_number_variable, values)
+        except Exception:
+            my_error = {"result": traceback.format_exc()}
+            conn.rollback()
+            return my_error
+        else:
+            count = cursor.rowcount()
             cursor.close()
             conn.commit()
             conn.close()
-            return {"result": "finished"}
-        except Exception:
-            my_error = {"result": traceback.format_exc()}
-            return my_error
+            return {"result": str(count)}
+        finally:
+            conn.autocommit=True
 
     def delete_sql(self, sql_server, database, username, password, query=None):
         try:

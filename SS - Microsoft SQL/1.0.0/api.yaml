@@ -50,13 +50,31 @@ actions:
   - name: insert_sql
     description: Execute a INSERT query against the sql database.
     parameters:
-      - name: query
-        description: The query to run
+      - name: table_name
+        description: The table to insert the rows into
         multiline: true
-        example: "INSERT INTO product (product_id, product_name, price)
-                VALUES
-                (5,'Chair',120),
-                (6,'Tablet',300)"
+        example: "Product_Table"
+        required: True
+        schema:
+          type: string
+      - name: columns
+        description: The column names inclosed in parethesis
+        multiline: true
+        example: "(name, age, id)"
+        required: True
+        schema:
+          type: string
+      - name: values
+        description: A list of values to insert
+        multiline: true
+        example: "[('A', 1, 'Test'), ('B', 2, 'Shuffle')]"
+        required: True
+        schema:
+          type: string
+      - name: column_number_variable
+        description: A varible for the query based on the number of columns you are inserting into. In the form of (?, ?, ?). In this example it is 3 columns you are inserting into.
+        multiline: true
+        example: "(?, ?, ?)"
         required: True
         schema:
           type: string
