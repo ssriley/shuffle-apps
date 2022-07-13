@@ -47,7 +47,7 @@ actions:
         required: True
         schema:
           type: string
-  - name: insert_sql
+  - name: insert_records_sql
     description: Execute a INSERT query against the sql database.
     parameters:
       - name: table_name
@@ -65,32 +65,65 @@ actions:
         schema:
           type: string
       - name: values
-        description: A list of values to insert
+        description: A list of values to insert. Don't put [] around the list.
         multiline: true
-        example: "[('A', 1, 'Test'), ('B', 2, 'Shuffle')]"
+        example: "('A', 1, 'Test'), ('B', 2, 'Shuffle')"
         required: True
         schema:
           type: string
-      - name: column_number_variable
-        description: A varible for the query based on the number of columns you are inserting into. In the form of (?, ?, ?). In this example it is 3 columns you are inserting into.
-        multiline: true
-        example: "(?, ?, ?)"
-        required: True
-        schema:
-          type: string
-  - name: delete_sql
+  - name: delete_records_sql
     description: Execute an Update query against the sql database.
     parameters:
-      - name: query
-        description: The query to run
+      - name: table_name
+        description: The table to delete records from
         multiline: true
-        example: "DELETE FROM product 
-                WHERE product_id in (5,6)"
+        example: "product"
         required: True
         schema:
           type: string
-  - name: update_sql
+      - name: where_clause
+        description: The WHERE statement to match on. Don't include word WHERE, just the parameters to match on.
+        multiline: true
+        example: "product_id = 5"
+        required: True
+        schema:
+          type: string
+  - name: update_records_sql
     description: Execute an Update query against the sql database.
+    parameters:
+      - name: table_name
+        description: The table name.
+        multiline: true
+        example: "product"
+        required: True
+        schema:
+          type: string
+      - name: column_name
+        description: The column to alter.
+        multiline: true
+        example: "price"
+        required: True
+        schema:
+          type: string
+      - name: new_value
+        description: The new value to set.
+        multiline: true
+        example: "My_New_Value"
+        required: True
+        schema:
+          type: string
+      - name: where_clause
+        description: The WHERE clause to match on. Don't include the word WHERE. Just what to match.
+        multiline: true
+        example: "product_id = 20"
+        required: True
+        schema:
+          type: string
+    returns:
+      schema:
+        type: string
+  - name: raw_modify_records_query
+    description: Execute an Update/Delete/Insert query against the sql database.
     parameters:
       - name: query
         description: The query to run
