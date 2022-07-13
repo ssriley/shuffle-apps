@@ -76,7 +76,7 @@ class SS_MS_SQL(AppBase):
         
         try:
             conn = self.connection(sql_server,database,username,password)
-            conn.autocommit=False
+            #conn.autocommit=False
             cursor = conn.cursor()
             #value_list = values.replace("'", '"', -1)
             #value_list = [values]
@@ -86,13 +86,11 @@ class SS_MS_SQL(AppBase):
             conn.rollback()
             return my_error
         else:
-            count = cursor.rowcount()
+            #count = cursor.rowcount()
             cursor.close()
             conn.commit()
             conn.close()
-            return {"result": str(count)}
-        finally:
-            conn.autocommit=True
+            return {"result": "finished"}
 
     def delete_sql(self, sql_server, database, username, password, query=None):
         try:
