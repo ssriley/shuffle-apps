@@ -78,9 +78,9 @@ class SS_MS_SQL(AppBase):
             conn = self.connection(sql_server,database,username,password)
             conn.autocommit=False
             cursor = conn.cursor()
-            value_list = values.replace("'", '"', -1)
+            #value_list = values.replace("'", '"', -1)
             #value_list = [values]
-            cursor.execute("INSERT INTO " + table_name + " " + columns + " " + "VALUES " + column_number_variable, value_list)
+            cursor.execute("INSERT INTO " + table_name + " " + columns + " " + "VALUES " + values)
         except Exception:
             my_error = {"result": traceback.format_exc()}
             conn.rollback()
