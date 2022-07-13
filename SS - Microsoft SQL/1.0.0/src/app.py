@@ -60,6 +60,7 @@ class SS_MS_SQL(AppBase):
     def insert_sql(self, sql_server, database, username, password, table_name=None, columns=None, values=None, column_number_variable=None):
         try:
             value_list = values.replace("'", '"', -1)
+            value_list = value_list.split(",")
             value_list = json.loads(value_list)
         except Exception:
             print("[WARNING] Error parsing string to array. Continuing anyway.")
