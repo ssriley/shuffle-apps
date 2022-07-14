@@ -4,7 +4,7 @@ from logging import exception
 import json
 import traceback
 import winrm
-from winrm.Protocol import Protocol
+from winrm.protocol import Protocol
 
 from walkoff_app_sdk.app_base import AppBase
 
