@@ -35,9 +35,11 @@ class SS_WinRM(AppBase):
         try:
             cmd = ['/usr/bin/kinit', username]
             success = subprocess.run(cmd, input=password.encode(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
+            ticket_cache = subprocess.run('/usr/bin/klist')
+            print(ticket_cache)
             return not bool(success)
         except Exception:
-            my_error = {"result": traceback.format_exc()}
+            my_error = {"kerberos_auth_result": traceback.format_exc()}
             return my_error
 
     def run_powershell_script(self,username, password, windows_host, powershell_script, auth_mode='ntlm'):
@@ -45,7 +47,7 @@ class SS_WinRM(AppBase):
             try:
                 ticket = self.krbauth(username,password)
             except Exception:
-                my_error = {"result": traceback.format_exc()}
+                my_error = {"ticket_retrieve_result": traceback.format_exc()}
                 return my_error
             if ticket:
                 try:
