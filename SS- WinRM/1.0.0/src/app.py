@@ -3,6 +3,7 @@ import datetime
 from logging import exception
 import json
 import traceback
+import subprocess
 import winrm
 from winrm.protocol import Protocol
 
@@ -30,39 +31,94 @@ class SS_WinRM(AppBase):
         """
         super().__init__(redis, logger, console_logger)
 
+    def krbauth(self,username, password):
+        cmd = ['/usr/bin/kinit', username]
+        success = subprocess.run(cmd, input=password.encode(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
+        return not bool(success)
+
     def run_powershell_script(self,username, password, windows_host, powershell_script, auth_mode='ntlm'):
-        try:
-            s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
-            remote_ps = s.run_ps(powershell_script)
-            result = {"status_code": str(remote_ps.status_code),
-                    "result": str(remote_ps.std_out)
-                    }
-            return result
-        except exception:
-            my_error = {"result": traceback.format_exc()}
-            return my_error
+        if auth_mode == 'kerberos':
+            try:
+                ticket = self.krbauth(username,password)
+            except exception:
+                my_error = {"result": traceback.format_exc()}
+                return my_error
+            if ticket:
+                try:
+                    s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
+                    remote_ps = s.run_ps(powershell_script)
+                    result = {"status_code": str(remote_ps.status_code),
+                            "result": str(remote_ps.std_out)
+                            }
+                    return result
+                except exception:
+                    my_error = {"result": traceback.format_exc()}
+                    return my_error
+            else:
+                return {'result': 'Did not Login Successfully'}
+        else:
+            try:
+                s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
+                remote_ps = s.run_ps(powershell_script)
+                result = {"status_code": str(remote_ps.status_code),
+                        "result": str(remote_ps.std_out)
+                        }
+                return result
+            except exception:
+                my_error = {"result": traceback.format_exc()}
+                return my_error
 
     def run_command_prompt(self,username, password, windows_host, command, command_args=None, auth_mode='ntlm'):
-        try:
-            if command_args:
-                command_args = command_args.replace("'", '"', -1)
-                command_args = json.loads(command_args)
-                s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
-                remote_command = s.run_cmd(command, command_args)
-                result = {"status_code": str(remote_command.status_code),
-                        "result": str(remote_command.std_out)
-                        }
-                return result
+        if auth_mode == 'kerberos':
+            try:
+                ticket = self.krbauth(username,password)
+            except exception:
+                my_error = {"result": traceback.format_exc()}
+                return my_error
+            if ticket:
+                try:
+                    if command_args:
+                        command_args = command_args.replace("'", '"', -1)
+                        command_args = json.loads(command_args)
+                        s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
+                        remote_command = s.run_cmd(command, command_args)
+                        result = {"status_code": str(remote_command.status_code),
+                                "result": str(remote_command.std_out)
+                                }
+                        return result
+                    else:
+                        s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
+                        remote_command = s.run_cmd(command)
+                        result = {"status_code": str(remote_command.status_code),
+                                "result": str(remote_command.std_out)
+                                }
+                        return result
+                except exception:
+                    my_error = {"result": traceback.format_exc()}
+                    return my_error
             else:
-                s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
-                remote_command = s.run_cmd(command)
-                result = {"status_code": str(remote_command.status_code),
-                        "result": str(remote_command.std_out)
-                        }
-                return result
-        except exception:
-            my_error = {"result": traceback.format_exc()}
-            return my_error
+                return {'result': 'Did not Login Successfully'}
+        else:
+            try:
+                if command_args:
+                    command_args = command_args.replace("'", '"', -1)
+                    command_args = json.loads(command_args)
+                    s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
+                    remote_command = s.run_cmd(command, command_args)
+                    result = {"status_code": str(remote_command.status_code),
+                            "result": str(remote_command.std_out)
+                            }
+                    return result
+                else:
+                    s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
+                    remote_command = s.run_cmd(command)
+                    result = {"status_code": str(remote_command.status_code),
+                            "result": str(remote_command.std_out)
+                            }
+                    return result
+            except exception:
+                my_error = {"result": traceback.format_exc()}
+                return my_error
 
 if __name__ == "__main__":
     SS_WinRM.run()
