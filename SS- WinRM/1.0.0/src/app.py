@@ -32,15 +32,19 @@ class SS_WinRM(AppBase):
         super().__init__(redis, logger, console_logger)
 
     def krbauth(self,username, password):
-        cmd = ['/usr/bin/kinit', username]
-        success = subprocess.run(cmd, input=password.encode(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
-        return not bool(success)
+        try:
+            cmd = ['/usr/bin/kinit', username]
+            success = subprocess.run(cmd, input=password.encode(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
+            return not bool(success)
+        except Exception:
+            my_error = {"result": traceback.format_exc()}
+            return my_error
 
     def run_powershell_script(self,username, password, windows_host, powershell_script, auth_mode='ntlm'):
         if auth_mode == 'kerberos':
             try:
                 ticket = self.krbauth(username,password)
-            except exception:
+            except Exception:
                 my_error = {"result": traceback.format_exc()}
                 return my_error
             if ticket:
@@ -51,7 +55,7 @@ class SS_WinRM(AppBase):
                             "result": str(remote_ps.std_out)
                             }
                     return result
-                except exception:
+                except Exception:
                     my_error = {"result": traceback.format_exc()}
                     return my_error
             else:
@@ -64,7 +68,7 @@ class SS_WinRM(AppBase):
                         "result": str(remote_ps.std_out)
                         }
                 return result
-            except exception:
+            except Exception:
                 my_error = {"result": traceback.format_exc()}
                 return my_error
 
@@ -72,7 +76,7 @@ class SS_WinRM(AppBase):
         if auth_mode == 'kerberos':
             try:
                 ticket = self.krbauth(username,password)
-            except exception:
+            except Exception:
                 my_error = {"result": traceback.format_exc()}
                 return my_error
             if ticket:
@@ -93,7 +97,7 @@ class SS_WinRM(AppBase):
                                 "result": str(remote_command.std_out)
                                 }
                         return result
-                except exception:
+                except Exception:
                     my_error = {"result": traceback.format_exc()}
                     return my_error
             else:
@@ -116,7 +120,7 @@ class SS_WinRM(AppBase):
                             "result": str(remote_command.std_out)
                             }
                     return result
-            except exception:
+            except Exception:
                 my_error = {"result": traceback.format_exc()}
                 return my_error
 
