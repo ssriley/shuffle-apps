@@ -34,8 +34,8 @@ class SS_WinRM(AppBase):
         try:
             s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
             remote_ps = s.run_ps(powershell_script)
-            result = {"status_code": remote_ps.status_code,
-                    "result": remote_ps.std_out
+            result = {"status_code": str(remote_ps.status_code),
+                    "result": str(remote_ps.std_out)
                     }
             return result
         except exception:
@@ -49,15 +49,15 @@ class SS_WinRM(AppBase):
                 command_args = json.loads(command_args)
                 s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
                 remote_command = s.run_cmd(command, command_args)
-                result = {"status_code": remote_command.status_code,
-                        "result": remote_command.std_out
+                result = {"status_code": str(remote_command.status_code),
+                        "result": str(remote_command.std_out)
                         }
                 return result
             else:
                 s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
                 remote_command = s.run_cmd(command)
-                result = {"status_code": remote_command.status_code,
-                        "result": remote_command.std_out
+                result = {"status_code": str(remote_command.status_code),
+                        "result": str(remote_command.std_out)
                         }
                 return result
         except exception:
