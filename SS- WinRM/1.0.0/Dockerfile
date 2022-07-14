@@ -21,7 +21,7 @@ RUN apk add curl
 
 # Install any binary dependencies needed in our final image
 # RUN apk --no-cache add --update my_binary_dependency
-RUN apk --no-cache add --update krb5-dev 
+RUN apk --no-cache add --update krb5-libs krb5-dev 
 # Finally, lets run our app!
 WORKDIR /app
 CMD python app.py --log-level DEBUG
