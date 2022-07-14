@@ -5,7 +5,7 @@ FROM frikky/shuffle:app_sdk as base
 FROM base as builder
 
 # Install all alpine build tools needed for our pip installs
-RUN apk --no-cache add --update alpine-sdk libffi libffi-dev musl-dev openssl-dev
+RUN apk --no-cache add --update alpine-sdk libffi libffi-dev musl-dev openssl-dev python3-dev krb5-libs krb5-dev krb5-conf keyutils-libs libcom_err libcrypto1.1 libssl1.1 libverto musl
 
 # Install all of our pip packages in a single directory that we can copy to our base image later
 RUN mkdir /install
@@ -21,7 +21,7 @@ RUN apk add curl
 
 # Install any binary dependencies needed in our final image
 # RUN apk --no-cache add --update my_binary_dependency
-RUN apk --no-cache add --update python3-dev krb5-libs krb5-dev krb5-conf keyutils-libs libcom_err libcrypto1.1 libssl1.1 libverto musl
+#RUN apk --no-cache add --update python3-dev krb5-libs krb5-dev krb5-conf keyutils-libs libcom_err libcrypto1.1 libssl1.1 libverto musl
 # Finally, lets run our app!
 WORKDIR /app
 CMD python app.py --log-level DEBUG
