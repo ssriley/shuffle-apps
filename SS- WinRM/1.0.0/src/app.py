@@ -128,13 +128,13 @@ class SS_WinRM(AppBase):
     
     def check_kerberos(self, username, password, kerberos_config_file_id):
         try:
-            set_kerberos_file_path = ['export KRB5_CONFIG=/tmp/krb5.conf']
+            set_kerberos_file_path = ['/bin/bash','export KRB5_CONFIG=/tmp/krb5.conf']
             subprocess.run(set_kerberos_file_path)
             krb5_file = self.get_file(kerberos_config_file_id)
 
             with open('/tmp/krb5.conf', "wb+") as krb5:
                 krb5.write(krb5_file["data"])
-                
+
             cmd = ['/usr/bin/kinit', username]
             success = subprocess.run(cmd, input=password.encode(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
             ticket_cache = subprocess.run('/usr/bin/klist')
