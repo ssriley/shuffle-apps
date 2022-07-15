@@ -128,7 +128,7 @@ class SS_WinRM(AppBase):
     
     def check_kerberos(self, username, password, kerberos_config_file_id):
         try:
-            set_kerberos_file_path = ['/bin/bash','export KRB5_CONFIG=/tmp/krb5.conf']
+            set_kerberos_file_path = ['/bin/sh','export KRB5_CONFIG=/tmp/krb5.conf']
             subprocess.run(set_kerberos_file_path)
             krb5_file = self.get_file(kerberos_config_file_id)
 
