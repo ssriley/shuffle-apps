@@ -13,8 +13,8 @@ authentication:
   required: true
   parameters:
     - name: username
-      description: "Windows Username"
-      example: "Administrator"
+      description: "Windows Username. The Domain must be capitalized. "
+      example: "Administrator@EXAMPLE.COM"
       required: true
       schema:
         type: string
@@ -29,7 +29,7 @@ actions:
     description: Run a remote powershell script on a Windows Host.
     parameters:
       - name: windows_host
-        description: The windows host to run the command on
+        description: The windows host to run the command on. If using kerberos, you mush use the FQDN.
         multiline: false
         example: "https://host1.example.com:5986/wsman"
         required: True
@@ -54,7 +54,7 @@ actions:
         schema:
           type: string
       - name: kerberos_config_file_id
-        description: The Id of the uploaded krb5.conf file. Required if you are doing Kerberos auth.
+        description: The Id of the uploaded krb5.conf file. Required if you are doing Kerberos auth. See https://www.virtualizationhowto.com/2018/04/configure-ansible-windows-server-kerberos-authentication-in-ubuntu/
         multiline: true
         example: "5f1659b8a684793d4da78661a2d3a843"
         required: false
@@ -67,7 +67,7 @@ actions:
     description: Run a command from command prompt
     parameters:
       - name: windows_host
-        description: The windows host to run the command against
+        description: The windows host to run the command against. If using Kerberos, you must use the FQDN.
         multiline: false
         example: "https://host1.example.com:5986/wsman"
         required: True
@@ -95,7 +95,7 @@ actions:
         schema:
           type: string
       - name: kerberos_config_file_id
-        description: The Id of the uploaded krb5.conf file. Requried if you are doing kerberos auth.
+        description: The Id of the uploaded krb5.conf file. Requried if you are doing kerberos auth. See https://www.virtualizationhowto.com/2018/04/configure-ansible-windows-server-kerberos-authentication-in-ubuntu/
         multiline: true
         example: "5f1659b8a684793d4da78661a2d3a843"
         required: false
