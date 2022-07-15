@@ -42,7 +42,7 @@ class SS_WinRM(AppBase):
 
             cmd = ['kinit', username]
             success = subprocess.run(cmd, input=password.encode(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
-            ticket_cache = subprocess.run('klist')
+            ticket_cache = subprocess.run('klist', capture_output=True)
             return {'ticket_cache': str(ticket_cache)}
             #return not bool(success)
         except Exception:
