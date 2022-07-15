@@ -31,21 +31,27 @@ class SS_WinRM(AppBase):
         """
         super().__init__(redis, logger, console_logger)
 
-    def krbauth(self,username, password):
+    def krbauth(self,username, password, kerberos_config_file_id):
         try:
+            #set_kerberos_file_path = ['/bin/sh','export KRB5_CONFIG=/tmp/krb5.conf']
+            #subprocess.run(set_kerberos_file_path)
+            krb5_file = self.get_file(kerberos_config_file_id)
+
+            with open('/etc/krb5.conf', "wb+") as krb5:
+                krb5.write(krb5_file["data"])
+
             cmd = ['/usr/bin/kinit', username]
             success = subprocess.run(cmd, input=password.encode(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
-            ticket_cache = subprocess.run('/usr/bin/klist')
-            print(ticket_cache)
-            return not bool(success)
+            #ticket_cache = subprocess.run('/usr/bin/klist')
+            return {'ticket_cache': str(ticket_cache)}
         except Exception:
             my_error = {"kerberos_auth_result": traceback.format_exc()}
             return my_error
 
-    def run_powershell_script(self,username, password, windows_host, powershell_script, auth_mode='ntlm'):
+    def run_powershell_script(self,username, password, windows_host, powershell_script, auth_mode='ntlm', kerberos_config_file_id=None):
         if auth_mode == 'kerberos':
             try:
-                ticket = self.krbauth(username,password)
+                ticket = self.krbauth(username,password, kerberos_config_file_id)
             except Exception:
                 my_error = {"ticket_retrieve_result": traceback.format_exc()}
                 return my_error
@@ -74,10 +80,10 @@ class SS_WinRM(AppBase):
                 my_error = {"result": traceback.format_exc()}
                 return my_error
 
-    def run_command_prompt(self,username, password, windows_host, command, command_args=None, auth_mode='ntlm'):
+    def run_command_prompt(self,username, password, windows_host, command, command_args=None, auth_mode='ntlm', kerberos_config_file_id=None):
         if auth_mode == 'kerberos':
             try:
-                ticket = self.krbauth(username,password)
+                ticket = self.krbauth(username,password, kerberos_config_file_id)
             except Exception:
                 my_error = {"result": traceback.format_exc()}
                 return my_error
@@ -128,16 +134,16 @@ class SS_WinRM(AppBase):
     
     def check_kerberos(self, username, password, kerberos_config_file_id):
         try:
-            set_kerberos_file_path = ['/bin/sh','export KRB5_CONFIG=/tmp/krb5.conf']
-            subprocess.run(set_kerberos_file_path)
+            #set_kerberos_file_path = ['/bin/sh','export KRB5_CONFIG=/tmp/krb5.conf']
+            #subprocess.run(set_kerberos_file_path)
             krb5_file = self.get_file(kerberos_config_file_id)
 
-            with open('/tmp/krb5.conf', "wb+") as krb5:
+            with open('/etc/krb5.conf', "wb+") as krb5:
                 krb5.write(krb5_file["data"])
 
-            cmd = ['/usr/bin/kinit', username]
+            cmd = ['kinit', username]
             success = subprocess.run(cmd, input=password.encode(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
-            ticket_cache = subprocess.run('/usr/bin/klist')
+            ticket_cache = subprocess.run('klist', capture_output=True)
             return {'ticket_cache': str(ticket_cache)}
         except Exception:
             my_error = {"kerberos_auth_result": traceback.format_exc()}
