@@ -40,7 +40,7 @@ class SS_WinRM(AppBase):
             with open('/etc/krb5.conf', "wb+") as krb5:
                 krb5.write(krb5_file["data"])
 
-            cmd = ['/usr/bin/kinit', username]
+            cmd = ['kinit', username]
             success = subprocess.run(cmd, input=password.encode(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
             #ticket_cache = subprocess.run('klist')
             #return {'ticket_cache': str(ticket_cache)}
