@@ -53,6 +53,13 @@ actions:
         required: True
         schema:
           type: string
+      - name: kerberos_config_file_id
+        description: The Id of the uploaded krb5.conf file. Required if you are doing Kerberos auth.
+        multiline: true
+        example: "5f1659b8a684793d4da78661a2d3a843"
+        required: false
+        schema:
+          type: string
     returns:
       schema:
         type: string
@@ -85,6 +92,13 @@ actions:
         multiline: true
         example: "['/all']"
         required: False
+        schema:
+          type: string
+      - name: kerberos_config_file_id
+        description: The Id of the uploaded krb5.conf file. Requried if you are doing kerberos auth.
+        multiline: true
+        example: "5f1659b8a684793d4da78661a2d3a843"
+        required: false
         schema:
           type: string
     returns:
