@@ -44,6 +44,7 @@ class SS_WinRM(AppBase):
             success = subprocess.run(cmd, input=password.encode(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
             #ticket_cache = subprocess.run('klist')
             #return {'ticket_cache': str(ticket_cache)}
+            return not bool(success)
         except Exception:
             my_error = {"kerberos_auth_result": traceback.format_exc()}
             return my_error
