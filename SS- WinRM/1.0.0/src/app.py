@@ -61,7 +61,7 @@ class SS_WinRM(AppBase):
                     s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
                     remote_ps = s.run_ps(powershell_script)
                     result = {"status_code": str(remote_ps.status_code),
-                            "result": str(remote_ps.std_out)
+                            "result": remote_ps.std_out.decode('utf-8')
                             }
                     return result
                 except Exception:
@@ -74,7 +74,7 @@ class SS_WinRM(AppBase):
                 s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
                 remote_ps = s.run_ps(powershell_script)
                 result = {"status_code": str(remote_ps.status_code),
-                        "result": str(remote_ps.std_out)
+                        "result": remote_ps.std_out.decode('utf-8')
                         }
                 return result
             except Exception:
@@ -97,7 +97,7 @@ class SS_WinRM(AppBase):
                         s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
                         remote_command = s.run_cmd(command, command_args)
                         result = {"status_code": str(remote_command.status_code),
-                                "result": str(remote_command.std_out),
+                                "result": remote_command.std_out.decode('utf-8'),
                                 "krbauth_result": str(ticket)
                                 }
                         return result
@@ -105,7 +105,7 @@ class SS_WinRM(AppBase):
                         s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
                         remote_command = s.run_cmd(command)
                         result = {"status_code": str(remote_command.status_code),
-                                "result": str(remote_command.std_out),
+                                "result": remote_command.std_out.decode('utf-8'),
                                 "krbauth_result": str(ticket)
                                 }
                         return result
@@ -123,7 +123,7 @@ class SS_WinRM(AppBase):
                     s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
                     remote_command = s.run_cmd(command, command_args)
                     result = {"status_code": str(remote_command.status_code),
-                            "result": str(remote_command.std_out),
+                            "result": remote_command.std_out.decode('utf-8'),
                             "krbauth_result": str(ticket)
                             }
                     return result
@@ -131,7 +131,7 @@ class SS_WinRM(AppBase):
                     s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
                     remote_command = s.run_cmd(command)
                     result = {"status_code": str(remote_command.status_code),
-                            "result": str(remote_command.std_out),
+                            "result": remote_command.std_out('utf-8'),
                             "krbauth_result": str(ticket)
                             }
                     return result
