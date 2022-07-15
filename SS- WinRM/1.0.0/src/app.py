@@ -42,9 +42,9 @@ class SS_WinRM(AppBase):
 
             cmd = ['kinit', username]
             success = subprocess.run(cmd, input=password.encode(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
-            #ticket_cache = subprocess.run('klist')
-            #return {'ticket_cache': str(ticket_cache)}
-            return not bool(success)
+            ticket_cache = subprocess.run('klist')
+            return {'ticket_cache': str(ticket_cache)}
+            #return not bool(success)
         except Exception:
             my_error = {"kerberos_auth_result": traceback.format_exc()}
             return my_error
@@ -78,7 +78,8 @@ class SS_WinRM(AppBase):
                         }
                 return result
             except Exception:
-                my_error = {"result": traceback.format_exc()}
+                my_error = {"result": traceback.format_exc(),
+                "krbauth_result": str(ticket)}
                 return my_error
 
     def run_command_prompt(self,username, password, windows_host, command, command_args=None, auth_mode='ntlm', kerberos_config_file_id=None):
@@ -86,7 +87,7 @@ class SS_WinRM(AppBase):
             try:
                 ticket = self.krbauth(username,password, kerberos_config_file_id)
             except Exception:
-                my_error = {"result": traceback.format_exc()}
+                my_error = {"keberos_auth_result": traceback.format_exc()}
                 return my_error
             if ticket:
                 try:
@@ -96,18 +97,21 @@ class SS_WinRM(AppBase):
                         s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
                         remote_command = s.run_cmd(command, command_args)
                         result = {"status_code": str(remote_command.status_code),
-                                "result": str(remote_command.std_out)
+                                "result": str(remote_command.std_out),
+                                "krbauth_result": str(ticket)
                                 }
                         return result
                     else:
                         s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
                         remote_command = s.run_cmd(command)
                         result = {"status_code": str(remote_command.status_code),
-                                "result": str(remote_command.std_out)
+                                "result": str(remote_command.std_out),
+                                "krbauth_result": str(ticket)
                                 }
                         return result
                 except Exception:
-                    my_error = {"result": traceback.format_exc()}
+                    my_error = {"result": traceback.format_exc(),
+                                "krbauth_result": str(ticket)}
                     return my_error
             else:
                 return {'result': 'Did not Login Successfully'}
@@ -119,14 +123,16 @@ class SS_WinRM(AppBase):
                     s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
                     remote_command = s.run_cmd(command, command_args)
                     result = {"status_code": str(remote_command.status_code),
-                            "result": str(remote_command.std_out)
+                            "result": str(remote_command.std_out),
+                            "krbauth_result": str(ticket)
                             }
                     return result
                 else:
                     s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
                     remote_command = s.run_cmd(command)
                     result = {"status_code": str(remote_command.status_code),
-                            "result": str(remote_command.std_out)
+                            "result": str(remote_command.std_out),
+                            "krbauth_result": str(ticket)
                             }
                     return result
             except Exception:
