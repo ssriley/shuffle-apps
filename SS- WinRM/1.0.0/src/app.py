@@ -166,9 +166,10 @@ class SS_WinRM(AppBase):
             if ticket:
                 try:
                     powershell_file = self.get_file(powershell_script_file_id)
-                    ps_file_contents = powershell_file["data"].decode('utf-16')
+                    ps_file_contents = powershell_file["data"].decode('utf-8')
+                    ps = "Get-Process"
                     s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
-                    remote_ps = s.run_ps(ps_file_contents)
+                    remote_ps = s.run_ps(ps)
                     result = {"status_code": str(remote_ps.status_code),
                             "result": remote_ps.std_out.decode('utf-8'),
                             "script": ps_file_contents
