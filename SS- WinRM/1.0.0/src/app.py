@@ -172,7 +172,7 @@ class SS_WinRM(AppBase):
                     remote_ps = s.run_ps(ps_file_contents)
                     result = {"status_code": str(remote_ps.status_code),
                             "result": remote_ps.std_out.decode('utf-8'),
-                            "script": ps_file_contents
+                            "script": powershell_file.decode('utf-8')
                             }
                     return result
                 except Exception:
