@@ -123,5 +123,42 @@ actions:
         required: True
         schema:
           type: string
+  - name: run_powershell_file
+    description: Run a remote powershell script from file uploaded to shuffle
+    parameters:
+      - name: windows_host
+        description: The windows host to run the command on. If using kerberos, you mush use the FQDN.
+        multiline: false
+        example: "https://host1.example.com:5986/wsman"
+        required: True
+        schema:
+          type: string
+      - name: auth_mode
+        description: How to authenticate to WinRM
+        multiline: false
+        example: "kerberos or ntlm"
+        options:
+          - kerberos
+          - ntlm
+        required: True
+        schema:
+          type: string
+      - name: powershell_script_file_id
+        description: The powershell script file to run.
+        multiline: true
+        example: "5f1659b8a684793d4da78661a2d3a843"
+        required: True
+        schema:
+          type: string
+      - name: kerberos_config_file_id
+        description: The Id of the uploaded krb5.conf file. Required if you are doing Kerberos auth. See https://www.virtualizationhowto.com/2018/04/configure-ansible-windows-server-kerberos-authentication-in-ubuntu/
+        multiline: true
+        example: "5f1659b8a684793d4da78661a2d3a843"
+        required: false
+        schema:
+          type: string
+    returns:
+      schema:
+        type: string
 
 large_image: data:image/png;base64,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

@@ -156,5 +156,40 @@ class SS_WinRM(AppBase):
             my_error = {"kerberos_auth_result": traceback.format_exc()}
             return my_error
 
+    def run_powershell_file(self,username, password, windows_host, powershell_script_file_id=None, auth_mode='ntlm', kerberos_config_file_id=None):
+        if auth_mode == 'kerberos':
+            try:
+                ticket = self.krbauth(username,password, kerberos_config_file_id)
+            except Exception:
+                my_error = {"ticket_retrieve_result": traceback.format_exc()}
+                return my_error
+            if ticket:
+                try:
+                    powershell_file = self.get_file(powershell_script_file_id)
+                    s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
+                    remote_ps = s.run_ps(powershell_file["data"])
+                    result = {"status_code": str(remote_ps.status_code),
+                            "result": remote_ps.std_out.decode('utf-8')
+                            }
+                    return result
+                except Exception:
+                    my_error = {"result": traceback.format_exc()}
+                    return my_error
+            else:
+                return {'result': 'Did not Login Successfully'}
+        else:
+            try:
+                powershell_file = self.get_file(powershell_script_file_id)
+                s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
+                remote_ps = s.run_ps(powershell_file["data"])
+                result = {"status_code": str(remote_ps.status_code),
+                        "result": remote_ps.std_out.decode('utf-8')
+                        }
+                return result
+            except Exception:
+                my_error = {"result": traceback.format_exc(),
+                "krbauth_result": str(ticket)}
+                return my_error
+
 if __name__ == "__main__":
     SS_WinRM.run()
