@@ -167,7 +167,7 @@ class SS_WinRM(AppBase):
                 try:
                     powershell_file = self.get_file(powershell_script_file_id)
                     s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
-                    remote_ps = s.run_ps(json.dumps(powershell_file["data"]))
+                    remote_ps = s.run_ps(powershell_file["data"].decode('utf-8'))
                     result = {"status_code": str(remote_ps.status_code),
                             "result": remote_ps.std_out.decode('utf-8')
                             }
@@ -181,7 +181,7 @@ class SS_WinRM(AppBase):
             try:
                 powershell_file = self.get_file(powershell_script_file_id)
                 s = winrm.Session(windows_host, auth=(username, password), server_cert_validation='ignore', transport=auth_mode)
-                remote_ps = s.run_ps(json.dumps(powershell_file["data"]))
+                remote_ps = s.run_ps(powershell_file["data"].decode('utf-8'))
                 result = {"status_code": str(remote_ps.status_code),
                         "result": remote_ps.std_out.decode('utf-8')
                         }
