@@ -103,7 +103,7 @@ actions:
       - name: kerberos_config_file_id
         description: The Id of the uploaded krb5.conf file. Requried if you are doing kerberos auth. See https://www.virtualizationhowto.com/2018/04/configure-ansible-windows-server-kerberos-authentication-in-ubuntu/
         multiline: true
-        example: "5f1659b8a684793d4da78661a2d3a843"
+        example: "file_b41c7701-c6f4-4046-80e6-5a04ae3d251a"
         required: false
         schema:
           type: string
@@ -119,7 +119,7 @@ actions:
       - name: kerberos_config_file_id
         description: The Id of the uploaded krb5.conf file
         multiline: true
-        example: "5f1659b8a684793d4da78661a2d3a843"
+        example: "file_b41c7701-c6f4-4046-80e6-5a04ae3d251a"
         required: True
         schema:
           type: string
@@ -146,14 +146,14 @@ actions:
       - name: powershell_script_file_id
         description: The powershell script file to run.
         multiline: true
-        example: "5f1659b8a684793d4da78661a2d3a843"
+        example: "file_b41c7701-c6f4-4046-80e6-5a04ae3d251a"
         required: True
         schema:
           type: string
       - name: kerberos_config_file_id
         description: The Id of the uploaded krb5.conf file. Required if you are doing Kerberos auth. See https://www.virtualizationhowto.com/2018/04/configure-ansible-windows-server-kerberos-authentication-in-ubuntu/
         multiline: true
-        example: "5f1659b8a684793d4da78661a2d3a843"
+        example: "file_b41c7701-c6f4-4046-80e6-5a04ae3d251a"
         required: false
         schema:
           type: string
