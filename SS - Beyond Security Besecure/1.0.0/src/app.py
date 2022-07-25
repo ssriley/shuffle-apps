@@ -107,7 +107,7 @@ class BeyondSecurity(AppBase):
 
         verify = self.checkverify(verify)
         #body = self.checkbody(body)
-        body = "primary=admin&secondary=accounts&action=returnaccounts&apikey=" + api_key + "&order=userid&direction=down&search_email=" + search_email
+        body = "primary=admin&secondary=accounts&action=returnaccounts&apikey=" + api_key + "&order=userid&search_limit=99&direction=down&search_email=" + search_email
         send_request = self.POST(url, body=body, verify=True)
         return send_request
 
