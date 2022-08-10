@@ -134,6 +134,25 @@ class BeyondSecurity(AppBase):
         return send_request
 
 
+    def return_contacts(self, api_key, url, verify=True):
+        
+
+        verify = self.checkverify(verify)
+        #body = self.checkbody(body)
+        body = "primary=admin&secondary=contacts&action=returncontacts&apikey=" + api_key + "&search_limit=99"
+        send_request = self.POST(url, body=body, verify=True)
+        return send_request
+        
+        
+    def create_contact(self, api_key, url, username, fullname, verify=True):
+        
+
+        verify = self.checkverify(verify)
+        #body = self.checkbody(body)
+        body = "primary=admin&secondary=contacts&action=create&apikey=" + api_key + "&contact_email=" + username + "&contact_name=" + fullname + "&contact_country=US"
+        send_request = self.POST(url, body=body, verify=True)
+        return send_request
+
 # Run the actual thing after we've checked params
 
 if __name__ == "__main__":
