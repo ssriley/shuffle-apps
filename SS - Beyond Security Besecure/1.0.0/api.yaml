@@ -136,7 +136,7 @@ actions:
     returns:
       schema:
         type: string
-- name: get_contacts
+  - name: get_contacts
     description: Show contacts
     parameters:
       - name: url
