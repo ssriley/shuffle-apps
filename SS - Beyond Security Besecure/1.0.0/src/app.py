@@ -134,7 +134,7 @@ class BeyondSecurity(AppBase):
         return send_request
 
 
-    def return_contacts(self, api_key, url, verify=True):
+    def get_contacts(self, api_key, url, verify=True):
         
 
         verify = self.checkverify(verify)
