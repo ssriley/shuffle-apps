@@ -83,7 +83,7 @@ actions:
         example: "PasswordME"
         schema:
           type: string
-       - name: contact
+      - name: contact
         description: The Contact ID for this new Account
         multiline: false 
         required: false
