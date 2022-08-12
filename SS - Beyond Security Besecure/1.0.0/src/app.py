@@ -111,7 +111,7 @@ class BeyondSecurity(AppBase):
         send_request = self.POST(url, body=body, verify=True)
         return send_request
 
-    def create_account(self, api_key, username, password, retype_password, contact, security_profile, url, user_profile="E513CAF7", language="2", timezone="UTC", verify=True):
+    def create_account(self, api_key, username, password, retype_password, contact, security_profile, url, user_profile="81F933C3", language="2", timezone="UTC", verify=True):
         
 
         verify = self.checkverify(verify)
