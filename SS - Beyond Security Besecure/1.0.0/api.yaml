@@ -83,6 +83,13 @@ actions:
         example: "PasswordME"
         schema:
           type: string
+      - name: contact
+        description: The Contact ID for this new Account
+        multiline: false 
+        required: false
+        example: "1A234B56"
+        schema:
+          type: string
       - name: security_profile
         description: The Security profile to apply to account. This is password settings etc..
         multiline: false 
@@ -133,6 +140,66 @@ actions:
         example: "false"
         schema:
           type: bool 
+    returns:
+      schema:
+        type: string
+  - name: get_contacts
+    description: Show contacts
+    parameters:
+      - name: url
+        description: The Beyond Security API Url
+        multiline: false 
+        required: true 
+        example: "https://safesystems.beyondsecurity.com/json.cgi"
+        schema:
+          type: string
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool 
+    returns:
+      schema:
+        type: string
+  - name: create_contact
+    description: Create a new contact (needed to create an account)
+    parameters:
+      - name: url
+        description: The Beyond Security API Url
+        multiline: false 
+        required: true 
+        example: "https://safesystems.beyondsecurity.com/json.cgi"
+        schema:
+          type: string
+      - name: username 
+        description: the username of the new account
+        multiline: false 
+        required: true 
+        example: "bruce.wayne@safesystems.com"
+        schema:
+          type: string 
+      - name: fullname
+        description: Contact's first and last name
+        multiline: false 
+        required: true
+        example: "Bruce Wayne"
+        schema:
+          type: string 
+      - name: verify 
+        description: Check certificate
+        multiline: false 
+        options:
+          - false 
+          - true
+        required: false 
+        example: "false"
+        schema:
+          type: bool
     returns:
       schema:
         type: string

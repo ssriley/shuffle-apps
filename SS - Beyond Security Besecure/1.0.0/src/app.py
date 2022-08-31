@@ -107,11 +107,11 @@ class BeyondSecurity(AppBase):
 
         verify = self.checkverify(verify)
         #body = self.checkbody(body)
-        body = "primary=admin&secondary=accounts&action=returnaccounts&apikey=" + api_key + "&order=userid&direction=down&search_email=" + search_email
+        body = "primary=admin&secondary=accounts&action=returnaccounts&apikey=" + api_key + "&order=userid&search_limit=99&direction=down&search_email=" + search_email
         send_request = self.POST(url, body=body, verify=True)
         return send_request
 
-    def create_account(self, api_key, username, password, retype_password, security_profile, url, user_profile="E513CAF7", language="2", timezone="UTC", verify=True):
+    def create_account(self, api_key, username, password, retype_password, contact, security_profile, url, user_profile="81F933C3", language="2", timezone="UTC", verify=True):
         
 
         verify = self.checkverify(verify)
@@ -120,7 +120,7 @@ class BeyondSecurity(AppBase):
             security_profile = "031F28B7"
         if security_profile == "Safe Systems Security Profile":
             security_profile = "031F28B7"
-        body = "primary=admin&secondary=accounts&action=create&apikey=" + api_key + "&username=" + username + "&password=" + password + "&password_retype=" + retype_password + "&securityprofile=" + security_profile + "&userprofile=" + user_profile + "&language=" + language + "&timezone=" + timezone
+        body = "primary=admin&secondary=accounts&action=create&apikey=" + api_key + "&username=" + username + "&password=" + password + "&password_retype=" + retype_password + "&securityprofile=" + security_profile + "&userprofile=" + user_profile + "&language=" + language + "&timezone=" + timezone + "&contact=" + contact
         send_request = self.POST(url, body=body, verify=True)
         return send_request
 
@@ -133,6 +133,25 @@ class BeyondSecurity(AppBase):
         send_request = self.POST(url, body=body, verify=True)
         return send_request
 
+
+    def get_contacts(self, api_key, url, verify=True):
+        
+
+        verify = self.checkverify(verify)
+        #body = self.checkbody(body)
+        body = "primary=admin&secondary=contacts&action=returncontacts&apikey=" + api_key + "&search_limit=99"
+        send_request = self.POST(url, body=body, verify=True)
+        return send_request
+        
+        
+    def create_contact(self, api_key, url, username, fullname, verify=True):
+        
+
+        verify = self.checkverify(verify)
+        #body = self.checkbody(body)
+        body = "primary=admin&secondary=contacts&action=create&apikey=" + api_key + "&contact_email=" + username + "&contact_name=" + fullname + "&contact_country=US"
+        send_request = self.POST(url, body=body, verify=True)
+        return send_request
 
 # Run the actual thing after we've checked params
 
